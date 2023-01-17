@@ -23,6 +23,8 @@ ifneq ($(HAVE_MNL),y)
 endif
 endif
   P4OBJ += p4_types.o
+  P4OBJ += cJSON.o
+  P4OBJ += cjson_utils.o
   CFLAGS += -DP4TC
 endif
 
