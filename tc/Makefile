@@ -27,6 +27,7 @@ endif
   P4OBJ += cjson_utils.o
   P4OBJ += p4tc_json.o
   P4OBJ += p4tc_template.o
+  P4OBJ += m_dyna.o
   CFLAGS += -DP4TC
 endif
 
