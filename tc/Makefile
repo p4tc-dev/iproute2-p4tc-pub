@@ -7,6 +7,25 @@ include ../config.mk
 
 SHARED_LIBS ?= y
 
+LIBBPF_VERSION_MAJOR?=0
+LIBBPF_VERSION_MINOR?=0
+LIBBPF_VERSION_REVISION?=0
+LIBBPF_VERSION_MIN_MAJOR=0
+LIBBPF_VERSION_MIN_MINOR=0
+LIBBPF_VERSION_MIN_REVISION=8
+
+HAVE_P4TC_LIBBPF := $(shell echo $$((( $(LIBBPF_VERSION_MAJOR) * 10000 + $(LIBBPF_VERSION_MINOR) * 100 + $(LIBBPF_VERSION_REVISION)) >= ($(LIBBPF_VERSION_MIN_MAJOR) * 10000 + $(LIBBPF_VERSION_MIN_MINOR) * 100 + $(LIBBPF_VERSION_MIN_REVISION)))))
+
+ifeq ($(HAVE_P4TC_LIBBPF),1)
+ifneq ($(MAKECMDGOALS),clean)
+ifneq ($(HAVE_MNL),y)
+  $(error libmnl is required for P4TC; install its development files and rerun configure)
+endif
+endif
+  P4OBJ += p4_types.o
+  CFLAGS += -DP4TC
+endif
+
 TCMODULES :=
 TCMODULES += q_fifo.o
 TCMODULES += q_dualpi2.o
@@ -91,6 +110,7 @@ ifneq ($(TC_CONFIG_NO_XT),y)
 endif
 
 TCOBJ += $(TCMODULES)
+TCOBJ += $(P4OBJ)
 LDLIBS += -L. -lm
 
 ifeq ($(SHARED_LIBS),y)
