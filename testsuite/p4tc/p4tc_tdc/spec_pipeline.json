@@ -1,0 +1,1799 @@
+[
+    {
+        "id": "648b",
+        "name": "PIPE-01: Pipeline ids are allocated in order when none is given",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_pipeline"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/p2 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            "$TC p4template create pipeline/ptables"
+        ],
+        "cmdUnderTest": "$TC p4template create pipeline/p2",
+        "expExitCode": "0",
+        "verifyCmd": "{ $TC -j p4template get pipeline/ptables; $TC -j p4template get pipeline/p2; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "\"pname\":\\s*\"ptables\".*\"pipeid\":\\s*1.*\"pname\":\\s*\"p2\".*\"pipeid\":\\s*2",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/p2 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "3232",
+        "name": "PIPE-02: Create a pipeline with an existing name and a new pipeid [BUG? B1]",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_pipeline"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ pipeid 2 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            "$TC p4template create pipeline/ptables pipeid 1"
+        ],
+        "cmdUnderTest": "$TC p4template create pipeline/ptables pipeid 2 2>/tmp/p4tc-spec-$TESTID.err",
+        "expExitCode": "255",
+        "verifyCmd": "{ cat /tmp/p4tc-spec-$TESTID.err; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "Error: Pipeline name exists",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ pipeid 2 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "ada4",
+        "name": "PIPE-03: Create a pipeline with a new name and an existing pipeid",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_pipeline"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/other 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            "$TC p4template create pipeline/ptables pipeid 1"
+        ],
+        "cmdUnderTest": "$TC p4template create pipeline/other pipeid 1 2>/tmp/p4tc-spec-$TESTID.err",
+        "expExitCode": "255",
+        "verifyCmd": "{ cat /tmp/p4tc-spec-$TESTID.err; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "Error: Pipeline id exists",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/other 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "167d",
+        "name": "PIPE-06: Create a table in a pipeline created without numtables",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_pipeline"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            "$TC p4template create pipeline/ptables pipeid 22"
+        ],
+        "cmdUnderTest": "$TC p4template create table/ptables/cb/tname keysz 16 2>/tmp/p4tc-spec-$TESTID.err",
+        "expExitCode": "255",
+        "verifyCmd": "{ cat /tmp/p4tc-spec-$TESTID.err; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "Error:\\ Table\\ range\\ exceeded\\ max\\ allowed\\ value",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "ecb8",
+        "name": "PIPE-07: Seal a pipeline with numtables 0",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_pipeline"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 0"
+        ],
+        "cmdUnderTest": "$TC p4template update pipeline/ptables state ready",
+        "expExitCode": "0",
+        "verifyCmd": "{ $TC -j p4template get pipeline/ptables; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "\"pnumtables\":\\s*0.*\"pstate\":\\s*\"ready\"",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "569a",
+        "name": "PIPE-08: Get the kernel pipeline by name",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_pipeline"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ]
+        ],
+        "cmdUnderTest": "$TC p4template get pipeline/kernel 2>/tmp/p4tc-spec-$TESTID.err",
+        "expExitCode": "255",
+        "verifyCmd": "{ cat /tmp/p4tc-spec-$TESTID.err; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "Error:\\ Pipeline\\ name\\ not\\ found",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "9a5b",
+        "name": "PIPE-09: Dump pipelines does not list the kernel pipeline",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_pipeline"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 4"
+        ],
+        "cmdUnderTest": "$TC -j p4template get pipeline/",
+        "expExitCode": "0",
+        "verifyCmd": "{ $TC -j p4template get pipeline/; } 2>&1; true",
+        "matchCount": "0",
+        "matchPattern": "\"pname\":\\s*\"kernel\"",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "b91f",
+        "name": "PIPE-10: Reject a 33-byte pipeline name without creating a truncated name",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_pipeline"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ pipeid 5 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ pipeid 6 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ]
+        ],
+        "cmdUnderTest": "$TC p4template create pipeline/ppppppppppppppppppppppppppppppppp pipeid 5",
+        "expExitCode": "255",
+        "verifyCmd": "{ $TC -j p4template get pipeline/ pipeid 5; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "Error: Unable to find pipeline by id\\.",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ pipeid 5 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ pipeid 6 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "8cbe",
+        "name": "PIPE-11: Pipeline with a 31 character name can be found by name",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_pipeline"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ pipeid 5 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ]
+        ],
+        "cmdUnderTest": "$TC p4template create pipeline/ppppppppppppppppppppppppppppppp pipeid 5",
+        "expExitCode": "0",
+        "verifyCmd": "{ $TC -j p4template get pipeline/ppppppppppppppppppppppppppppppp; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "\"pname\":\\s*\"ppppppppppppppppppppppppppppppp\".*\"pipeid\":\\s*5",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ pipeid 5 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "50bc",
+        "name": "PIPE-UPD-01a: Update a pipeline that does not exist, by name",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_pipeline"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ]
+        ],
+        "cmdUnderTest": "$TC p4template update pipeline/nosuchpipe numtables 1 2>/tmp/p4tc-spec-$TESTID.err",
+        "expExitCode": "255",
+        "verifyCmd": "{ cat /tmp/p4tc-spec-$TESTID.err; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "Error:\\ Pipeline\\ name\\ not\\ found",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "776f",
+        "name": "PIPE-UPD-01b: Update a pipeline that does not exist, by id",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_pipeline"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ]
+        ],
+        "cmdUnderTest": "$TC p4template update pipeline/ pipeid 99 numtables 1 2>/tmp/p4tc-spec-$TESTID.err",
+        "expExitCode": "255",
+        "verifyCmd": "{ cat /tmp/p4tc-spec-$TESTID.err; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "Error:\\ Unable\\ to\\ find\\ pipeline\\ by\\ id",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "c569",
+        "name": "PIPE-UPD-02: Update numtables of a sealed pipeline",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_pipeline"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 0",
+            "$TC p4template update pipeline/ptables state ready"
+        ],
+        "cmdUnderTest": "$TC p4template update pipeline/ptables numtables 1 2>/tmp/p4tc-spec-$TESTID.err",
+        "expExitCode": "255",
+        "verifyCmd": "{ cat /tmp/p4tc-spec-$TESTID.err; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "Error:\\ Pipeline\\ is\\ sealed",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "7d5e",
+        "name": "PIPE-UPD-03: Seal a pipeline twice",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_pipeline"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 0",
+            "$TC p4template update pipeline/ptables state ready"
+        ],
+        "cmdUnderTest": "$TC p4template update pipeline/ptables state ready 2>/tmp/p4tc-spec-$TESTID.err",
+        "expExitCode": "255",
+        "verifyCmd": "{ cat /tmp/p4tc-spec-$TESTID.err; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "Error:\\ Pipeline\\ is\\ sealed",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "b732",
+        "name": "PIPE-UPD-04: Seal after lowering numtables below the number of tables",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_pipeline"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 2",
+            "$TC p4template create table/ptables/cb/t1 keysz 16",
+            "$TC p4template create table/ptables/cb/t2 keysz 16",
+            "$TC p4template update pipeline/ptables numtables 1"
+        ],
+        "cmdUnderTest": "$TC p4template update pipeline/ptables state ready 2>/tmp/p4tc-spec-$TESTID.err",
+        "expExitCode": "255",
+        "verifyCmd": "{ cat /tmp/p4tc-spec-$TESTID.err; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "Error:\\ Must\\ have\\ all\\ table\\ defined\\ to\\ update\\ state\\ to\\ ready",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "8302",
+        "name": "PIPE-UPD-06: Seal a pipeline with a table with 1024 masks",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_pipeline"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 2",
+            "$TC p4template create table/ptables/cb/t1 keysz 16",
+            "$TC p4template create table/ptables/cb/t2 keysz 16 type ternary nummasks 1024"
+        ],
+        "cmdUnderTest": "$TC p4template update pipeline/ptables state ready",
+        "expExitCode": "0",
+        "verifyCmd": "{ $TC -j p4template get pipeline/ptables; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "\"pstate\":\\s*\"ready\"",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "0a51",
+        "name": "PIPE-UPD-07: Seal a pipeline with an extern instance with 4 elements and a default value",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_pipeline"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/E1",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/E2",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Counter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/DirectCounter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Meter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/DirectMeter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Digest",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/NoSuchExt",
+                0,
+                1,
+                2,
+                255
+            ],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 0",
+            "$TC p4template create extern/root/myext extid 1 numinstances 1",
+            "$TC p4template create extern_inst/ptables/myext/inst1 instid 1 tc_numel 4 control_path tc_key index ptype bit32 param value ptype bit32 default_value 7"
+        ],
+        "cmdUnderTest": "$TC p4template update pipeline/ptables state ready",
+        "expExitCode": "0",
+        "verifyCmd": "{ $TC -j p4ctrl get ptables/extern/myext/inst1; } 2>&1; true",
+        "matchCount": "4",
+        "matchPattern": "\"value\".{0,80}?7\\b",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/E1",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/E2",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Counter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/DirectCounter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Meter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/DirectMeter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Digest",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/NoSuchExt",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "82a3",
+        "name": "PIPE-UPD-08: Seal by pipeid only; the reply carries the name",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_pipeline"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 0"
+        ],
+        "cmdUnderTest": "$TC -echo -j p4template update pipeline/ pipeid 22 state ready > /tmp/p4tc-spec-$TESTID.out",
+        "expExitCode": "0",
+        "verifyCmd": "{ cat /tmp/p4tc-spec-$TESTID.out; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "\"pname\":\\s*\"ptables\"",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "5a2b",
+        "name": "PIPE-DEL-01: Delete a sealed pipeline with a P4 filter attached",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_pipeline"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "ip link del dev p4d$TESTID",
+                0,
+                1,
+                2,
+                255
+            ],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 0",
+            "$TC p4template update pipeline/ptables state ready",
+            "ip link add dev p4d$TESTID type dummy",
+            "$TC qdisc add dev p4d$TESTID clsact",
+            "$TC filter add dev p4d$TESTID ingress protocol all prio 1 p4 pname ptables action ok"
+        ],
+        "cmdUnderTest": "$TC p4template del pipeline/ptables 2>/tmp/p4tc-spec-$TESTID.err",
+        "expExitCode": "255",
+        "verifyCmd": "{ cat /tmp/p4tc-spec-$TESTID.err; $TC -j p4template get pipeline/ptables; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "Error:\\ Pipeline\\ in\\ use.*\"pname\":\\s*\"ptables\"",
+        "teardown": [
+            [
+                "$TC filter del dev p4d$TESTID ingress",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "ip link del dev p4d$TESTID",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "4304",
+        "name": "PIPE-DEL-02: Delete the P4 filter, then the pipeline",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_pipeline"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "ip link del dev p4d$TESTID",
+                0,
+                1,
+                2,
+                255
+            ],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 0",
+            "$TC p4template update pipeline/ptables state ready",
+            "ip link add dev p4d$TESTID type dummy",
+            "$TC qdisc add dev p4d$TESTID clsact",
+            "$TC filter add dev p4d$TESTID ingress protocol all prio 1 p4 pname ptables action ok"
+        ],
+        "cmdUnderTest": "$TC filter del dev p4d$TESTID ingress && (for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '%s\\n' \"$output\" >&2; exit \"$rc\")",
+        "expExitCode": "0",
+        "verifyCmd": "{ $TC p4template get pipeline/ptables; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "Error:\\ Pipeline\\ name\\ not\\ found",
+        "teardown": [
+            [
+                "$TC filter del dev p4d$TESTID ingress",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "ip link del dev p4d$TESTID",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "7362",
+        "name": "PIPE-DEL-03: Delete a pipeline with tables, actions, instances and externs",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_pipeline"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/E1",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/E2",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Counter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/DirectCounter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Meter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/DirectMeter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Digest",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/NoSuchExt",
+                0,
+                1,
+                2,
+                255
+            ],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 1",
+            "$TC p4template create action/ptables/a1 actid 1 num_prealloc_acts 2 param p1 type bit32",
+            "$TC p4template update action/ptables/a1 state active",
+            "$TC actions add action ptables/a1 param p1 type bit32 id 1 5 index 100",
+            "$TC p4template create table/ptables/cb/t1 keysz 16 table_acts act name ptables/a1",
+            "$TC p4template create extern/root/myext extid 1 numinstances 1",
+            "$TC p4template create extern_inst/ptables/myext/inst1 instid 1 control_path tc_key index ptype bit32 param value ptype bit32"
+        ],
+        "cmdUnderTest": "$TC p4template del pipeline/ptables && $TC p4template del extern/root/myext",
+        "expExitCode": "0",
+        "verifyCmd": "{ $TC -j p4template get extern/root/myext; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "Error: ",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/E1",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/E2",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Counter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/DirectCounter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Meter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/DirectMeter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Digest",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/NoSuchExt",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "43a9",
+        "name": "PIPE-DEL-04: Delete a netns with a pipeline",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_pipeline"
+        ],
+        "setup": [
+            "echo P4TCMARK-$TESTID > /dev/kmsg",
+            [
+                "ip netns del p4ns$TESTID",
+                0,
+                1,
+                2,
+                255
+            ],
+            "ip netns add p4ns$TESTID",
+            "ip netns exec p4ns$TESTID $TC p4template create pipeline/ptables pipeid 22 numtables 1",
+            "ip netns exec p4ns$TESTID $TC p4template create action/ptables/a1 actid 1 param p1 type bit32",
+            "ip netns exec p4ns$TESTID $TC p4template update action/ptables/a1 state active",
+            "ip netns exec p4ns$TESTID $TC p4template create table/ptables/cb/t1 keysz 16 table_acts act name ptables/a1",
+            "ip netns exec p4ns$TESTID $TC p4template update pipeline/ptables state ready"
+        ],
+        "cmdUnderTest": "ip netns del p4ns$TESTID",
+        "expExitCode": "0",
+        "verifyCmd": "{ sleep 2; ip netns list; dmesg | sed -n '/P4TCMARK-$TESTID/,$p' | grep -E \"BUG:|WARNING:|KASAN:|UBSAN:\"; } 2>&1; true",
+        "matchCount": "0",
+        "matchPattern": "p4ns\\$TESTID|BUG:|WARNING:|KASAN:|UBSAN:",
+        "teardown": [
+            [
+                "ip netns del p4ns$TESTID",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "704c",
+        "name": "PIPE-DEL-05: Delete a netns with a pipeline and a P4 filter",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_pipeline"
+        ],
+        "setup": [
+            "echo P4TCMARK-$TESTID > /dev/kmsg",
+            [
+                "ip netns del p4ns$TESTID",
+                0,
+                1,
+                2,
+                255
+            ],
+            "ip netns add p4ns$TESTID",
+            "ip netns exec p4ns$TESTID $TC p4template create pipeline/ptables pipeid 22 numtables 1",
+            "ip netns exec p4ns$TESTID $TC p4template create action/ptables/a1 actid 1 param p1 type bit32",
+            "ip netns exec p4ns$TESTID $TC p4template update action/ptables/a1 state active",
+            "ip netns exec p4ns$TESTID $TC p4template create table/ptables/cb/t1 keysz 16 table_acts act name ptables/a1",
+            "ip netns exec p4ns$TESTID $TC p4template update pipeline/ptables state ready",
+            "ip netns exec p4ns$TESTID ip link add dev p4d$TESTID type dummy",
+            "ip netns exec p4ns$TESTID $TC qdisc add dev p4d$TESTID clsact",
+            "ip netns exec p4ns$TESTID $TC filter add dev p4d$TESTID ingress protocol all prio 1 p4 pname ptables action ok"
+        ],
+        "cmdUnderTest": "ip netns del p4ns$TESTID",
+        "expExitCode": "0",
+        "verifyCmd": "{ sleep 2; ip netns list; dmesg | sed -n '/P4TCMARK-$TESTID/,$p' | grep -E \"BUG:|WARNING:|KASAN:|UBSAN:\"; } 2>&1; true",
+        "matchCount": "0",
+        "matchPattern": "p4ns\\$TESTID|BUG:|WARNING:|KASAN:|UBSAN:",
+        "teardown": [
+            [
+                "ip netns del p4ns$TESTID",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "d227",
+        "name": "PIPE-DEL-06: Get a pipeline by id only; the reply carries the name",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_pipeline"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 4"
+        ],
+        "cmdUnderTest": "$TC -j p4template get pipeline/ pipeid 22",
+        "expExitCode": "0",
+        "verifyCmd": "{ $TC -j p4template get pipeline/ pipeid 22; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "\"pname\":\\s*\"ptables\"",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "1522",
+        "name": "PIPE-DEL-08: Dump 33 pipelines",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_pipeline"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            "for i in $(seq 1 33); do $TC p4template create pipeline/pp$i pipeid $i || exit 1; done"
+        ],
+        "cmdUnderTest": "$TC -j p4template get pipeline/",
+        "expExitCode": "0",
+        "verifyCmd": "{ $TC -j p4template get pipeline/; } 2>&1; true",
+        "matchCount": "33",
+        "matchPattern": "\"pname\":\\s*\"pp\\d+\"",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "for i in $(seq 1 33); do $TC p4template del pipeline/pp$i; done",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "0491",
+        "name": "PIPE-DEL-09: Flush pipelines is not supported",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_pipeline"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 4"
+        ],
+        "cmdUnderTest": "$TC p4template del pipeline/ 2>/tmp/p4tc-spec-$TESTID.err",
+        "expExitCode": "255",
+        "verifyCmd": "{ cat /tmp/p4tc-spec-$TESTID.err; $TC -j p4template get pipeline/ptables; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "Error:\\ Pipeline\\ flush\\ not\\ supported.*\"pname\":\\s*\"ptables\"",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "0d18",
+        "name": "API-05a: Unprivileged pipeline create fails",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_pipeline"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ]
+        ],
+        "cmdUnderTest": "setpriv --reuid=65534 --regid=65534 --clear-groups $TC p4template create pipeline/ptables 2>/tmp/p4tc-spec-$TESTID.err",
+        "expExitCode": "255",
+        "verifyCmd": "{ cat /tmp/p4tc-spec-$TESTID.err; $TC p4template get pipeline/ptables; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "Operation not permitted.*Error:\\ Pipeline\\ name\\ not\\ found",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "f704",
+        "name": "API-05b: Unprivileged pipeline get works",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_pipeline"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 4"
+        ],
+        "cmdUnderTest": "setpriv --reuid=65534 --regid=65534 --clear-groups $TC -j p4template get pipeline/ptables",
+        "expExitCode": "0",
+        "verifyCmd": "{ setpriv --reuid=65534 --regid=65534 --clear-groups $TC -j p4template get pipeline/ptables; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "\"pname\":\\s*\"ptables\"",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "6ecf",
+        "name": "API-05c: Unprivileged pipeline delete fails",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_pipeline"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 4"
+        ],
+        "cmdUnderTest": "setpriv --reuid=65534 --regid=65534 --clear-groups $TC p4template del pipeline/ptables 2>/tmp/p4tc-spec-$TESTID.err",
+        "expExitCode": "255",
+        "verifyCmd": "{ cat /tmp/p4tc-spec-$TESTID.err; $TC -j p4template get pipeline/ptables; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "Operation not permitted.*\"pname\":\\s*\"ptables\"",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "448f",
+        "name": "API-06: Dump pipelines when there are none",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_pipeline"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ]
+        ],
+        "cmdUnderTest": "$TC -j p4template get pipeline/",
+        "expExitCode": "0",
+        "verifyCmd": "{ $TC -j p4template get pipeline/; } 2>&1; true",
+        "matchCount": "0",
+        "matchPattern": "\"pname\"",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "0ed2",
+        "name": "API-07: Create echo carries the allocated pipeline id",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_pipeline"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ]
+        ],
+        "cmdUnderTest": "$TC -echo -j p4template create pipeline/ptables > /tmp/p4tc-spec-$TESTID.out",
+        "expExitCode": "0",
+        "verifyCmd": "{ cat /tmp/p4tc-spec-$TESTID.out; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "\"pname\":\\s*\"ptables\".*\"pipeid\":\\s*[1-9]",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    }
+]

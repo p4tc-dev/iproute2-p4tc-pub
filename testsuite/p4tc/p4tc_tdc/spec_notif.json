@@ -1,0 +1,1784 @@
+[
+    {
+        "id": "0e83",
+        "name": "NOTIF-01: Pipeline create, update, seal and delete events",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_notif"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            "rm -f /tmp/p4tc-spec-$TESTID.mon",
+            "(stdbuf -oL -eL $TC monitor p4 events > /tmp/p4tc-spec-$TESTID.mon 2>&1 < /dev/null &) ; sleep 1"
+        ],
+        "cmdUnderTest": "$TC p4template create pipeline/ptables numtables 0 && $TC p4template update pipeline/ptables numtables 1 && $TC p4template create table/ptables/cb/tname keysz 16 && $TC p4template update pipeline/ptables state ready && $TC p4template del pipeline/ptables",
+        "expExitCode": "0",
+        "verifyCmd": "{ sleep 1; cat /tmp/p4tc-spec-$TESTID.mon; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "(?s)(ptables.*){5}",
+        "teardown": [
+            [
+                "pkill -f \"[t]c monitor p4 events\"",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "rm -f /tmp/p4tc-spec-$TESTID.mon",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/E1",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/E2",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Counter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/DirectCounter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Meter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/DirectMeter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Digest",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/NoSuchExt",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "80e2",
+        "name": "NOTIF-02: Table create, update, default action delete and delete events",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_notif"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 4",
+            "$TC p4template create action/ptables/test actid 1 param param1 type bit32",
+            "$TC p4template update action/ptables/test state active",
+            "rm -f /tmp/p4tc-spec-$TESTID.mon",
+            "(stdbuf -oL -eL $TC monitor p4 events > /tmp/p4tc-spec-$TESTID.mon 2>&1 < /dev/null &) ; sleep 1"
+        ],
+        "cmdUnderTest": "$TC p4template create table/ptables/cb/tname keysz 16 table_acts act name ptables/test && $TC p4template update table/ptables/cb/tname default_hit_action action ptables/test param param1 1 && $TC p4template del table/ptables/cb/tname default_hit_action && $TC p4template del table/ptables/cb/tname",
+        "expExitCode": "0",
+        "verifyCmd": "{ sleep 1; cat /tmp/p4tc-spec-$TESTID.mon; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "(?s)(cb/tname.*){4}",
+        "teardown": [
+            [
+                "pkill -f \"[t]c monitor p4 events\"",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "rm -f /tmp/p4tc-spec-$TESTID.mon",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/E1",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/E2",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Counter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/DirectCounter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Meter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/DirectMeter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Digest",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/NoSuchExt",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "8d11",
+        "name": "NOTIF-03: Table flush event carries the count",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_notif"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 4",
+            "$TC p4template create table/ptables/cb/t1 keysz 16",
+            "$TC p4template create table/ptables/cb/t2 keysz 16",
+            "$TC p4template create table/ptables/cb/t3 keysz 16",
+            "rm -f /tmp/p4tc-spec-$TESTID.mon",
+            "(stdbuf -oL -eL $TC monitor p4 events > /tmp/p4tc-spec-$TESTID.mon 2>&1 < /dev/null &) ; sleep 1"
+        ],
+        "cmdUnderTest": "$TC p4template del table/ptables/",
+        "expExitCode": "0",
+        "verifyCmd": "{ sleep 1; cat /tmp/p4tc-spec-$TESTID.mon; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "(?s)count\\D{0,5}3\\b",
+        "teardown": [
+            [
+                "pkill -f \"[t]c monitor p4 events\"",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "rm -f /tmp/p4tc-spec-$TESTID.mon",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/E1",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/E2",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Counter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/DirectCounter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Meter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/DirectMeter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Digest",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/NoSuchExt",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "fc98",
+        "name": "NOTIF-04: Action template create, update and delete events",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_notif"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 4",
+            "rm -f /tmp/p4tc-spec-$TESTID.mon",
+            "(stdbuf -oL -eL $TC monitor p4 events > /tmp/p4tc-spec-$TESTID.mon 2>&1 < /dev/null &) ; sleep 1"
+        ],
+        "cmdUnderTest": "$TC p4template create action/ptables/test actid 1 param param1 type bit32 && $TC p4template update action/ptables/test state active && $TC p4template del action/ptables/test",
+        "expExitCode": "0",
+        "verifyCmd": "{ sleep 1; cat /tmp/p4tc-spec-$TESTID.mon; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "(?s)(ptables/test.*){3}",
+        "teardown": [
+            [
+                "pkill -f \"[t]c monitor p4 events\"",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "rm -f /tmp/p4tc-spec-$TESTID.mon",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/E1",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/E2",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Counter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/DirectCounter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Meter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/DirectMeter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Digest",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/NoSuchExt",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "b016",
+        "name": "NOTIF-05: Action template flush event carries the count",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_notif"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 4",
+            "$TC p4template create action/ptables/a1 actid 1",
+            "$TC p4template create action/ptables/a2 actid 2",
+            "$TC p4template create action/ptables/a3 actid 3",
+            "$TC p4template create table/ptables/cb/tname keysz 16 table_acts act name ptables/a1",
+            "rm -f /tmp/p4tc-spec-$TESTID.mon",
+            "(stdbuf -oL -eL $TC monitor p4 events > /tmp/p4tc-spec-$TESTID.mon 2>&1 < /dev/null &) ; sleep 1"
+        ],
+        "cmdUnderTest": "$TC p4template del action/ptables/",
+        "expExitCode": "0",
+        "verifyCmd": "{ sleep 1; cat /tmp/p4tc-spec-$TESTID.mon; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "(?s)count\\D{0,5}2\\b",
+        "teardown": [
+            [
+                "pkill -f \"[t]c monitor p4 events\"",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "rm -f /tmp/p4tc-spec-$TESTID.mon",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/E1",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/E2",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Counter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/DirectCounter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Meter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/DirectMeter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Digest",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/NoSuchExt",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "fed1",
+        "name": "NOTIF-06: Extern template create, delete and flush events",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_notif"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/E1",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/E2",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Counter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/DirectCounter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Meter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/DirectMeter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Digest",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/NoSuchExt",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "modprobe -q ext_Counter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "modprobe -q ext_Meter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "modprobe -q ext_Digest",
+                0,
+                1,
+                2,
+                255
+            ],
+            "rm -f /tmp/p4tc-spec-$TESTID.mon",
+            "(stdbuf -oL -eL $TC monitor p4 events > /tmp/p4tc-spec-$TESTID.mon 2>&1 < /dev/null &) ; sleep 1"
+        ],
+        "cmdUnderTest": "$TC p4template create extern/root/myext extid 1 && $TC p4template del extern/root/myext && $TC p4template create extern/root/E1 extid 2 && $TC p4template create extern/root/E2 extid 3 && $TC p4template del extern/root/",
+        "expExitCode": "0",
+        "verifyCmd": "{ sleep 1; cat /tmp/p4tc-spec-$TESTID.mon; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "(?s)myext.*myext.*E1.*E2.*count\\D{0,5}2\\b",
+        "teardown": [
+            [
+                "pkill -f \"[t]c monitor p4 events\"",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "rm -f /tmp/p4tc-spec-$TESTID.mon",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/E1",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/E2",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Counter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/DirectCounter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Meter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/DirectMeter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Digest",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/NoSuchExt",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "5c5a",
+        "name": "NOTIF-07: Extern instance create, update, delete and flush events",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_notif"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/E1",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/E2",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Counter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/DirectCounter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Meter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/DirectMeter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Digest",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/NoSuchExt",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "modprobe -q ext_Counter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "modprobe -q ext_Meter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "modprobe -q ext_Digest",
+                0,
+                1,
+                2,
+                255
+            ],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 0",
+            "$TC p4template create extern/root/myext extid 1 numinstances 2",
+            "rm -f /tmp/p4tc-spec-$TESTID.mon",
+            "(stdbuf -oL -eL $TC monitor p4 events > /tmp/p4tc-spec-$TESTID.mon 2>&1 < /dev/null &) ; sleep 1"
+        ],
+        "cmdUnderTest": "$TC p4template create extern_inst/ptables/myext/inst1 instid 1 control_path tc_key index ptype bit32 param value ptype bit32 && $TC p4template update extern_inst/ptables/myext/inst1 tc_numel 4 && $TC p4template del extern_inst/ptables/myext/inst1 && $TC p4template create extern_inst/ptables/myext/i1 instid 1 control_path tc_key index ptype bit32 param value ptype bit32 && $TC p4template create extern_inst/ptables/myext/i2 instid 2 control_path tc_key index ptype bit32 param value ptype bit32 && $TC p4template del extern_inst/ptables/myext/",
+        "expExitCode": "0",
+        "verifyCmd": "{ sleep 1; cat /tmp/p4tc-spec-$TESTID.mon; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "(?s)(inst1.*){3}.*count\\D{0,5}2\\b",
+        "teardown": [
+            [
+                "pkill -f \"[t]c monitor p4 events\"",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "rm -f /tmp/p4tc-spec-$TESTID.mon",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/E1",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/E2",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Counter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/DirectCounter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Meter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/DirectMeter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Digest",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/NoSuchExt",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "6403",
+        "name": "NOTIF-08: Const entry create event carries the entry",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_notif"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 1",
+            "$TC p4template create table/ptables/cb/tname2 tblid 2 keysz 32 table_acts act name NoAction",
+            "rm -f /tmp/p4tc-spec-$TESTID.mon",
+            "(stdbuf -oL -eL $TC monitor p4 events > /tmp/p4tc-spec-$TESTID.mon 2>&1 < /dev/null &) ; sleep 1"
+        ],
+        "cmdUnderTest": "$TC p4template create table/ptables/cb/tname2 entry srcPort 80 dstPort 443",
+        "expExitCode": "0",
+        "verifyCmd": "{ sleep 1; cat /tmp/p4tc-spec-$TESTID.mon; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "(?s)cb/tname2.*80",
+        "teardown": [
+            [
+                "pkill -f \"[t]c monitor p4 events\"",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "rm -f /tmp/p4tc-spec-$TESTID.mon",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/E1",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/E2",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Counter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/DirectCounter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Meter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/DirectMeter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Digest",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/NoSuchExt",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "3735",
+        "name": "NOTIF-09: Get and dump send no event",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_notif"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/E1",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/E2",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Counter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/DirectCounter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Meter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/DirectMeter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Digest",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/NoSuchExt",
+                0,
+                1,
+                2,
+                255
+            ],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 4",
+            "$TC p4template create table/ptables/cb/tname keysz 16",
+            "$TC p4template create action/ptables/test actid 1 param param1 type bit32",
+            "$TC p4template create extern/root/myext extid 1",
+            "rm -f /tmp/p4tc-spec-$TESTID.mon",
+            "(stdbuf -oL -eL $TC monitor p4 events > /tmp/p4tc-spec-$TESTID.mon 2>&1 < /dev/null &) ; sleep 1"
+        ],
+        "cmdUnderTest": "$TC p4template get pipeline/ptables; $TC p4template get pipeline/; $TC -j p4template get table/ptables/cb/tname; $TC p4template get table/ptables/; $TC -j p4template get action/ptables/test; $TC p4template get action/ptables/; $TC p4template get extern/root/myext; $TC p4template get extern/root/",
+        "expExitCode": "0",
+        "verifyCmd": "{ sleep 1; cat /tmp/p4tc-spec-$TESTID.mon; } 2>&1; true",
+        "matchCount": "0",
+        "matchPattern": "\\S",
+        "teardown": [
+            [
+                "pkill -f \"[t]c monitor p4 events\"",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "rm -f /tmp/p4tc-spec-$TESTID.mon",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/E1",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/E2",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Counter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/DirectCounter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Meter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/DirectMeter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Digest",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/NoSuchExt",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "7ebf",
+        "name": "NOTIF-10: Failed commands send no event",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_notif"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/E1",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/E2",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Counter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/DirectCounter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Meter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/DirectMeter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Digest",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/NoSuchExt",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "modprobe -q ext_Counter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "modprobe -q ext_Meter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "modprobe -q ext_Digest",
+                0,
+                1,
+                2,
+                255
+            ],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 4",
+            "$TC p4template create action/ptables/test actid 1 param param1 type bit32",
+            "$TC p4template update action/ptables/test state active",
+            "$TC p4template create extern/root/DirectCounter extid 0x1A000000 numinstances 2 has_exec_method",
+            "$TC p4template create extern_inst/ptables/DirectCounter/cnt instid 1 tc_numel 16 tbl_bindable constructor param type ptype bit32 0 control_path tc_key index ptype bit32 id 1 param pkts ptype bit64 id 2",
+            "$TC p4template create extern/root/myext extid 1 numinstances 1",
+            "$TC p4template create extern_inst/ptables/myext/inst1 instid 1 control_path tc_key index ptype bit32 param value ptype bit32",
+            "rm -f /tmp/p4tc-spec-$TESTID.mon",
+            "(stdbuf -oL -eL $TC monitor p4 events > /tmp/p4tc-spec-$TESTID.mon 2>&1 < /dev/null &) ; sleep 1"
+        ],
+        "cmdUnderTest": "$TC p4template create pipeline/ptables; $TC p4template create table/ptables/cb/tname keysz 16 table_acts act name ptables/nosuch; $TC p4template update action/ptables/test param param1 type bit8; $TC p4template create extern/root/E1 extid 5 tc_acl 0x38b6; $TC p4template create extern_inst/ptables/myext/inst2 instid 2 control_path tc_key index ptype bit32 param value ptype bit32; true",
+        "expExitCode": "0",
+        "verifyCmd": "{ sleep 1; cat /tmp/p4tc-spec-$TESTID.mon; } 2>&1; true",
+        "matchCount": "0",
+        "matchPattern": "\\S",
+        "teardown": [
+            [
+                "pkill -f \"[t]c monitor p4 events\"",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "rm -f /tmp/p4tc-spec-$TESTID.mon",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/E1",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/E2",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Counter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/DirectCounter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Meter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/DirectMeter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Digest",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/NoSuchExt",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "fefb",
+        "name": "NOTIF-12: Create with no attributes on an existing table sends no event [BUG? B17]",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_notif"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 4",
+            "$TC p4template create table/ptables/cb/t1 keysz 16",
+            "rm -f /tmp/p4tc-spec-$TESTID.mon",
+            "(stdbuf -oL -eL $TC monitor p4 events > /tmp/p4tc-spec-$TESTID.mon 2>&1 < /dev/null &) ; sleep 1"
+        ],
+        "cmdUnderTest": "$TC p4template create table/ptables/cb/t1; true",
+        "expExitCode": "0",
+        "verifyCmd": "{ sleep 1; cat /tmp/p4tc-spec-$TESTID.mon; } 2>&1; true",
+        "matchCount": "0",
+        "matchPattern": "\\S",
+        "teardown": [
+            [
+                "pkill -f \"[t]c monitor p4 events\"",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "rm -f /tmp/p4tc-spec-$TESTID.mon",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/E1",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/E2",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Counter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/DirectCounter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Meter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/DirectMeter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Digest",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/NoSuchExt",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "9751",
+        "name": "NOTIF-13: Echo and monitor each get the event once",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_notif"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            "rm -f /tmp/p4tc-spec-$TESTID.mon",
+            "(stdbuf -oL -eL $TC monitor p4 events > /tmp/p4tc-spec-$TESTID.mon 2>&1 < /dev/null &) ; sleep 1"
+        ],
+        "cmdUnderTest": "$TC -echo p4template create pipeline/ptables pipeid 22 > /tmp/p4tc-spec-$TESTID.out",
+        "expExitCode": "0",
+        "verifyCmd": "{ sleep 1; cat /tmp/p4tc-spec-$TESTID.out; echo ====; cat /tmp/p4tc-spec-$TESTID.mon; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "(?s)^[^=]*ptables[^=]*====[^=]*ptables[^=]*$",
+        "teardown": [
+            [
+                "pkill -f \"[t]c monitor p4 events\"",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "rm -f /tmp/p4tc-spec-$TESTID.mon",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    }
+]

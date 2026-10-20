@@ -1,0 +1,1 @@
+create table/ppppppppppppppppppppppppppppppp/cb/rejected tblid 2 keysz 16 table_acts act name ppppppppppppppppppppppppppppppp/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa

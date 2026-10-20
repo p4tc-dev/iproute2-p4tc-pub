@@ -4,7 +4,7 @@
     "id" : 22,
     "externs": [
         {
-            "id": 1,
+            "id": "0x1",
             "name": "myext",
             "annotations": [],
             "instances": [
@@ -25,6 +25,78 @@
                     "bitwidth": 32
                   }
                 ]
+              },
+              {
+                "inst_id": 2,
+                "inst_name": "inst2",
+                "params": [
+                  {
+                    "id": 1,
+                    "name": "index",
+                    "type": "bit32",
+                    "bitwidth": 32
+                  },
+                  {
+                    "id": 2,
+                    "name": "value",
+                    "type": "dev",
+                    "bitwidth": 32
+                  }
+                ]
+              },
+              {
+                "inst_id": 1,
+                "inst_name": "inst3",
+                "params": [
+                  {
+                    "id": 1,
+                    "name": "index",
+                    "type": "bit16",
+                    "bitwidth": 16
+                  },
+                  {
+                    "id": 2,
+                    "name": "value",
+                    "type": "bit32",
+                    "bitwidth": 32
+                  }
+                ]
+              },
+              {
+                "inst_id": 4,
+                "inst_name": "inst4",
+                "params": [
+                  {
+                    "id": 1,
+                    "name": "index",
+                    "type": "bit8",
+                    "bitwidth":8
+                  },
+                  {
+                    "id": 2,
+                    "name": "value",
+                    "type": "bit32",
+                    "bitwidth": 32
+                  }
+                ]
+              },
+              {
+                "inst_id": 5,
+                "inst_name": "inst5",
+                "params": [
+                  {
+                    "id": 1,
+                    "name": "index",
+                    "type": "bit8",
+                    "bitwidth":8
+                  },
+                  {
+                    "id": 2,
+                    "name": "value",
+                    "type": "dev",
+                    "bitwidth": 32
+                  }
+                ]
               }
             ]
         }
@@ -41,9 +113,10 @@
                     "id" : 1,
                     "//name" : "srcAddr",
                     "name" : "srcAddr",
+
                     "type" : "ipv4",
                     "match_type" : "exact",
-                    "bitwidth" : 32 
+                    "bitwidth" : 32
                 },
                 {
                     "id" : 2,
@@ -51,80 +124,7 @@
                     "name" : "dstAddr",
                     "type" : "ipv4",
                     "match_type" : "exact",
-                    "bitwidth" : 32 
-                }
-            ],
-            "actions" : [
-                {
-                  "id" : 2,
-                  "name" : "ingress/drop",
-                  "action_scope" : "TableAndDefault",
-                  "annotations" : [],
-                  "params" : [],
-                  "default_hit_action" : false,
-                  "default_miss_action" : true
-                }
-            ]
-        },
-        {
-            "name" : "cb/tname2",
-            "id" : 2,
-            "tentries" : 2048,
-            "nummask" : 8,
-            "keysize" : 32,
-            "keyid" : 1,
-            "keyfields" : [
-                {
-                    "id" : 1,
-                    "//name" : "srcPort",
-                    "name" : "srcPort",
-                    "type" : "bit16",
-                    "match_type" : "exact",
-                    "bitwidth" : 16 
-                },
-                {
-                    "id" : 2,
-                    "//name" : "dstPort",
-                    "name" : "dstPort",
-                    "type" : "bit16",
-                    "match_type" : "exact",
-                    "bitwidth" : 16 
-                }
-            ],
-            "actions" : [
-            ]
-        },
-        {
-            "name" : "cb/tname3",
-            "id" : 3,
-            "tentries" : 2048,
-            "nummask" : 8,
-            "keysize" : 104,
-            "keyid" : 1,
-            "keyfields" : [
-                {
-                    "id" : 1,
-                    "//name" : "randomKey1",
-                    "name" : "randomKey1",
-                    "type" : "bit8",
-                    "match_type" : "exact",
-                    "bitwidth" : 8 
-                },
-                {
-                    "id" : 2,
-                    "//name" : "randomKey2",
-                    "name" : "randomKey2",
-                    "type" : "bit32",
-                    "match_type" : "exact",
-                    "bitwidth" : 32 
-                },
-                {
-                    "id" : 3,
-                    "//name" : "randomKey3",
-                    "name" : "randomKey3",
-                    "type" : "bit64",
-                    "match_type" : "exact",
-                    "bitwidth" : 64 
+                    "bitwidth" : 32
                 }
             ],
             "actions" : [
@@ -152,7 +152,267 @@
                             "annotations" : [],
                             "bitwidth" : 48
                         }
-                        
+
+                    ]
+                },
+                {
+                  "id" : 2,
+                  "name" : "ingress/drop",
+                  "action_scope" : "TableAndDefault",
+                  "annotations" : [],
+                  "params" : [],
+                  "default_hit_action" : false,
+                  "default_miss_action" : true
+                },
+                {
+                    "id" : 3,
+                    "name" : "test",
+                    "action_scope" : "DefaultOnly",
+                    "default_hit_action" : true,
+                    "default_miss_action" : true,
+                    "annotations" : [],
+                    "params" : [
+                        {
+                            "id" : 1,
+                            "name" : "param1",
+                            "type" : "bit32",
+                            "read_only" : false,
+                            "annotations" : [],
+                            "bitwidth" : 32
+                        },
+                        {
+                            "id" : 2,
+                            "name" : "param2",
+                            "type" : "bit32",
+                            "read_only" : false,
+                            "annotations" : [],
+                            "bitwidth" : 32
+                        }
+
+                    ]
+                },
+                {
+                    "id" : 4,
+                    "name" : "testmacaddr",
+                    "action_scope" : "DefaultOnly",
+                    "default_hit_action" : true,
+                    "default_miss_action" : true,
+                    "annotations" : [],
+                    "params" : [
+                        {
+                            "id" : 1,
+                            "name" : "param1",
+                            "type" : "macaddr",
+                            "read_only" : false,
+                            "annotations" : [],
+                            "bitwidth" : 48
+                        }
+
+                    ]
+                }
+            ]
+        },
+        {
+            "name" : "cb/tname2",
+            "id" : 2,
+            "tentries" : 2048,
+            "nummask" : 8,
+            "keysize" : 32,
+            "keyid" : 1,
+            "keyfields" : [
+                {
+                    "id" : 1,
+                    "//name" : "srcPort",
+                    "name" : "srcPort",
+                    "type" : "bit16",
+                    "match_type" : "exact",
+                    "bitwidth" : 16
+                },
+                {
+                    "id" : 2,
+                    "//name" : "dstPort",
+                    "name" : "dstPort",
+                    "type" : "bit16",
+                    "match_type" : "exact",
+                    "bitwidth" : 16
+                }
+            ],
+            "actions" : [
+            ]
+        },
+        {
+            "name" : "cb/tname3",
+            "id" : 3,
+            "tentries" : 2048,
+            "nummask" : 8,
+            "keysize" : 104,
+            "keyid" : 1,
+            "keyfields" : [
+                {
+                    "id" : 1,
+                    "//name" : "randomKey1",
+                    "name" : "randomKey1",
+                    "type" : "bit8",
+                    "match_type" : "exact",
+                    "bitwidth" : 8
+                },
+                {
+                    "id" : 2,
+                    "//name" : "randomKey2",
+                    "name" : "randomKey2",
+                    "type" : "bit32",
+                    "match_type" : "exact",
+                    "bitwidth" : 32
+                },
+                {
+                    "id" : 3,
+                    "//name" : "randomKey3",
+                    "name" : "randomKey3",
+                    "type" : "bit64",
+                    "match_type" : "exact",
+                    "bitwidth" : 64
+                }
+            ],
+            "actions" : [
+                {
+                    "id" : 1,
+                    "name" : "cb/send_nh",
+                    "action_scope" : "TableAndDefault",
+                    "default_hit_action" : false,
+                    "default_miss_action" : false,
+                    "annotations" : [],
+                    "params" : [
+                        {
+                            "id" : 1,
+                            "name" : "dmac",
+                            "type" : "macaddr",
+                            "read_only" : false,
+                            "annotations" : [],
+                            "bitwidth" : 48
+                        },
+                        {
+                            "id" : 2,
+                            "name" : "smac",
+                            "type" : "macaddr",
+                            "read_only" : false,
+                            "annotations" : [],
+                            "bitwidth" : 48
+                        }
+
+                    ]
+                }
+            ]
+        },
+        {
+            "name" : "cb/tname4",
+            "id" : 4,
+            "tentries" : 2048,
+            "nummask" : 8,
+            "keysize" : 104,
+            "keyid" : 1,
+            "keyfields" : [
+                {
+                    "id" : 1,
+                    "//name" : "randomKey1",
+                    "name" : "randomKey1",
+                    "type" : "bit8",
+                    "match_type" : "exact",
+                    "bitwidth" : 8
+                },
+                {
+                    "id" : 2,
+                    "//name" : "randomKey2",
+                    "name" : "randomKey2",
+                    "type" : "bit32",
+                    "match_type" : "exact",
+                    "bitwidth" : 32
+                },
+                {
+                    "id" : 3,
+                    "//name" : "randomKey3",
+                    "name" : "randomKey3",
+                    "type" : "bit64",
+                    "match_type" : "exact",
+                    "bitwidth" : 64
+                }
+            ],
+            "actions" : [
+                {
+                    "id" : 2,
+                    "name" : "cb/send_nh2",
+                    "action_scope" : "TableAndDefault",
+                    "default_hit_action" : false,
+                    "default_miss_action" : false,
+                    "annotations" : [],
+                    "params" : [
+                        {
+                            "id" : 1,
+                            "name" : "dst_port",
+                            "type" : "dev",
+                            "read_only" : false,
+                            "annotations" : [],
+                            "bitwidth" : 32
+                        },
+                        {
+                            "id" : 2,
+                            "name" : "bit32_test",
+                            "type" : "bit32",
+                            "read_only" : false,
+                            "annotations" : [],
+                            "bitwidth" : 32
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name" : "cb/tname5",
+            "id" : 5,
+            "tentries" : 2048,
+            "nummask" : 8,
+            "keysize" : 104,
+            "keyid" : 1,
+            "keyfields" : [
+                {
+                    "id" : 1,
+                    "name" : "randomKey1",
+                    "type" : "bit8",
+                    "match_type" : "exact",
+                    "bitwidth" : 8
+                },
+                {
+                    "id" : 2,
+                    "name" : "randomKey2",
+                    "type" : "bit32",
+                    "match_type" : "exact",
+                    "bitwidth" : 32
+                },
+                {
+                    "id" : 3,
+                    "//name" : "randomKey3",
+                    "name" : "randomKey3",
+                    "type" : "bit64",
+                    "match_type" : "exact",
+                    "bitwidth" : 64
+                }
+            ],
+            "actions" : [
+                {
+                    "id" : 2,
+                    "name" : "cb/send_nh3",
+                    "action_scope" : "TableAndDefault",
+                    "default_hit_action" : false,
+                    "default_miss_action" : false,
+                    "annotations" : [],
+                    "params" : [
+                        {
+                            "id" : 1,
+                            "name" : "param1",
+                            "type" : "bit12",
+                            "read_only" : false,
+                            "annotations" : [],
+                            "bitwidth" : 12
+                        }
                     ]
                 }
             ]

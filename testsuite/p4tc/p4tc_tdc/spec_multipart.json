@@ -1,0 +1,66 @@
+[
+    {
+        "id": "a7b0",
+        "name": "Multipart entry dump preserves every stable-population key across buffer boundaries",
+        "category": [
+            "p4tc",
+            "entries",
+            "multipart"
+        ],
+        "setup": [
+            [
+                "$TC p4template del pipeline/reads65",
+                0,
+                1,
+                255
+            ],
+            "$TC p4template create pipeline/reads65 numtables 1",
+            "$TC p4template create action/reads65/ingress/send_nh actid 1 param port_id type dev param dmac type macaddr param smac type macaddr",
+            "$TC p4template update action/reads65/ingress/send_nh state active",
+            "$TC p4template create table/reads65/ingress/nh_table tblid 1 type exact keysz 32 permissions 0x3da4 tentries 128 nummasks 1 table_acts act name reads65/ingress/send_nh flags tableonly",
+            "$TC p4template update pipeline/reads65 state ready",
+            "sh -c 'set -e; for i in $(seq 1 65); do $TC p4ctrl create reads65/table/ingress/nh_table srcAddr 192.0.2.$i action reads65/ingress/send_nh param port_id lo param dmac 02:aa:00:00:00:01 param smac 02:bb:00:00:00:01; done'"
+        ],
+        "cmdUnderTest": "$TC -j p4ctrl get reads65/table/ingress/nh_table > /tmp/p4tc-multipart-$TESTID.json",
+        "expExitCode": "0",
+        "verifyCmd": "python3 -c 'import json; roots=json.load(open(\"/tmp/p4tc-multipart-$TESTID.json\")); entries=[e for root in roots for e in root.get(\"entries\",[])]; keys=[e[\"key\"][0][\"fieldval\"].split(\"/\")[0] for e in entries]; wanted={\"192.0.2.\"+str(i) for i in range(1,66)}; print(\"complete population\" if len(keys)==65 and set(keys)==wanted else \"incomplete population: \"+str(keys))'",
+        "matchPattern": "^complete population$",
+        "matchCount": "1",
+        "teardown": [
+            "$TC p4template del pipeline/reads65",
+            "rm -f /tmp/p4tc-multipart-$TESTID.json"
+        ]
+    },
+    {
+        "id": "a7b1",
+        "name": "Filtered table dump consumes the complete CLI expression",
+        "category": [
+            "p4tc",
+            "entries",
+            "multipart"
+        ],
+        "setup": [
+            [
+                "$TC p4template del pipeline/reads65",
+                0,
+                1,
+                255
+            ],
+            "$TC p4template create pipeline/reads65 numtables 1",
+            "$TC p4template create action/reads65/ingress/send_nh actid 1 param port_id type dev param dmac type macaddr param smac type macaddr",
+            "$TC p4template update action/reads65/ingress/send_nh state active",
+            "$TC p4template create table/reads65/ingress/nh_table tblid 1 type exact keysz 32 permissions 0x3da4 tentries 128 nummasks 1 table_acts act name reads65/ingress/send_nh flags tableonly",
+            "$TC p4template update pipeline/reads65 state ready",
+            "sh -c 'set -e; for i in $(seq 1 65); do $TC p4ctrl create reads65/table/ingress/nh_table srcAddr 192.0.2.$i action reads65/ingress/send_nh param port_id lo param dmac 02:aa:00:00:00:01 param smac 02:bb:00:00:00:01; done'"
+        ],
+        "cmdUnderTest": "$TC -j p4ctrl get reads65/table/ingress/nh_table filter 'key.srcAddr = \"192.0.2.1\"' > /tmp/p4tc-multipart-$TESTID.json",
+        "expExitCode": "0",
+        "verifyCmd": "python3 -c 'import json; roots=json.load(open(\"/tmp/p4tc-multipart-$TESTID.json\")); entries=[e for root in roots for e in root.get(\"entries\",[])]; print(\"complete population\" if len(entries)==1 and entries[0][\"key\"][0][\"fieldval\"]==\"192.0.2.1/32\" else \"wrong subset\")'",
+        "matchPattern": "^complete population$",
+        "matchCount": "1",
+        "teardown": [
+            "$TC p4template del pipeline/reads65",
+            "rm -f /tmp/p4tc-multipart-$TESTID.json"
+        ]
+    }
+]

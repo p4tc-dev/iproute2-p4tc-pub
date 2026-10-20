@@ -1,0 +1,85 @@
+[
+    {
+        "id": "e905",
+        "name": "Runtime: absent hit default permission-only update is rejected",
+        "category": [
+            "p4tc",
+            "entries",
+            "spec_table"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 1",
+            "$TC p4template create action/ptables/test actid 1 param param1 type bit32",
+            "$TC p4template update action/ptables/test num_prealloc_acts 16 state active",
+            "$TC p4template create table/ptables/cb/tname tblid 1 keysz 16 table_acts act name ptables/test act name NoAction",
+            "$TC p4template update pipeline/ptables state ready"
+        ],
+        "cmdUnderTest": "$TC p4ctrl update ptables/table/cb/tname tbl_attrs default_hit_action permissions 0x1424",
+        "expExitCode": "255",
+        "verifyCmd": "python3 \"$INTROSPECTION/runtime_default_absent.py\" \"$TC\" hit",
+        "matchCount": "1",
+        "matchPattern": "absent",
+        "teardown": [
+            "$TC p4template del pipeline/ptables"
+        ]
+    },
+    {
+        "id": "e906",
+        "name": "Runtime: absent miss default permission-only update is rejected",
+        "category": [
+            "p4tc",
+            "entries",
+            "spec_table"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 1",
+            "$TC p4template create action/ptables/test actid 1 param param1 type bit32",
+            "$TC p4template update action/ptables/test num_prealloc_acts 16 state active",
+            "$TC p4template create table/ptables/cb/tname tblid 1 keysz 16 table_acts act name ptables/test act name NoAction",
+            "$TC p4template update pipeline/ptables state ready"
+        ],
+        "cmdUnderTest": "$TC p4ctrl update ptables/table/cb/tname tbl_attrs default_miss_action permissions 0x1424",
+        "expExitCode": "255",
+        "verifyCmd": "python3 \"$INTROSPECTION/runtime_default_absent.py\" \"$TC\" miss",
+        "matchCount": "1",
+        "matchPattern": "absent",
+        "teardown": [
+            "$TC p4template del pipeline/ptables"
+        ]
+    },
+    {
+        "id": "e907",
+        "name": "Runtime: mixed update with absent miss is rejected without changing hit",
+        "category": [
+            "p4tc",
+            "entries",
+            "spec_table"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 1",
+            "$TC p4template create action/ptables/test actid 1 param param1 type bit32",
+            "$TC p4template update action/ptables/test num_prealloc_acts 16 state active",
+            "$TC p4template create table/ptables/cb/tname tblid 1 keysz 16 table_acts act name ptables/test act name NoAction default_hit_action action ptables/test param param1 7 index 17",
+            "$TC p4template update pipeline/ptables state ready",
+            "$TC -j p4template get table/ptables/cb/tname >/tmp/p4tc-runtime-default-$TESTID.json"
+        ],
+        "cmdUnderTest": "$TC p4ctrl update ptables/table/cb/tname tbl_attrs default_hit_action permissions 0x1424 default_miss_action permissions 0x1c24",
+        "expExitCode": "255",
+        "verifyCmd": "python3 \"$INTROSPECTION/runtime_default_absent.py\" \"$TC\" mixed-hit /tmp/p4tc-runtime-default-$TESTID.json",
+        "matchCount": "1",
+        "matchPattern": "absent",
+        "teardown": [
+            "$TC p4template del pipeline/ptables",
+            "rm -f /tmp/p4tc-runtime-default-$TESTID.json"
+        ]
+    }
+]

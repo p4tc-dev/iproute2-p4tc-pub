@@ -1,0 +1,38 @@
+[
+    {
+        "id": "e921",
+        "name": "Read a table entry without datapath publish permission",
+        "category": ["p4tc", "entries"],
+        "setup": [
+            ["$TC p4template del pipeline/ptables", 0, 1, 255],
+            ["$TC p4template create pipeline/ptables pipeid 22 numtables 1", 0],
+            ["$TC p4template create table/ptables/cb/tname2 tblid 2 keysz 32 permissions 0x3da4 table_acts act name NoAction", 0],
+            ["$TC p4template update pipeline/ptables state ready", 0],
+            ["$TC p4ctrl create ptables/table/cb/tname2 srcPort 80 dstPort 443", 0]
+        ],
+        "cmdUnderTest": "$TC p4ctrl get ptables/table/cb/tname2 srcPort 80 dstPort 443",
+        "expExitCode": "0",
+        "verifyCmd": "$TC -j p4ctrl get ptables/table/cb/tname2",
+        "matchPattern": "\"fieldval\":\"80/0xffff\"",
+        "matchCount": "1",
+        "teardown": [["$TC p4template del pipeline/ptables", 0]]
+    },
+    {
+        "id": "e922",
+        "name": "Read a table entry without control or datapath publish permission",
+        "category": ["p4tc", "entries"],
+        "setup": [
+            ["$TC p4template del pipeline/ptables", 0, 1, 255],
+            ["$TC p4template create pipeline/ptables pipeid 22 numtables 1", 0],
+            ["$TC p4template create table/ptables/cb/tname2 tblid 2 keysz 32 permissions 0x3ca4 table_acts act name NoAction", 0],
+            ["$TC p4template update pipeline/ptables state ready", 0],
+            ["$TC p4ctrl create ptables/table/cb/tname2 srcPort 80 dstPort 443", 0]
+        ],
+        "cmdUnderTest": "$TC p4ctrl get ptables/table/cb/tname2 srcPort 80 dstPort 443",
+        "expExitCode": "0",
+        "verifyCmd": "$TC -j p4ctrl get ptables/table/cb/tname2",
+        "matchPattern": "\"fieldval\":\"80/0xffff\"",
+        "matchCount": "1",
+        "teardown": [["$TC p4template del pipeline/ptables", 0]]
+    }
+]

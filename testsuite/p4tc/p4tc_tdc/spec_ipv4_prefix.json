@@ -1,0 +1,127 @@
+[
+    {
+        "id": "e930",
+        "name": "IPv4 /1 entry can be read using its network-order hexadecimal mask",
+        "category": ["p4tc", "entries"],
+        "setup": [
+            ["$TC p4template del pipeline/ptables", 0, 1, 255],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 1",
+            "$TC p4template create table/ptables/cb/tname tblid 1 keysz 64 type lpm table_acts act name NoAction",
+            "$TC p4template update pipeline/ptables state ready",
+            "$TC p4ctrl create ptables/table/cb/tname srcAddr 192.0.2.1 dstAddr 128.0.0.0/1 prio 100"
+        ],
+        "cmdUnderTest": "$TC p4ctrl get ptables/table/cb/tname srcAddr 192.0.2.1 dstAddr 128.0.0.0/0x80000000",
+        "expExitCode": "0",
+        "verifyCmd": "$TC -j p4ctrl get ptables/table/cb/tname",
+        "matchPattern": "\"fieldval\":\"128.0.0.0/1\"",
+        "matchCount": "1",
+        "teardown": [["$TC p4template del pipeline/ptables", 0]]
+    },
+    {
+        "id": "e931",
+        "name": "IPv4 /17 entry can be read using its network-order hexadecimal mask",
+        "category": ["p4tc", "entries"],
+        "setup": [
+            ["$TC p4template del pipeline/ptables", 0, 1, 255],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 1",
+            "$TC p4template create table/ptables/cb/tname tblid 1 keysz 64 type lpm table_acts act name NoAction",
+            "$TC p4template update pipeline/ptables state ready",
+            "$TC p4ctrl create ptables/table/cb/tname srcAddr 192.0.2.1 dstAddr 203.0.0.0/17 prio 100"
+        ],
+        "cmdUnderTest": "$TC p4ctrl get ptables/table/cb/tname srcAddr 192.0.2.1 dstAddr 203.0.0.0/0xffff8000",
+        "expExitCode": "0",
+        "verifyCmd": "$TC -j p4ctrl get ptables/table/cb/tname",
+        "matchPattern": "\"fieldval\":\"203.0.0.0/17\"",
+        "matchCount": "1",
+        "teardown": [["$TC p4template del pipeline/ptables", 0]]
+    },
+    {
+        "id": "e932",
+        "name": "IPv4 /25 entry can be read using its network-order hexadecimal mask",
+        "category": ["p4tc", "entries"],
+        "setup": [
+            ["$TC p4template del pipeline/ptables", 0, 1, 255],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 1",
+            "$TC p4template create table/ptables/cb/tname tblid 1 keysz 64 type lpm table_acts act name NoAction",
+            "$TC p4template update pipeline/ptables state ready",
+            "$TC p4ctrl create ptables/table/cb/tname srcAddr 192.0.2.1 dstAddr 203.0.113.0/25 prio 100"
+        ],
+        "cmdUnderTest": "$TC p4ctrl get ptables/table/cb/tname srcAddr 192.0.2.1 dstAddr 203.0.113.0/0xffffff80",
+        "expExitCode": "0",
+        "verifyCmd": "$TC -j p4ctrl get ptables/table/cb/tname",
+        "matchPattern": "\"fieldval\":\"203.0.113.0/25\"",
+        "matchCount": "1",
+        "teardown": [["$TC p4template del pipeline/ptables", 0]]
+    },
+    {
+        "id": "e933",
+        "name": "IPv4 /31 entry can be read using its network-order hexadecimal mask",
+        "category": ["p4tc", "entries"],
+        "setup": [
+            ["$TC p4template del pipeline/ptables", 0, 1, 255],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 1",
+            "$TC p4template create table/ptables/cb/tname tblid 1 keysz 64 type lpm table_acts act name NoAction",
+            "$TC p4template update pipeline/ptables state ready",
+            "$TC p4ctrl create ptables/table/cb/tname srcAddr 192.0.2.1 dstAddr 203.0.113.4/31 prio 100"
+        ],
+        "cmdUnderTest": "$TC p4ctrl get ptables/table/cb/tname srcAddr 192.0.2.1 dstAddr 203.0.113.4/0xfffffffe",
+        "expExitCode": "0",
+        "verifyCmd": "$TC -j p4ctrl get ptables/table/cb/tname",
+        "matchPattern": "\"fieldval\":\"203.0.113.4/31\"",
+        "matchCount": "1",
+        "teardown": [["$TC p4template del pipeline/ptables", 0]]
+    },
+    {
+        "id": "e934",
+        "name": "IPv4 /0 entry retains its zero network mask",
+        "category": ["p4tc", "entries"],
+        "setup": [
+            ["$TC p4template del pipeline/ptables", 0, 1, 255],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 1",
+            "$TC p4template create table/ptables/cb/tname tblid 1 keysz 64 type lpm table_acts act name NoAction",
+            "$TC p4template update pipeline/ptables state ready",
+            "$TC p4ctrl create ptables/table/cb/tname srcAddr 192.0.2.1 dstAddr 0.0.0.0/0 prio 100"
+        ],
+        "cmdUnderTest": "$TC p4ctrl get ptables/table/cb/tname srcAddr 192.0.2.1 dstAddr 0.0.0.0/0x00000000",
+        "expExitCode": "0",
+        "verifyCmd": "$TC -j p4ctrl get ptables/table/cb/tname",
+        "matchPattern": "\"fieldval\":\"0.0.0.0/0\"",
+        "matchCount": "1",
+        "teardown": [["$TC p4template del pipeline/ptables", 0]]
+    },
+    {
+        "id": "e935",
+        "name": "IPv4 /32 entry retains its full network mask",
+        "category": ["p4tc", "entries"],
+        "setup": [
+            ["$TC p4template del pipeline/ptables", 0, 1, 255],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 1",
+            "$TC p4template create table/ptables/cb/tname tblid 1 keysz 64 type lpm table_acts act name NoAction",
+            "$TC p4template update pipeline/ptables state ready",
+            "$TC p4ctrl create ptables/table/cb/tname srcAddr 192.0.2.1 dstAddr 203.0.113.4/32 prio 100"
+        ],
+        "cmdUnderTest": "$TC p4ctrl get ptables/table/cb/tname srcAddr 192.0.2.1 dstAddr 203.0.113.4/0xffffffff",
+        "expExitCode": "0",
+        "verifyCmd": "$TC -j p4ctrl get ptables/table/cb/tname",
+        "matchPattern": "\"fieldval\":\"203.0.113.4/32\"",
+        "matchCount": "1",
+        "teardown": [["$TC p4template del pipeline/ptables", 0]]
+    },
+    {
+        "id": "e936",
+        "name": "IPv4 nonprefix masks are printed as explicit hexadecimal masks",
+        "category": ["p4tc", "entries"],
+        "setup": [
+            ["$TC p4template del pipeline/ptables", 0, 1, 255],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 1",
+            "$TC p4template create table/ptables/cb/tname tblid 1 keysz 64 type ternary table_acts act name NoAction",
+            "$TC p4template update pipeline/ptables state ready"
+        ],
+        "cmdUnderTest": "$TC p4ctrl create ptables/table/cb/tname srcAddr 192.0.2.1 dstAddr 203.0.113.0/0xff00ff00 prio 100",
+        "expExitCode": "0",
+        "verifyCmd": "$TC -j p4ctrl get ptables/table/cb/tname",
+        "matchPattern": "\"fieldval\":\"203.0.113.0/0xff00ff00\"",
+        "matchCount": "1",
+        "teardown": [["$TC p4template del pipeline/ptables", 0]]
+    }
+]

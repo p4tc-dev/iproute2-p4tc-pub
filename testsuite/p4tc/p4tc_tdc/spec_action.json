@@ -1,0 +1,1956 @@
+[
+    {
+        "id": "8f15",
+        "name": "ACT-01a: Reject 33-byte action component before combined-name construction",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_action"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ pipeid 5 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            "$TC p4template create pipeline/ppppppppppppppppppppppppppppppp pipeid 5"
+        ],
+        "cmdUnderTest": "$TC p4template create action/ppppppppppppppppppppppppppppppp/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa actid 1 2>/tmp/p4tc-spec-$TESTID.err",
+        "expExitCode": "255",
+        "verifyCmd": "{ cat /tmp/p4tc-spec-$TESTID.err; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "Path component exceeds 32 bytes",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ pipeid 5 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "8b69",
+        "name": "ACT-01b: pipeline name + action name 63 characters",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_action"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ pipeid 5 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            "$TC p4template create pipeline/ppppppppppppppppppppppppppppppp pipeid 5"
+        ],
+        "cmdUnderTest": "$TC p4template create action/ppppppppppppppppppppppppppppppp/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa actid 1",
+        "expExitCode": "0",
+        "verifyCmd": "{ $TC -j p4template get action/ppppppppppppppppppppppppppppppp/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "\"aname\":\\s*\"ppppppppppppppppppppppppppppppp/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ pipeid 5 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "b6aa",
+        "name": "ACT-02: Create an action template in a sealed pipeline",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_action"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 0",
+            "$TC p4template update pipeline/ptables state ready"
+        ],
+        "cmdUnderTest": "$TC p4template create action/ptables/test actid 1 param param1 type bit32 2>/tmp/p4tc-spec-$TESTID.err",
+        "expExitCode": "255",
+        "verifyCmd": "{ cat /tmp/p4tc-spec-$TESTID.err; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "Error:\\ Pipeline\\ is\\ sealed",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "1635",
+        "name": "ACT-03b: num_prealloc_acts above the maximum",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_action"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 4"
+        ],
+        "cmdUnderTest": "$TC p4template create action/ptables/test actid 1 num_prealloc_acts 0x2000001 param param1 type bit32 2>/tmp/p4tc-spec-$TESTID.err",
+        "expExitCode": "255",
+        "verifyCmd": "{ cat /tmp/p4tc-spec-$TESTID.err; $TC -j p4template get action/ptables/test; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "Error: .*Error:\\ Action\\ name\\ not\\ found",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "f1de",
+        "name": "ACT-04: Default num_prealloc_acts",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_action"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 4"
+        ],
+        "cmdUnderTest": "$TC p4template create action/ptables/test actid 1 param param1 type bit32",
+        "expExitCode": "0",
+        "verifyCmd": "{ $TC -j p4template get action/ptables/test; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "\"prealloc\":\\s*16",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "7a83",
+        "name": "ACT-05: Action template with 16 params",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_action"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 4"
+        ],
+        "cmdUnderTest": "$TC p4template create action/ptables/test actid 1 param p1 type bit32 param p2 type bit32 param p3 type bit32 param p4 type bit32 param p5 type bit32 param p6 type bit32 param p7 type bit32 param p8 type bit32 param p9 type bit32 param p10 type bit32 param p11 type bit32 param p12 type bit32 param p13 type bit32 param p14 type bit32 param p15 type bit32 param p16 type bit32",
+        "expExitCode": "0",
+        "verifyCmd": "{ $TC -j p4template get action/ptables/test; } 2>&1; true",
+        "matchCount": "16",
+        "matchPattern": "\"name\":\\s*\"p\\d+\"",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "1b3f",
+        "name": "ACT-06: Action template with 17 params is rejected",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_action"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 4"
+        ],
+        "cmdUnderTest": "$TC p4template create action/ptables/test actid 1 param p1 type bit32 param p2 type bit32 param p3 type bit32 param p4 type bit32 param p5 type bit32 param p6 type bit32 param p7 type bit32 param p8 type bit32 param p9 type bit32 param p10 type bit32 param p11 type bit32 param p12 type bit32 param p13 type bit32 param p14 type bit32 param p15 type bit32 param p16 type bit32 param p17 type bit32",
+        "expExitCode": "255",
+        "verifyCmd": "{ $TC -j p4template get action/ptables/test; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "Error:\\ Action\\ name\\ not\\ found",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "3b87",
+        "name": "ACT-10: Same action name in two pipelines",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_action"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/p2 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 4",
+            "$TC p4template create pipeline/p2 pipeid 23 numtables 4",
+            "$TC p4template create action/ptables/act actid 1"
+        ],
+        "cmdUnderTest": "$TC p4template create action/p2/act actid 1",
+        "expExitCode": "0",
+        "verifyCmd": "{ $TC -j p4template get action/p2/act; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "\"aname\":\\s*\"p2/act\"",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/p2 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "e50f",
+        "name": "ACT-12: Create an action template twice",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_action"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 4",
+            "$TC p4template create action/ptables/test actid 1 param param1 type bit32"
+        ],
+        "cmdUnderTest": "$TC p4template create action/ptables/test actid 2 2>/tmp/p4tc-spec-$TESTID.err",
+        "expExitCode": "255",
+        "verifyCmd": "{ cat /tmp/p4tc-spec-$TESTID.err; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "Error:\\ Action\\ already\\ exists\\ with\\ same\\ name",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "37dd",
+        "name": "ACT-13: Create two action templates with the same id",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_action"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 4",
+            "$TC p4template create action/ptables/test actid 1 param param1 type bit32"
+        ],
+        "cmdUnderTest": "$TC p4template create action/ptables/other actid 1 2>/tmp/p4tc-spec-$TESTID.err",
+        "expExitCode": "255",
+        "verifyCmd": "{ cat /tmp/p4tc-spec-$TESTID.err; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "Error:\\ Action\\ already\\ exists\\ with\\ same\\ id",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "3939",
+        "name": "ACT-15: Reject a 33-byte action name without changing the existing 31-byte name",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_action"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 4",
+            "$TC p4template create action/ptables/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa actid 2"
+        ],
+        "cmdUnderTest": "$TC p4template create action/ptables/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa actid 1",
+        "expExitCode": "255",
+        "verifyCmd": "$TC -j p4template get action/ptables/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "matchCount": "1",
+        "matchPattern": "ptables/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "1c73",
+        "name": "ACT-UPD-01: Update a param type",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_action"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 4",
+            "$TC p4template create action/ptables/test actid 1 param param1 type bit32 param param2 type bit16"
+        ],
+        "cmdUnderTest": "$TC p4template update action/ptables/test param param1 type bit8",
+        "expExitCode": "0",
+        "verifyCmd": "{ $TC -j p4template get action/ptables/test; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "\"name\":\\s*\"param1\".{0,40}\"type\":\\s*\"bit8\".*\"name\":\\s*\"param2\".{0,40}\"type\":\\s*\"bit16\"",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "6b64",
+        "name": "ACT-UPD-03: Update a param by an id that does not exist",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_action"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 4",
+            "$TC p4template create action/ptables/test actid 1 param param1 type bit32"
+        ],
+        "cmdUnderTest": "$TC p4template update action/ptables/test param param9 type bit8 id 9 2>/tmp/p4tc-spec-$TESTID.err",
+        "expExitCode": "255",
+        "verifyCmd": "{ cat /tmp/p4tc-spec-$TESTID.err; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "Error:\\ Unable\\ to\\ find\\ param\\ by\\ id",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "e2e0",
+        "name": "ACT-UPD-04: A failed update of two params keeps the first",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_action"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 4",
+            "$TC p4template create action/ptables/test actid 1 param param1 type bit32 param param2 type bit16"
+        ],
+        "cmdUnderTest": "$TC p4template update action/ptables/test param param1 type bit8 param param2 type notvalid",
+        "expExitCode": "255",
+        "verifyCmd": "{ $TC -j p4template get action/ptables/test; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "\"name\":\\s*\"param1\".{0,40}\"type\":\\s*\"bit32\"",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "b28a",
+        "name": "ACT-UPD-05: Activate with num_prealloc_acts 4",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_action"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 4",
+            "$TC p4template create action/ptables/test actid 1 param param1 type bit32"
+        ],
+        "cmdUnderTest": "$TC p4template update action/ptables/test num_prealloc_acts 4 state active",
+        "expExitCode": "0",
+        "verifyCmd": "{ $TC -j p4template get action/ptables/test; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "\"prealloc\":\\s*4",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "5d99",
+        "name": "ACT-UPD-06: Activate and change params in the same command",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_action"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 4",
+            "$TC p4template create action/ptables/test actid 1 param param1 type bit32"
+        ],
+        "cmdUnderTest": "$TC p4template update action/ptables/test state active param param1 type bit8",
+        "expExitCode": "0",
+        "verifyCmd": "{ $TC actions add action ptables/test param param1 type bit8 255 index 100 && echo ADDED; $TC -j p4template get action/ptables/test; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "ADDED.*\"type\":\\s*\"bit8\"",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "0021",
+        "name": "ACT-UPD-08: Deactivate an action with an instance",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_action"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 4",
+            "$TC p4template create action/ptables/test actid 1 param param1 type bit32",
+            "$TC p4template update action/ptables/test state active",
+            "$TC actions add action ptables/test param param1 1 index 100"
+        ],
+        "cmdUnderTest": "$TC p4template update action/ptables/test state inactive 2>/tmp/p4tc-spec-$TESTID.err",
+        "expExitCode": "255",
+        "verifyCmd": "{ cat /tmp/p4tc-spec-$TESTID.err; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "Error:\\ Unable\\ to\\ inactivate\\ action\\ with\\ instances",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "e494",
+        "name": "ACT-UPD-10: Deactivate an inactive action",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_action"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 4",
+            "$TC p4template create action/ptables/test actid 1 param param1 type bit32"
+        ],
+        "cmdUnderTest": "$TC p4template update action/ptables/test state inactive 2>/tmp/p4tc-spec-$TESTID.err",
+        "expExitCode": "255",
+        "verifyCmd": "{ cat /tmp/p4tc-spec-$TESTID.err; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "Error:\\ Action\\ is\\ already\\ inactive",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "74ea",
+        "name": "ACT-UPD-12a: Update an active action (param param1 type bit8)",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_action"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 4",
+            "$TC p4template create action/ptables/test actid 1 param param1 type bit32",
+            "$TC p4template update action/ptables/test state active"
+        ],
+        "cmdUnderTest": "$TC p4template update action/ptables/test param param1 type bit8 2>/tmp/p4tc-spec-$TESTID.err",
+        "expExitCode": "255",
+        "verifyCmd": "{ cat /tmp/p4tc-spec-$TESTID.err; $TC -j p4template get action/ptables/test; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "Error:\\ Unable\\ to\\ update\\ active\\ action.*\"type\":\\s*\"bit32\"",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "5f1f",
+        "name": "ACT-UPD-12b: Update an active action (num_prealloc_acts 4)",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_action"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 4",
+            "$TC p4template create action/ptables/test actid 1 param param1 type bit32",
+            "$TC p4template update action/ptables/test state active"
+        ],
+        "cmdUnderTest": "$TC p4template update action/ptables/test num_prealloc_acts 4 2>/tmp/p4tc-spec-$TESTID.err",
+        "expExitCode": "255",
+        "verifyCmd": "{ cat /tmp/p4tc-spec-$TESTID.err; $TC -j p4template get action/ptables/test; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "Error:\\ Unable\\ to\\ update\\ active\\ action.*\"type\":\\s*\"bit32\"",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "2779",
+        "name": "ACT-UPD-12c: Update an active action (state active)",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_action"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 4",
+            "$TC p4template create action/ptables/test actid 1 param param1 type bit32",
+            "$TC p4template update action/ptables/test state active"
+        ],
+        "cmdUnderTest": "$TC p4template update action/ptables/test state active 2>/tmp/p4tc-spec-$TESTID.err",
+        "expExitCode": "255",
+        "verifyCmd": "{ cat /tmp/p4tc-spec-$TESTID.err; $TC -j p4template get action/ptables/test; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "Error:\\ Unable\\ to\\ update\\ active\\ action.*\"type\":\\s*\"bit32\"",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "f26d",
+        "name": "ACT-UPD-13: Update params of an inactive action",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_action"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 4",
+            "$TC p4template create action/ptables/test actid 1 param param1 type bit32"
+        ],
+        "cmdUnderTest": "$TC p4template update action/ptables/test param param1 type bit8",
+        "expExitCode": "0",
+        "verifyCmd": "{ $TC -j p4template get action/ptables/test; $TC actions add action ptables/test param param1 1 index 100; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "\"type\":\\s*\"bit8\".*Error:\\ Dynamic\\ action\\ must\\ be\\ active\\ to\\ create\\ instance",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "1765",
+        "name": "ACT-UPD-14: Update a param by a name that does not exist",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_action"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 4",
+            "$TC p4template create action/ptables/test actid 1 param param1 type bit32"
+        ],
+        "cmdUnderTest": "$TC p4template update action/ptables/test param nosuch type bit8 2>/tmp/p4tc-spec-$TESTID.err",
+        "expExitCode": "255",
+        "verifyCmd": "{ cat /tmp/p4tc-spec-$TESTID.err; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "Error:\\ Param\\ name\\ not\\ found",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "6217",
+        "name": "ACT-DEL-01: Delete an action template in a sealed pipeline",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_action"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 0",
+            "$TC p4template create action/ptables/test actid 1 param param1 type bit32",
+            "$TC p4template update pipeline/ptables state ready"
+        ],
+        "cmdUnderTest": "$TC p4template del action/ptables/test 2>/tmp/p4tc-spec-$TESTID.err",
+        "expExitCode": "255",
+        "verifyCmd": "{ cat /tmp/p4tc-spec-$TESTID.err; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "Error:\\ Pipeline\\ is\\ sealed",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "9497",
+        "name": "ACT-DEL-02: Delete an action referenced by table_acts",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_action"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 4",
+            "$TC p4template create action/ptables/test actid 1 param param1 type bit32",
+            "$TC p4template create table/ptables/cb/tname keysz 16 table_acts act name ptables/test"
+        ],
+        "cmdUnderTest": "$TC p4template del action/ptables/test 2>/tmp/p4tc-spec-$TESTID.err",
+        "expExitCode": "255",
+        "verifyCmd": "{ cat /tmp/p4tc-spec-$TESTID.err; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "Error:\\ Unable\\ to\\ delete\\ referenced\\ action\\ template",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "59e4",
+        "name": "ACT-DEL-03: Flush action templates when there are none",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_action"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 4"
+        ],
+        "cmdUnderTest": "$TC p4template del action/ptables/",
+        "expExitCode": "255",
+        "verifyCmd": "{ $TC p4template del action/ptables/; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "There are not action templates to flush",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "de63",
+        "name": "ACT-DEL-04: Flush 3 action templates, 1 referenced",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_action"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 4",
+            "$TC p4template create action/ptables/a1 actid 1",
+            "$TC p4template create action/ptables/a2 actid 2",
+            "$TC p4template create action/ptables/a3 actid 3",
+            "$TC p4template create table/ptables/cb/tname keysz 16 table_acts act name ptables/a1"
+        ],
+        "cmdUnderTest": "$TC -j -echo p4template del action/ptables/ >/tmp/p4tc-spec-$TESTID.out 2>/tmp/p4tc-spec-$TESTID.err",
+        "expExitCode": "0",
+        "verifyCmd": "{ cat /tmp/p4tc-spec-$TESTID.out; $TC -j p4template get action/ptables/a1; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "\"count\":\\s*2.*\"aname\":\\s*\"ptables/a1\"",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "d6cf",
+        "name": "ACT-DEL-05: Flush when every action template is referenced",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_action"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 4",
+            "$TC p4template create action/ptables/a1 actid 1",
+            "$TC p4template create table/ptables/cb/tname keysz 16 table_acts act name ptables/a1"
+        ],
+        "cmdUnderTest": "$TC p4template del action/ptables/ 2>/tmp/p4tc-spec-$TESTID.err",
+        "expExitCode": "255",
+        "verifyCmd": "{ cat /tmp/p4tc-spec-$TESTID.err; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "Error:\\ Unable\\ to\\ flush\\ any\\ action\\ template",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "1a66",
+        "name": "ACT-DEL-06: Delete an active action with unused preallocated instances",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_action"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 4",
+            "$TC p4template create action/ptables/test actid 1 param param1 type bit32",
+            "$TC p4template update action/ptables/test state active"
+        ],
+        "cmdUnderTest": "$TC p4template del action/ptables/test",
+        "expExitCode": "0",
+        "verifyCmd": "{ $TC actions ls action ptables/test; } 2>&1; true",
+        "matchCount": "0",
+        "matchPattern": "\"index\"",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "1044",
+        "name": "ACTI-01: Bind a dynamic action from a filter",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_action"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 4",
+            "$TC p4template create action/ptables/test actid 1 param param1 type bit32",
+            "$TC p4template update action/ptables/test state active",
+            [
+                "ip link del dev p4d$TESTID",
+                0,
+                1,
+                2,
+                255
+            ],
+            "ip link add dev p4d$TESTID type dummy",
+            "$TC qdisc add dev p4d$TESTID clsact"
+        ],
+        "cmdUnderTest": "$TC filter add dev p4d$TESTID ingress matchall action ptables/test param param1 1 2>/tmp/p4tc-spec-$TESTID.err",
+        "expExitCode": "2",
+        "verifyCmd": "{ cat /tmp/p4tc-spec-$TESTID.err; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "Error:\\ Can\\ only\\ bind\\ to\\ dynamic\\ action\\ from\\ P4TC\\ objects",
+        "teardown": [
+            [
+                "$TC filter del dev p4d$TESTID ingress",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "ip link del dev p4d$TESTID",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "7a7f",
+        "name": "ACTI-03: Create an instance with an existing index",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_action"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 4",
+            "$TC p4template create action/ptables/test actid 1 param param1 type bit32",
+            "$TC p4template update action/ptables/test state active",
+            "$TC actions add action ptables/test param param1 1 index 100"
+        ],
+        "cmdUnderTest": "$TC actions add action ptables/test param param1 2 index 100 2>/tmp/p4tc-spec-$TESTID.err",
+        "expExitCode": "255",
+        "verifyCmd": "{ cat /tmp/p4tc-spec-$TESTID.err; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "Error:\\ Action\\ ptables/test\\ with\\ index\\ 100\\ was\\ already\\ created",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "70f1",
+        "name": "ACTI-04: Replace an existing instance",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_action"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 4",
+            "$TC p4template create action/ptables/test actid 1 param param1 type bit32",
+            "$TC p4template update action/ptables/test state active",
+            "$TC actions add action ptables/test param param1 1 index 100"
+        ],
+        "cmdUnderTest": "$TC actions replace action ptables/test param param1 7 index 100",
+        "expExitCode": "0",
+        "verifyCmd": "{ $TC -j actions get action ptables/test index 100; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "\"value\":\\s*7\\b",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "5ea5",
+        "name": "ACTI-05: Replace a preallocated instance by index makes it referenced",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_action"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 4",
+            "$TC p4template create action/ptables/test actid 1 param param1 type bit32",
+            "$TC p4template update action/ptables/test state active"
+        ],
+        "cmdUnderTest": "$TC actions replace action ptables/test param param1 7 index 1",
+        "expExitCode": "0",
+        "verifyCmd": "{ $TC p4template update action/ptables/test state inactive; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "Error:\\ Unable\\ to\\ inactivate\\ action\\ with\\ instances",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "8822",
+        "name": "ACTI-08: Instance param type different from the template",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_action"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 4",
+            "$TC p4template create action/ptables/test actid 1 param param1 type bit32",
+            "$TC p4template update action/ptables/test state active"
+        ],
+        "cmdUnderTest": "$TC actions add action ptables/test param param1 type macaddr 00:01:02:03:04:05 index 100 2>/tmp/p4tc-spec-$TESTID.err",
+        "expExitCode": "255",
+        "verifyCmd": "{ cat /tmp/p4tc-spec-$TESTID.err; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "Error:\\ Param\\ type\\ differs\\ from\\ template",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "1332",
+        "name": "ACTI-09: Instance param width different from the template",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_action"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 4",
+            "$TC p4template create action/ptables/test actid 1 param param1 type bit32",
+            "$TC p4template update action/ptables/test state active"
+        ],
+        "cmdUnderTest": "$TC actions add action ptables/test param param1 type bit24 5 index 100 2>/tmp/p4tc-spec-$TESTID.err",
+        "expExitCode": "255",
+        "verifyCmd": "{ cat /tmp/p4tc-spec-$TESTID.err; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "Error:\\ Param\\ bitend\\ differs\\ from\\ template",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "4a9c",
+        "name": "ACTI-13: Instance with a goto chain that does not exist",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_action"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 4",
+            "$TC p4template create action/ptables/test actid 1 param param1 type bit32",
+            "$TC p4template update action/ptables/test state active"
+        ],
+        "cmdUnderTest": "$TC actions add action ptables/test param param1 1 goto chain 5 index 100 2>/tmp/p4tc-spec-$TESTID.err",
+        "expExitCode": "255",
+        "verifyCmd": "{ cat /tmp/p4tc-spec-$TESTID.err; $TC actions get action ptables/test index 100; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "Error: .*Error: ",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "258a",
+        "name": "ACTI-15: Instance of an action that was never activated",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_action"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 4",
+            "$TC p4template create action/ptables/test actid 1 param param1 type bit32"
+        ],
+        "cmdUnderTest": "$TC actions add action ptables/test param param1 1 index 100 2>/tmp/p4tc-spec-$TESTID.err",
+        "expExitCode": "255",
+        "verifyCmd": "{ cat /tmp/p4tc-spec-$TESTID.err; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "Error:\\ Dynamic\\ action\\ must\\ be\\ active\\ to\\ create\\ instance",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "39a7",
+        "name": "ACTI-16: Instance with no params for an action with params",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_action"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 4",
+            "$TC p4template create action/ptables/test actid 1 param param1 type bit32",
+            "$TC p4template update action/ptables/test state active"
+        ],
+        "cmdUnderTest": "$TC actions add action ptables/test index 100 2>/tmp/p4tc-spec-$TESTID.err",
+        "expExitCode": "255",
+        "verifyCmd": "{ cat /tmp/p4tc-spec-$TESTID.err; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "Error:\\ Must\\ specify\\ param\\ param1",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "c643",
+        "name": "ACTI-17: Instance with one of two params",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_action"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 4",
+            "$TC p4template create action/ptables/test actid 1 param param1 type bit32 param param2 type bit32",
+            "$TC p4template update action/ptables/test state active"
+        ],
+        "cmdUnderTest": "$TC actions add action ptables/test param param1 1 index 100 2>/tmp/p4tc-spec-$TESTID.err",
+        "expExitCode": "255",
+        "verifyCmd": "{ cat /tmp/p4tc-spec-$TESTID.err; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "Error:\\ Must\\ specify\\ param\\ param2",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    }
+]

@@ -1,0 +1,146 @@
+[
+    {
+        "id": "b651",
+        "name": "Replace both direct bindings and release the previous instances",
+        "category": ["p4tc", "template", "spec_table"],
+        "plugins": {"requires": "nsPlugin"},
+        "setup": [
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 2",
+            "$TC p4template create extern/root/DirectCounter extid 0x1A000000 numinstances 2 has_exec_method",
+            "$TC p4template create extern_inst/ptables/DirectCounter/cnt0 instid 1 tc_numel 16 tbl_bindable constructor param type ptype bit32 0 control_path tc_key index ptype bit32 id 1 param pkts ptype bit64 id 2",
+            "$TC p4template create extern_inst/ptables/DirectCounter/cnt1 instid 2 tc_numel 16 tbl_bindable constructor param type ptype bit32 0 control_path tc_key index ptype bit32 id 1 param pkts ptype bit64 id 2",
+            "$TC p4template create extern/root/DirectMeter extid 0x1C000000 numinstances 2 has_exec_method",
+            "$TC p4template create extern_inst/ptables/DirectMeter/met0 instid 1 tc_numel 16 tbl_bindable constructor param type ptype bit32 0 control_path tc_key index ptype bit32 id 1 param cir ptype bit64 id 2 param cbs ptype bit64 id 3 param pir ptype bit64 id 4 param pbs ptype bit64 id 5",
+            "$TC p4template create extern_inst/ptables/DirectMeter/met1 instid 2 tc_numel 16 tbl_bindable constructor param type ptype bit32 0 control_path tc_key index ptype bit32 id 1 param cir ptype bit64 id 2 param cbs ptype bit64 id 3 param pir ptype bit64 id 4 param pbs ptype bit64 id 5",
+            "$TC p4template create table/ptables/cb/tname keysz 16 pna_direct_counter DirectCounter/cnt0 pna_direct_meter DirectMeter/met0"
+        ],
+        "cmdUnderTest": "sh -c '$TC p4template update table/ptables/cb/tname pna_direct_counter DirectCounter/cnt1 pna_direct_meter DirectMeter/met1 && $TC p4template del extern_inst/ptables/DirectCounter/cnt0 && $TC p4template del extern_inst/ptables/DirectMeter/met0'",
+        "expExitCode": "0",
+        "verifyCmd": "$TC -j p4template get table/ptables/cb/tname",
+        "matchCount": "1",
+        "matchPattern": "\"counter_inst_path\":\\s*\"cnt1\".*\"meter_inst_path\":\\s*\"met1\"",
+        "teardown": [
+            "$TC p4template del pipeline/ptables",
+            "$TC p4template del extern/root/DirectCounter",
+            "$TC p4template del extern/root/DirectMeter"
+        ]
+    },
+    {
+        "id": "b652",
+        "name": "Failed dual-binding create releases both temporary instance references",
+        "category": ["p4tc", "template", "spec_table"],
+        "plugins": {"requires": "nsPlugin"},
+        "setup": [
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 2",
+            "$TC p4template create extern/root/DirectCounter extid 0x1A000000 numinstances 2 has_exec_method",
+            "$TC p4template create extern_inst/ptables/DirectCounter/cnt0 instid 1 tc_numel 16 tbl_bindable constructor param type ptype bit32 0 control_path tc_key index ptype bit32 id 1 param pkts ptype bit64 id 2",
+            "$TC p4template create extern_inst/ptables/DirectCounter/cnt1 instid 2 tc_numel 16 tbl_bindable constructor param type ptype bit32 0 control_path tc_key index ptype bit32 id 1 param pkts ptype bit64 id 2"
+        ],
+        "cmdUnderTest": "$TC p4template create table/ptables/cb/tname keysz 16 pna_direct_counter DirectCounter/cnt0 pna_direct_meter DirectCounter/cnt1",
+        "expExitCode": "255",
+        "verifyCmd": "sh -c '$TC p4template del extern_inst/ptables/DirectCounter/cnt0 && $TC p4template del extern_inst/ptables/DirectCounter/cnt1 && printf released'",
+        "matchCount": "1",
+        "matchPattern": "released",
+        "teardown": [
+            "$TC p4template del pipeline/ptables",
+            "$TC p4template del extern/root/DirectCounter"
+        ]
+    },
+    {
+        "id": "b653",
+        "name": "Failed replacement retains both old bindings and releases the new counter",
+        "category": ["p4tc", "template", "spec_table"],
+        "plugins": {"requires": "nsPlugin"},
+        "setup": [
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 2",
+            "$TC p4template create extern/root/DirectCounter extid 0x1A000000 numinstances 2 has_exec_method",
+            "$TC p4template create extern_inst/ptables/DirectCounter/cnt0 instid 1 tc_numel 16 tbl_bindable constructor param type ptype bit32 0 control_path tc_key index ptype bit32 id 1 param pkts ptype bit64 id 2",
+            "$TC p4template create extern_inst/ptables/DirectCounter/cnt1 instid 2 tc_numel 16 tbl_bindable constructor param type ptype bit32 0 control_path tc_key index ptype bit32 id 1 param pkts ptype bit64 id 2",
+            "$TC p4template create extern/root/DirectMeter extid 0x1C000000 numinstances 2 has_exec_method",
+            "$TC p4template create extern_inst/ptables/DirectMeter/met0 instid 1 tc_numel 16 tbl_bindable constructor param type ptype bit32 0 control_path tc_key index ptype bit32 id 1 param cir ptype bit64 id 2 param cbs ptype bit64 id 3 param pir ptype bit64 id 4 param pbs ptype bit64 id 5",
+            "$TC p4template create table/ptables/cb/tname keysz 16 pna_direct_counter DirectCounter/cnt0 pna_direct_meter DirectMeter/met0"
+        ],
+        "cmdUnderTest": "$TC p4template update table/ptables/cb/tname pna_direct_counter DirectCounter/cnt1 pna_direct_meter DirectCounter/cnt1",
+        "expExitCode": "255",
+        "verifyCmd": "sh -c '$TC -j p4template get table/ptables/cb/tname && $TC p4template del extern_inst/ptables/DirectCounter/cnt1 && printf released'",
+        "matchCount": "1",
+        "matchPattern": "\"counter_inst_path\":\\s*\"cnt0\".*\"meter_inst_path\":\\s*\"met0\"[\\s\\S]*released",
+        "teardown": [
+            "$TC p4template del pipeline/ptables",
+            "$TC p4template del extern/root/DirectCounter",
+            "$TC p4template del extern/root/DirectMeter"
+        ]
+    },
+    {
+        "id": "b654",
+        "name": "Failed meter type validation retains a reused counter binding",
+        "category": ["p4tc", "template", "spec_table"],
+        "plugins": {"requires": "nsPlugin"},
+        "setup": [
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 2",
+            "$TC p4template create extern/root/DirectCounter extid 0x1A000000 numinstances 2 has_exec_method",
+            "$TC p4template create extern_inst/ptables/DirectCounter/cnt0 instid 1 tc_numel 16 tbl_bindable constructor param type ptype bit32 0 control_path tc_key index ptype bit32 id 1 param pkts ptype bit64 id 2",
+            "$TC p4template create extern/root/DirectMeter extid 0x1C000000 numinstances 2 has_exec_method",
+            "$TC p4template create extern_inst/ptables/DirectMeter/met0 instid 1 tc_numel 16 tbl_bindable constructor param type ptype bit32 0 control_path tc_key index ptype bit32 id 1 param cir ptype bit64 id 2 param cbs ptype bit64 id 3 param pir ptype bit64 id 4 param pbs ptype bit64 id 5",
+            "$TC p4template create table/ptables/cb/tname keysz 16 pna_direct_counter DirectCounter/cnt0 pna_direct_meter DirectMeter/met0"
+        ],
+        "cmdUnderTest": "$TC p4template update table/ptables/cb/tname pna_direct_counter DirectCounter/cnt0 pna_direct_meter DirectCounter/cnt0",
+        "expExitCode": "255",
+        "verifyCmd": "sh -c '$TC -j p4template get table/ptables/cb/tname && $TC p4template del table/ptables/cb/tname && $TC p4template del extern_inst/ptables/DirectCounter/cnt0 && $TC p4template del extern_inst/ptables/DirectMeter/met0 && printf released'",
+        "matchCount": "1",
+        "matchPattern": "\"counter_inst_path\":\\s*\"cnt0\".*\"meter_inst_path\":\\s*\"met0\"[\\s\\S]*released",
+        "teardown": [
+            "$TC p4template del pipeline/ptables",
+            "$TC p4template del extern/root/DirectCounter",
+            "$TC p4template del extern/root/DirectMeter"
+        ]
+    },
+    {
+        "id": "b655",
+        "name": "Failed counter type validation retains the old meter binding",
+        "category": ["p4tc", "template", "spec_table"],
+        "plugins": {"requires": "nsPlugin"},
+        "setup": [
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 2",
+            "$TC p4template create extern/root/DirectCounter extid 0x1A000000 numinstances 2 has_exec_method",
+            "$TC p4template create extern_inst/ptables/DirectCounter/cnt0 instid 1 tc_numel 16 tbl_bindable constructor param type ptype bit32 0 control_path tc_key index ptype bit32 id 1 param pkts ptype bit64 id 2",
+            "$TC p4template create extern/root/DirectMeter extid 0x1C000000 numinstances 2 has_exec_method",
+            "$TC p4template create extern_inst/ptables/DirectMeter/met0 instid 1 tc_numel 16 tbl_bindable constructor param type ptype bit32 0 control_path tc_key index ptype bit32 id 1 param cir ptype bit64 id 2 param cbs ptype bit64 id 3 param pir ptype bit64 id 4 param pbs ptype bit64 id 5",
+            "$TC p4template create table/ptables/cb/tname keysz 16 pna_direct_counter DirectCounter/cnt0 pna_direct_meter DirectMeter/met0"
+        ],
+        "cmdUnderTest": "$TC p4template update table/ptables/cb/tname pna_direct_counter DirectMeter/met0",
+        "expExitCode": "255",
+        "verifyCmd": "sh -c '$TC -j p4template get table/ptables/cb/tname && $TC p4template del table/ptables/cb/tname && $TC p4template del extern_inst/ptables/DirectCounter/cnt0 && $TC p4template del extern_inst/ptables/DirectMeter/met0 && printf released'",
+        "matchCount": "1",
+        "matchPattern": "\"counter_inst_path\":\\s*\"cnt0\".*\"meter_inst_path\":\\s*\"met0\"[\\s\\S]*released",
+        "teardown": [
+            "$TC p4template del pipeline/ptables",
+            "$TC p4template del extern/root/DirectCounter",
+            "$TC p4template del extern/root/DirectMeter"
+        ]
+    },
+    {
+        "id": "b656",
+        "name": "Failed meter lookup retains a reused counter binding",
+        "category": ["p4tc", "template", "spec_table"],
+        "plugins": {"requires": "nsPlugin"},
+        "setup": [
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 2",
+            "$TC p4template create extern/root/DirectCounter extid 0x1A000000 numinstances 2 has_exec_method",
+            "$TC p4template create extern_inst/ptables/DirectCounter/cnt0 instid 1 tc_numel 16 tbl_bindable constructor param type ptype bit32 0 control_path tc_key index ptype bit32 id 1 param pkts ptype bit64 id 2",
+            "$TC p4template create extern/root/DirectMeter extid 0x1C000000 numinstances 2 has_exec_method",
+            "$TC p4template create extern_inst/ptables/DirectMeter/met0 instid 1 tc_numel 16 tbl_bindable constructor param type ptype bit32 0 control_path tc_key index ptype bit32 id 1 param cir ptype bit64 id 2 param cbs ptype bit64 id 3 param pir ptype bit64 id 4 param pbs ptype bit64 id 5",
+            "$TC p4template create table/ptables/cb/tname keysz 16 pna_direct_counter DirectCounter/cnt0 pna_direct_meter DirectMeter/met0"
+        ],
+        "cmdUnderTest": "$TC p4template update table/ptables/cb/tname pna_direct_counter DirectCounter/cnt0 pna_direct_meter DirectMeter/missing",
+        "expExitCode": "255",
+        "verifyCmd": "sh -c '$TC -j p4template get table/ptables/cb/tname && $TC p4template del table/ptables/cb/tname && $TC p4template del extern_inst/ptables/DirectCounter/cnt0 && $TC p4template del extern_inst/ptables/DirectMeter/met0 && printf released'",
+        "matchCount": "1",
+        "matchPattern": "\"counter_inst_path\":\\s*\"cnt0\".*\"meter_inst_path\":\\s*\"met0\"[\\s\\S]*released",
+        "teardown": [
+            "$TC p4template del pipeline/ptables",
+            "$TC p4template del extern/root/DirectCounter",
+            "$TC p4template del extern/root/DirectMeter"
+        ]
+    }
+]

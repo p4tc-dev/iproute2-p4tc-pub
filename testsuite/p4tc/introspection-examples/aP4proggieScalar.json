@@ -1,0 +1,28 @@
+{
+    "schema_version": "1.0.0",
+    "pipeline_name": "aP4proggieScalar",
+    "id": 22,
+    "externs": [
+        {
+            "id": "0x1",
+            "name": "Register",
+            "annotations": [],
+            "instances": [
+                {
+                    "inst_id": 1,
+                    "inst_name": "reg1",
+                    "params": [
+                        {
+                            "id": 1,
+                            "name": "value",
+                            "type": "bit32",
+                            "bitwidth": 32,
+                            "attr": "tc_data_scalar"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "tables": []
+}

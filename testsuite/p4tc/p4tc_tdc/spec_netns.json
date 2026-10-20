@@ -1,0 +1,986 @@
+[
+    {
+        "id": "28b0",
+        "name": "NS-01: Same pipeline name and id in two netns",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_netns"
+        ],
+        "setup": [
+            [
+                "ip netns del p4nsA$TESTID",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "ip netns del p4nsB$TESTID",
+                0,
+                1,
+                2,
+                255
+            ],
+            "ip netns add p4nsA$TESTID",
+            "ip netns add p4nsB$TESTID",
+            "ip netns exec p4nsA$TESTID $TC p4template create pipeline/ptables pipeid 22 numtables 1"
+        ],
+        "cmdUnderTest": "ip netns exec p4nsB$TESTID $TC p4template create pipeline/ptables pipeid 22 numtables 1",
+        "expExitCode": "0",
+        "verifyCmd": "{ ip netns exec p4nsA$TESTID $TC -j p4template get pipeline/ptables; ip netns exec p4nsB$TESTID $TC -j p4template get pipeline/ptables; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "(?s)\"pname\":\\s*\"ptables\".*\"pname\":\\s*\"ptables\"",
+        "teardown": [
+            [
+                "ip netns del p4nsA$TESTID",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "ip netns del p4nsB$TESTID",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/E1",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/E2",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Counter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/DirectCounter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Meter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/DirectMeter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Digest",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/NoSuchExt",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "7488",
+        "name": "NS-02: Same action in two netns, each with its own instances",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_netns"
+        ],
+        "setup": [
+            [
+                "ip netns del p4nsA$TESTID",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "ip netns del p4nsB$TESTID",
+                0,
+                1,
+                2,
+                255
+            ],
+            "ip netns add p4nsA$TESTID",
+            "ip netns add p4nsB$TESTID",
+            "ip netns exec p4nsA$TESTID $TC p4template create pipeline/ptables pipeid 22 numtables 1",
+            "ip netns exec p4nsB$TESTID $TC p4template create pipeline/ptables pipeid 22 numtables 1",
+            "ip netns exec p4nsA$TESTID $TC p4template create action/ptables/test actid 1 param param1 type bit32",
+            "ip netns exec p4nsB$TESTID $TC p4template create action/ptables/test actid 1 param param1 type bit32",
+            "ip netns exec p4nsA$TESTID $TC p4template update action/ptables/test state active",
+            "ip netns exec p4nsB$TESTID $TC p4template update action/ptables/test state active"
+        ],
+        "cmdUnderTest": "ip netns exec p4nsA$TESTID $TC actions add action ptables/test param param1 1 index 100 && ip netns exec p4nsB$TESTID $TC actions add action ptables/test param param1 2 index 200",
+        "expExitCode": "0",
+        "verifyCmd": "{ ip netns exec p4nsA$TESTID $TC -j actions get action ptables/test index 200; ip netns exec p4nsA$TESTID $TC -j actions get action ptables/test index 100; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "(?s)Error: .*\"index\":\\s*100",
+        "teardown": [
+            [
+                "ip netns del p4nsA$TESTID",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "ip netns del p4nsB$TESTID",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/E1",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/E2",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Counter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/DirectCounter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Meter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/DirectMeter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Digest",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/NoSuchExt",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "5b74",
+        "name": "NS-03: A table in one netns is not visible in the other",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_netns"
+        ],
+        "setup": [
+            [
+                "ip netns del p4nsA$TESTID",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "ip netns del p4nsB$TESTID",
+                0,
+                1,
+                2,
+                255
+            ],
+            "ip netns add p4nsA$TESTID",
+            "ip netns add p4nsB$TESTID",
+            "ip netns exec p4nsA$TESTID $TC p4template create pipeline/ptables pipeid 22 numtables 1",
+            "ip netns exec p4nsB$TESTID $TC p4template create pipeline/ptables pipeid 22 numtables 1"
+        ],
+        "cmdUnderTest": "ip netns exec p4nsA$TESTID $TC p4template create table/ptables/cb/tname keysz 16",
+        "expExitCode": "0",
+        "verifyCmd": "{ ip netns exec p4nsB$TESTID $TC -j p4template get table/ptables/cb/tname; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "Error: ",
+        "teardown": [
+            [
+                "ip netns del p4nsA$TESTID",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "ip netns del p4nsB$TESTID",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/E1",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/E2",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Counter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/DirectCounter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Meter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/DirectMeter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Digest",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/NoSuchExt",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "13f1",
+        "name": "NS-04: Dumps only list the netns own objects",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_netns"
+        ],
+        "setup": [
+            [
+                "ip netns del p4nsA$TESTID",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "ip netns del p4nsB$TESTID",
+                0,
+                1,
+                2,
+                255
+            ],
+            "ip netns add p4nsA$TESTID",
+            "ip netns add p4nsB$TESTID",
+            "ip netns exec p4nsA$TESTID $TC p4template create pipeline/ptables pipeid 22 numtables 2",
+            "ip netns exec p4nsB$TESTID $TC p4template create pipeline/ptables pipeid 22 numtables 2",
+            "ip netns exec p4nsA$TESTID $TC p4template create table/ptables/cb/ta keysz 16",
+            "ip netns exec p4nsB$TESTID $TC p4template create table/ptables/cb/tb keysz 16"
+        ],
+        "cmdUnderTest": "ip netns exec p4nsA$TESTID $TC -j p4template get table/ptables/",
+        "expExitCode": "0",
+        "verifyCmd": "{ ip netns exec p4nsA$TESTID $TC -j p4template get table/ptables/; } 2>&1; true",
+        "matchCount": "0",
+        "matchPattern": "cb/tb",
+        "teardown": [
+            [
+                "ip netns del p4nsA$TESTID",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "ip netns del p4nsB$TESTID",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/E1",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/E2",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Counter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/DirectCounter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Meter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/DirectMeter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Digest",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/NoSuchExt",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "48b0",
+        "name": "NS-05: Deleting the pipeline in one netns leaves the other",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_netns"
+        ],
+        "setup": [
+            [
+                "ip netns del p4nsA$TESTID",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "ip netns del p4nsB$TESTID",
+                0,
+                1,
+                2,
+                255
+            ],
+            "ip netns add p4nsA$TESTID",
+            "ip netns add p4nsB$TESTID",
+            "ip netns exec p4nsA$TESTID $TC p4template create pipeline/ptables pipeid 22 numtables 1",
+            "ip netns exec p4nsB$TESTID $TC p4template create pipeline/ptables pipeid 22 numtables 1",
+            "ip netns exec p4nsA$TESTID $TC p4template create action/ptables/test actid 1 param param1 type bit32",
+            "ip netns exec p4nsB$TESTID $TC p4template create action/ptables/test actid 1 param param1 type bit32",
+            "ip netns exec p4nsA$TESTID $TC p4template update action/ptables/test state active",
+            "ip netns exec p4nsB$TESTID $TC p4template update action/ptables/test state active",
+            "ip netns exec p4nsB$TESTID $TC actions add action ptables/test param param1 2 index 200"
+        ],
+        "cmdUnderTest": "ip netns exec p4nsA$TESTID $TC p4template del pipeline/ptables",
+        "expExitCode": "0",
+        "verifyCmd": "{ ip netns exec p4nsB$TESTID $TC -j actions get action ptables/test index 200; ip netns exec p4nsB$TESTID $TC actions add action ptables/test param param1 3 index 201 && echo ADDED; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "(?s)\"index\":\\s*200.*ADDED",
+        "teardown": [
+            [
+                "ip netns del p4nsA$TESTID",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "ip netns del p4nsB$TESTID",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/E1",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/E2",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Counter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/DirectCounter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Meter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/DirectMeter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Digest",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/NoSuchExt",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "7198",
+        "name": "NS-06: Delete netns A, then B with a P4 filter",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_netns"
+        ],
+        "setup": [
+            "echo P4TCMARK-$TESTID > /dev/kmsg",
+            [
+                "ip netns del p4nsA$TESTID",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "ip netns del p4nsB$TESTID",
+                0,
+                1,
+                2,
+                255
+            ],
+            "ip netns add p4nsA$TESTID",
+            "ip netns add p4nsB$TESTID",
+            "ip netns exec p4nsA$TESTID $TC p4template create pipeline/ptables pipeid 22 numtables 0",
+            "ip netns exec p4nsB$TESTID $TC p4template create pipeline/ptables pipeid 22 numtables 0",
+            "ip netns exec p4nsA$TESTID $TC p4template update pipeline/ptables state ready",
+            "ip netns exec p4nsB$TESTID $TC p4template update pipeline/ptables state ready",
+            "ip netns exec p4nsB$TESTID ip link add dev p4d$TESTID type dummy",
+            "ip netns exec p4nsB$TESTID $TC qdisc add dev p4d$TESTID clsact",
+            "ip netns exec p4nsB$TESTID $TC filter add dev p4d$TESTID ingress protocol all prio 1 p4 pname ptables action ok"
+        ],
+        "cmdUnderTest": "ip netns del p4nsA$TESTID && ip netns del p4nsB$TESTID",
+        "expExitCode": "0",
+        "verifyCmd": "{ sleep 2; dmesg | sed -n '/P4TCMARK-$TESTID/,$p' | grep -E \"KASAN|BUG:|WARNING:\"; } 2>&1; true",
+        "matchCount": "0",
+        "matchPattern": "KASAN|BUG:|WARNING:",
+        "teardown": [
+            [
+                "ip netns del p4nsA$TESTID",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "ip netns del p4nsB$TESTID",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/E1",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/E2",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Counter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/DirectCounter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Meter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/DirectMeter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Digest",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/NoSuchExt",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "fcc0",
+        "name": "NS-07: numinstances counts per netns pipeline",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_netns"
+        ],
+        "setup": [
+            [
+                "ip netns del p4nsA$TESTID",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "ip netns del p4nsB$TESTID",
+                0,
+                1,
+                2,
+                255
+            ],
+            "ip netns add p4nsA$TESTID",
+            "ip netns add p4nsB$TESTID",
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/E1",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/E2",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Counter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/DirectCounter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Meter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/DirectMeter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Digest",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/NoSuchExt",
+                0,
+                1,
+                2,
+                255
+            ],
+            "ip netns exec p4nsA$TESTID $TC p4template create pipeline/ptables pipeid 22 numtables 0",
+            "ip netns exec p4nsB$TESTID $TC p4template create pipeline/ptables pipeid 22 numtables 0",
+            "$TC p4template create extern/root/myext extid 1 numinstances 1",
+            "ip netns exec p4nsA$TESTID $TC p4template create extern_inst/ptables/myext/inst1 instid 1 control_path tc_key index ptype bit32 param value ptype bit32"
+        ],
+        "cmdUnderTest": "ip netns exec p4nsB$TESTID $TC p4template create extern_inst/ptables/myext/inst1 instid 1 control_path tc_key index ptype bit32 param value ptype bit32",
+        "expExitCode": "0",
+        "verifyCmd": "{ ip netns exec p4nsB$TESTID $TC -j p4template get extern_inst/ptables/myext/inst1; } 2>&1; true",
+        "matchCount": "1",
+        "matchPattern": "\"extinstname\":\\s*\"inst1\"",
+        "teardown": [
+            [
+                "ip netns del p4nsA$TESTID",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "ip netns del p4nsB$TESTID",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/E1",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/E2",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Counter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/DirectCounter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Meter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/DirectMeter",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/Digest",
+                0,
+                1,
+                2,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/NoSuchExt",
+                0,
+                1,
+                2,
+                255
+            ]
+        ]
+    }
+]

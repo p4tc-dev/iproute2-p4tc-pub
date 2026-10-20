@@ -1,0 +1,11 @@
+The const_range.json and const_range.template fixtures are generated from
+p4c's testdata/p4tc_samples/const_range.p4 with p4c-pna-p4tc -o <directory>.
+
+The source has two range keys, an exact selector and a ternary flags key.
+Four source-ordered constant entries expand into eleven physical entries
+requiring nine masks. Distinct action arguments expose entry precedence.
+const_range_verify.py checks the installed keys, masks, permissions, priorities,
+action arguments, logical match kinds and rejection of an unknown match kind.
+The compiler sample also has a packet-level STF test for matching and misses.
+
+Regenerate both fixtures together when changing the compiler sample.

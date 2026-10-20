@@ -1,0 +1,89 @@
+[
+    {
+        "id": "e901",
+        "name": "32-byte components: nested full-width path lifecycle",
+        "category": [
+            "p4tc",
+            "component_names"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [],
+        "cmdUnderTest": "python3 \"$INTROSPECTION/component_name_lifecycle.py\" \"$TC\" nested",
+        "expExitCode": "0",
+        "verifyCmd": "$TC -j p4template get pipeline/pppppppppppppppppppppppppppppppp",
+        "matchPattern": "\"pname\":\\s*\"pppppppppppppppppppppppppppppppp\"",
+        "matchCount": "1",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/pppppppppppppppppppppppppppppppp 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE",
+                0,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "e902",
+        "name": "32-byte components: runtime full-width path lifecycle",
+        "category": [
+            "p4tc",
+            "component_names"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [],
+        "cmdUnderTest": "python3 \"$INTROSPECTION/component_name_lifecycle.py\" \"$TC\" runtime",
+        "expExitCode": "0",
+        "verifyCmd": "$TC -j p4template get pipeline/pppppppppppppppppppppppppppppppp",
+        "matchPattern": "\"pname\":\\s*\"pppppppppppppppppppppppppppppppp\"",
+        "matchCount": "1",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/pppppppppppppppppppppppppppppppp 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE",
+                0,
+                255
+            ]
+        ]
+    },
+    {
+        "id": "e903",
+        "name": "32-byte components: extern full-width path lifecycle",
+        "category": [
+            "p4tc",
+            "component_names"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [],
+        "cmdUnderTest": "python3 \"$INTROSPECTION/component_name_lifecycle.py\" \"$TC\" extern",
+        "expExitCode": "0",
+        "verifyCmd": "$TC -j p4template get pipeline/pppppppppppppppppppppppppppppppp",
+        "matchPattern": "\"pname\":\\s*\"pppppppppppppppppppppppppppppppp\"",
+        "matchCount": "1",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/pppppppppppppppppppppppppppppppp 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                255
+            ],
+            [
+                "$TC p4template del extern/root/EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE",
+                0,
+                255
+            ]
+        ]
+    }
+]

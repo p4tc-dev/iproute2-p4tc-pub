@@ -1,0 +1,284 @@
+[
+    {
+        "id": "23bf",
+        "name": "Raw netlink rejects over-capacity pipeline without changing the valid neighbor",
+        "category": [
+            "p4tc",
+            "template",
+            "name_capacity"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/names pipeid 22 numtables 3",
+            "$TC -j p4template get pipeline/names >/tmp/p4tc-name-$TESTID.json"
+        ],
+        "cmdUnderTest": "python3 \"$INTROSPECTION/name_capacity_netlink.py\" \"$INTROSPECTION/name-capacity/pipeline.bin\"",
+        "expExitCode": "0",
+        "verifyCmd": "$TC -j p4template get pipeline/names | python3 -c 'import json,sys; assert json.load(sys.stdin)==json.load(open(sys.argv[1])); print(\"UNCHANGED\")' /tmp/p4tc-name-$TESTID.json",
+        "matchPattern": "UNCHANGED",
+        "matchCount": "1",
+        "teardown": [
+            "sh -c 'set -eu; for id in 22 23; do for n in $(seq 1 200); do out=$($TC p4template del pipeline/ pipeid \"$id\" 2>&1) && break; case \"$out\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; done'",
+            [
+                "$TC p4template del extern/root/",
+                0,
+                255
+            ],
+            "rm -f /tmp/p4tc-name-$TESTID.json"
+        ]
+    },
+    {
+        "id": "bd93",
+        "name": "Raw netlink rejects over-capacity action without changing the valid neighbor",
+        "category": [
+            "p4tc",
+            "template",
+            "name_capacity"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/names pipeid 22 numtables 3",
+            "$TC p4template create action/names/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa actid 1",
+            "$TC -j p4template get action/names/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa >/tmp/p4tc-name-$TESTID.json"
+        ],
+        "cmdUnderTest": "python3 \"$INTROSPECTION/name_capacity_netlink.py\" \"$INTROSPECTION/name-capacity/action.bin\"",
+        "expExitCode": "0",
+        "verifyCmd": "$TC -j p4template get action/names/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa | python3 -c 'import json,sys; assert json.load(sys.stdin)==json.load(open(sys.argv[1])); print(\"UNCHANGED\")' /tmp/p4tc-name-$TESTID.json",
+        "matchPattern": "UNCHANGED",
+        "matchCount": "1",
+        "teardown": [
+            "sh -c 'set -eu; for id in 22 23; do for n in $(seq 1 200); do out=$($TC p4template del pipeline/ pipeid \"$id\" 2>&1) && break; case \"$out\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; done'",
+            [
+                "$TC p4template del extern/root/",
+                0,
+                255
+            ],
+            "rm -f /tmp/p4tc-name-$TESTID.json"
+        ]
+    },
+    {
+        "id": "4404",
+        "name": "Raw netlink rejects over-capacity action-param without changing the valid neighbor",
+        "category": [
+            "p4tc",
+            "template",
+            "name_capacity"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/names pipeid 22 numtables 3",
+            "$TC p4template create action/names/kept actid 1 param vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv type bit32",
+            "$TC -j p4template get action/names/kept >/tmp/p4tc-name-$TESTID.json"
+        ],
+        "cmdUnderTest": "python3 \"$INTROSPECTION/name_capacity_netlink.py\" \"$INTROSPECTION/name-capacity/action-param.bin\"",
+        "expExitCode": "0",
+        "verifyCmd": "$TC -j p4template get action/names/kept | python3 -c 'import json,sys; assert json.load(sys.stdin)==json.load(open(sys.argv[1])); print(\"UNCHANGED\")' /tmp/p4tc-name-$TESTID.json",
+        "matchPattern": "UNCHANGED",
+        "matchCount": "1",
+        "teardown": [
+            "sh -c 'set -eu; for id in 22 23; do for n in $(seq 1 200); do out=$($TC p4template del pipeline/ pipeid \"$id\" 2>&1) && break; case \"$out\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; done'",
+            [
+                "$TC p4template del extern/root/",
+                0,
+                255
+            ],
+            "rm -f /tmp/p4tc-name-$TESTID.json"
+        ]
+    },
+    {
+        "id": "0d4f",
+        "name": "Raw netlink rejects over-capacity table without changing the valid neighbor",
+        "category": [
+            "p4tc",
+            "template",
+            "name_capacity"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/names pipeid 22 numtables 3",
+            "$TC p4template create table/names/cb/tttttttttttttttttttttttttttt tblid 1 keysz 16",
+            "$TC -j p4template get table/names/cb/tttttttttttttttttttttttttttt >/tmp/p4tc-name-$TESTID.json"
+        ],
+        "cmdUnderTest": "python3 \"$INTROSPECTION/name_capacity_netlink.py\" \"$INTROSPECTION/name-capacity/table.bin\"",
+        "expExitCode": "0",
+        "verifyCmd": "$TC -j p4template get table/names/cb/tttttttttttttttttttttttttttt | python3 -c 'import json,sys; assert json.load(sys.stdin)==json.load(open(sys.argv[1])); print(\"UNCHANGED\")' /tmp/p4tc-name-$TESTID.json",
+        "matchPattern": "UNCHANGED",
+        "matchCount": "1",
+        "teardown": [
+            "sh -c 'set -eu; for id in 22 23; do for n in $(seq 1 200); do out=$($TC p4template del pipeline/ pipeid \"$id\" 2>&1) && break; case \"$out\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; done'",
+            [
+                "$TC p4template del extern/root/",
+                0,
+                255
+            ],
+            "rm -f /tmp/p4tc-name-$TESTID.json"
+        ]
+    },
+    {
+        "id": "6d58",
+        "name": "Raw netlink rejects over-capacity extern without changing the valid neighbor",
+        "category": [
+            "p4tc",
+            "template",
+            "name_capacity"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/names pipeid 22 numtables 3",
+            "$TC p4template create extern/root/EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE extid 1",
+            "$TC -j p4template get extern/root/EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE >/tmp/p4tc-name-$TESTID.json"
+        ],
+        "cmdUnderTest": "python3 \"$INTROSPECTION/name_capacity_netlink.py\" \"$INTROSPECTION/name-capacity/extern.bin\"",
+        "expExitCode": "0",
+        "verifyCmd": "$TC -j p4template get extern/root/EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE | python3 -c 'import json,sys; assert json.load(sys.stdin)==json.load(open(sys.argv[1])); print(\"UNCHANGED\")' /tmp/p4tc-name-$TESTID.json",
+        "matchPattern": "UNCHANGED",
+        "matchCount": "1",
+        "teardown": [
+            "sh -c 'set -eu; for id in 22 23; do for n in $(seq 1 200); do out=$($TC p4template del pipeline/ pipeid \"$id\" 2>&1) && break; case \"$out\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; done'",
+            [
+                "$TC p4template del extern/root/",
+                0,
+                255
+            ],
+            "rm -f /tmp/p4tc-name-$TESTID.json"
+        ]
+    },
+    {
+        "id": "5e8c",
+        "name": "Raw netlink rejects over-capacity instance without changing the valid neighbor",
+        "category": [
+            "p4tc",
+            "template",
+            "name_capacity"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/names pipeid 22 numtables 3",
+            "$TC p4template create extern/root/Register extid 1 numinstances 2",
+            "$TC p4template create extern_inst/names/Register/iiiiiiiiiiiiiiiiiiiiiiiiiiiiiii instid 1 control_path tc_key index ptype bit32 param value ptype bit32",
+            "$TC -j p4template get extern_inst/names/Register/iiiiiiiiiiiiiiiiiiiiiiiiiiiiiii >/tmp/p4tc-name-$TESTID.json"
+        ],
+        "cmdUnderTest": "python3 \"$INTROSPECTION/name_capacity_netlink.py\" \"$INTROSPECTION/name-capacity/instance.bin\"",
+        "expExitCode": "0",
+        "verifyCmd": "$TC -j p4template get extern_inst/names/Register/iiiiiiiiiiiiiiiiiiiiiiiiiiiiiii | python3 -c 'import json,sys; assert json.load(sys.stdin)==json.load(open(sys.argv[1])); print(\"UNCHANGED\")' /tmp/p4tc-name-$TESTID.json",
+        "matchPattern": "UNCHANGED",
+        "matchCount": "1",
+        "teardown": [
+            "sh -c 'set -eu; for id in 22 23; do for n in $(seq 1 200); do out=$($TC p4template del pipeline/ pipeid \"$id\" 2>&1) && break; case \"$out\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; done'",
+            [
+                "$TC p4template del extern/root/",
+                0,
+                255
+            ],
+            "rm -f /tmp/p4tc-name-$TESTID.json"
+        ]
+    },
+    {
+        "id": "ddf6",
+        "name": "Raw netlink rejects over-capacity extern-param without changing the valid neighbor",
+        "category": [
+            "p4tc",
+            "template",
+            "name_capacity"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/names pipeid 22 numtables 3",
+            "$TC p4template create extern/root/Register extid 1 numinstances 2",
+            "$TC p4template create extern_inst/names/Register/kept instid 1 control_path tc_key index ptype bit32 param vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv ptype bit32",
+            "$TC -j p4template get extern_inst/names/Register/kept >/tmp/p4tc-name-$TESTID.json"
+        ],
+        "cmdUnderTest": "python3 \"$INTROSPECTION/name_capacity_netlink.py\" \"$INTROSPECTION/name-capacity/extern-param.bin\"",
+        "expExitCode": "0",
+        "verifyCmd": "$TC -j p4template get extern_inst/names/Register/kept | python3 -c 'import json,sys; assert json.load(sys.stdin)==json.load(open(sys.argv[1])); print(\"UNCHANGED\")' /tmp/p4tc-name-$TESTID.json",
+        "matchPattern": "UNCHANGED",
+        "matchCount": "1",
+        "teardown": [
+            "sh -c 'set -eu; for id in 22 23; do for n in $(seq 1 200); do out=$($TC p4template del pipeline/ pipeid \"$id\" 2>&1) && break; case \"$out\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; done'",
+            [
+                "$TC p4template del extern/root/",
+                0,
+                255
+            ],
+            "rm -f /tmp/p4tc-name-$TESTID.json"
+        ]
+    },
+    {
+        "id": "5463",
+        "name": "Raw netlink rejects over-capacity combined-action without changing the valid neighbor",
+        "category": [
+            "p4tc",
+            "template",
+            "name_capacity"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/ppppppppppppppppppppppppppppppp pipeid 23 numtables 2",
+            "$TC p4template create action/ppppppppppppppppppppppppppppppp/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa actid 1",
+            "$TC p4template create table/ppppppppppppppppppppppppppppppp/cb/kept tblid 1 keysz 16 table_acts act name ppppppppppppppppppppppppppppppp/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "$TC -j p4template get table/ppppppppppppppppppppppppppppppp/cb/kept >/tmp/p4tc-name-$TESTID.json"
+        ],
+        "cmdUnderTest": "python3 \"$INTROSPECTION/name_capacity_netlink.py\" \"$INTROSPECTION/name-capacity/combined-action.bin\"",
+        "expExitCode": "0",
+        "verifyCmd": "$TC -j p4template get table/ppppppppppppppppppppppppppppppp/cb/kept | python3 -c 'import json,sys; assert json.load(sys.stdin)==json.load(open(sys.argv[1])); print(\"UNCHANGED\")' /tmp/p4tc-name-$TESTID.json",
+        "matchPattern": "UNCHANGED",
+        "matchCount": "1",
+        "teardown": [
+            "sh -c 'set -eu; for id in 22 23; do for n in $(seq 1 200); do out=$($TC p4template del pipeline/ pipeid \"$id\" 2>&1) && break; case \"$out\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; done'",
+            [
+                "$TC p4template del extern/root/",
+                0,
+                255
+            ],
+            "rm -f /tmp/p4tc-name-$TESTID.json"
+        ]
+    },
+    {
+        "id": "e904",
+        "name": "Reject an interior NUL before a non-leaf action-path separator without mutation",
+        "category": [
+            "p4tc",
+            "template",
+            "name_capacity"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/ppppppppppppppppppppppppppppppp pipeid 23 numtables 2",
+            "$TC p4template create action/ppppppppppppppppppppppppppppppp/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa actid 1",
+            "$TC p4template create table/ppppppppppppppppppppppppppppppp/cb/kept tblid 1 keysz 16 table_acts act name ppppppppppppppppppppppppppppppp/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "$TC -j p4template get table/ppppppppppppppppppppppppppppppp/cb/kept >/tmp/p4tc-name-$TESTID.json"
+        ],
+        "cmdUnderTest": "python3 \"$INTROSPECTION/name_capacity_netlink.py\" \"$INTROSPECTION/name-capacity/interior-nul.bin\"",
+        "expExitCode": "0",
+        "verifyCmd": "$TC -j p4template get table/ppppppppppppppppppppppppppppppp/cb/kept | python3 -c 'import json,sys; assert json.load(sys.stdin)==json.load(open(sys.argv[1])); print(\"UNCHANGED\")' /tmp/p4tc-name-$TESTID.json",
+        "matchPattern": "UNCHANGED",
+        "matchCount": "1",
+        "teardown": [
+            "sh -c 'set -eu; for id in 22 23; do for n in $(seq 1 200); do out=$($TC p4template del pipeline/ pipeid \"$id\" 2>&1) && break; case \"$out\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; done'",
+            [
+                "$TC p4template del extern/root/",
+                0,
+                255
+            ],
+            "rm -f /tmp/p4tc-name-$TESTID.json"
+        ]
+    }
+]

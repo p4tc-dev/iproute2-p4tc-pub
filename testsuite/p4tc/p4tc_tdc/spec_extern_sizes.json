@@ -1,0 +1,240 @@
+[
+    {
+        "id": "050a",
+        "name": "Create accepts 63 aggregate bytes",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/externSizes pipeid 22 numtables 0",
+            "$TC p4template create extern/root/Register extid 1 numinstances 2"
+        ],
+        "cmdUnderTest": "$TC p4template create extern_inst/externSizes/Register/case1 tc_numel 1 instid 1 control_path tc_key index ptype bit32 id 1 param v1 ptype bit64 id 2 default_value 1 param v2 ptype bit64 id 3 default_value 1 param v3 ptype bit64 id 4 default_value 1 param v4 ptype bit64 id 5 default_value 1 param v5 ptype bit64 id 6 default_value 1 param v6 ptype bit64 id 7 default_value 1 param v7 ptype bit64 id 8 default_value 1 param tail ptype bit24 id 9 default_value 1",
+        "expExitCode": "0",
+        "verifyCmd": "sh -c 'set -eu; $TC -j p4template get extern_inst/externSizes/Register/case1 >/tmp/p4tc-size-$TESTID.json; python3 -c '\"'\"'import json,sys; value=json.load(sys.stdin); items=[(p[\"name\"],p[\"id\"],p[\"value\"]) for o in value for p in o[\"control_params\"] if p[\"name\"]!=\"index\"]; assert sorted(items)==[('\"'\"'\"'\"'\"'\"'\"'\"'tail'\"'\"'\"'\"'\"'\"'\"'\"', 9, 1), ('\"'\"'\"'\"'\"'\"'\"'\"'v1'\"'\"'\"'\"'\"'\"'\"'\"', 2, 1), ('\"'\"'\"'\"'\"'\"'\"'\"'v2'\"'\"'\"'\"'\"'\"'\"'\"', 3, 1), ('\"'\"'\"'\"'\"'\"'\"'\"'v3'\"'\"'\"'\"'\"'\"'\"'\"', 4, 1), ('\"'\"'\"'\"'\"'\"'\"'\"'v4'\"'\"'\"'\"'\"'\"'\"'\"', 5, 1), ('\"'\"'\"'\"'\"'\"'\"'\"'v5'\"'\"'\"'\"'\"'\"'\"'\"', 6, 1), ('\"'\"'\"'\"'\"'\"'\"'\"'v6'\"'\"'\"'\"'\"'\"'\"'\"', 7, 1), ('\"'\"'\"'\"'\"'\"'\"'\"'v7'\"'\"'\"'\"'\"'\"'\"'\"', 8, 1)], (items,value)'\"'\"' </tmp/p4tc-size-$TESTID.json; $TC p4template del extern_inst/externSizes/Register/case1; printf bounded'",
+        "matchCount": "1",
+        "matchPattern": "bounded",
+        "teardown": [
+            "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/externSizes 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf \"%s\\n\" \"$output\" >&2; exit \"$rc\"'",
+            "$TC p4template del extern/root/Register",
+            "rm -f /tmp/p4tc-size-$TESTID.err /tmp/p4tc-size-$TESTID.json"
+        ]
+    },
+    {
+        "id": "81f1",
+        "name": "Create accepts exactly 64 aggregate bytes",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/externSizes pipeid 22 numtables 0",
+            "$TC p4template create extern/root/Register extid 1 numinstances 2"
+        ],
+        "cmdUnderTest": "$TC p4template create extern_inst/externSizes/Register/case2 tc_numel 1 instid 2 control_path tc_key index ptype bit32 id 1 param v1 ptype bit64 id 2 default_value 1 param v2 ptype bit64 id 3 default_value 1 param v3 ptype bit64 id 4 default_value 1 param v4 ptype bit64 id 5 default_value 1 param v5 ptype bit64 id 6 default_value 1 param v6 ptype bit64 id 7 default_value 1 param v7 ptype bit64 id 8 default_value 1 param tail ptype bit32 id 9 default_value 1",
+        "expExitCode": "0",
+        "verifyCmd": "sh -c 'set -eu; $TC -j p4template get extern_inst/externSizes/Register/case2 >/tmp/p4tc-size-$TESTID.json; python3 -c '\"'\"'import json,sys; value=json.load(sys.stdin); items=[(p[\"name\"],p[\"id\"],p[\"value\"]) for o in value for p in o[\"control_params\"] if p[\"name\"]!=\"index\"]; assert sorted(items)==[('\"'\"'\"'\"'\"'\"'\"'\"'tail'\"'\"'\"'\"'\"'\"'\"'\"', 9, 1), ('\"'\"'\"'\"'\"'\"'\"'\"'v1'\"'\"'\"'\"'\"'\"'\"'\"', 2, 1), ('\"'\"'\"'\"'\"'\"'\"'\"'v2'\"'\"'\"'\"'\"'\"'\"'\"', 3, 1), ('\"'\"'\"'\"'\"'\"'\"'\"'v3'\"'\"'\"'\"'\"'\"'\"'\"', 4, 1), ('\"'\"'\"'\"'\"'\"'\"'\"'v4'\"'\"'\"'\"'\"'\"'\"'\"', 5, 1), ('\"'\"'\"'\"'\"'\"'\"'\"'v5'\"'\"'\"'\"'\"'\"'\"'\"', 6, 1), ('\"'\"'\"'\"'\"'\"'\"'\"'v6'\"'\"'\"'\"'\"'\"'\"'\"', 7, 1), ('\"'\"'\"'\"'\"'\"'\"'\"'v7'\"'\"'\"'\"'\"'\"'\"'\"', 8, 1)], (items,value)'\"'\"' </tmp/p4tc-size-$TESTID.json; $TC p4template del extern_inst/externSizes/Register/case2; printf bounded'",
+        "matchCount": "1",
+        "matchPattern": "bounded",
+        "teardown": [
+            "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/externSizes 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf \"%s\\n\" \"$output\" >&2; exit \"$rc\"'",
+            "$TC p4template del extern/root/Register",
+            "rm -f /tmp/p4tc-size-$TESTID.err /tmp/p4tc-size-$TESTID.json"
+        ]
+    },
+    {
+        "id": "486e",
+        "name": "Create rejects 65 bytes when final parameter adds one byte",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/externSizes pipeid 22 numtables 0",
+            "$TC p4template create extern/root/Register extid 1 numinstances 2"
+        ],
+        "cmdUnderTest": "$TC p4template create extern_inst/externSizes/Register/case3 tc_numel 1 instid 3 control_path tc_key index ptype bit32 id 1 param v1 ptype bit64 id 2 default_value 1 param v2 ptype bit64 id 3 default_value 1 param v3 ptype bit64 id 4 default_value 1 param v4 ptype bit64 id 5 default_value 1 param v5 ptype bit64 id 6 default_value 1 param v6 ptype bit64 id 7 default_value 1 param v7 ptype bit64 id 8 default_value 1 param tail ptype bit32 id 9 default_value 1 param last ptype bit8 id 10 default_value 1 2>/tmp/p4tc-size-$TESTID.err",
+        "expExitCode": "255",
+        "verifyCmd": "sh -c 'set -eu; python3 -c '\"'\"'import sys; assert open(sys.argv[1]).read().splitlines()[0] == \"Error: Maximum parameter byte size reached.\"'\"'\"' /tmp/p4tc-size-$TESTID.err; if $TC -j p4template get extern_inst/externSizes/Register/case3; then exit 1; else test \"$?\" -eq 255; fi; $TC p4template del extern/root/Register; $TC p4template create extern/root/Register extid 1 numinstances 2; $TC p4template create extern_inst/externSizes/Register/case3 tc_numel 1 instid 3 control_path tc_key index ptype bit32 id 1 param v1 ptype bit64 id 2 default_value 3; $TC p4template del extern_inst/externSizes/Register/case3; printf bounded'",
+        "matchCount": "1",
+        "matchPattern": "bounded",
+        "teardown": [
+            "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/externSizes 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf \"%s\\n\" \"$output\" >&2; exit \"$rc\"'",
+            "$TC p4template del extern/root/Register",
+            "rm -f /tmp/p4tc-size-$TESTID.err /tmp/p4tc-size-$TESTID.json"
+        ]
+    },
+    {
+        "id": "e307",
+        "name": "Create rejects 65 bytes when one-byte parameter is first",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/externSizes pipeid 22 numtables 0",
+            "$TC p4template create extern/root/Register extid 1 numinstances 2"
+        ],
+        "cmdUnderTest": "$TC p4template create extern_inst/externSizes/Register/case4 tc_numel 1 instid 4 control_path param last ptype bit8 id 1 default_value 1 tc_key index ptype bit32 id 2 param v1 ptype bit64 id 3 default_value 1 param v2 ptype bit64 id 4 default_value 1 param v3 ptype bit64 id 5 default_value 1 param v4 ptype bit64 id 6 default_value 1 param v5 ptype bit64 id 7 default_value 1 param v6 ptype bit64 id 8 default_value 1 param v7 ptype bit64 id 9 default_value 1 param tail ptype bit32 id 10 default_value 1 2>/tmp/p4tc-size-$TESTID.err",
+        "expExitCode": "255",
+        "verifyCmd": "sh -c 'set -eu; python3 -c '\"'\"'import sys; assert open(sys.argv[1]).read().splitlines()[0] == \"Error: Maximum parameter byte size reached.\"'\"'\"' /tmp/p4tc-size-$TESTID.err; if $TC -j p4template get extern_inst/externSizes/Register/case4; then exit 1; else test \"$?\" -eq 255; fi; $TC p4template del extern/root/Register; $TC p4template create extern/root/Register extid 1 numinstances 2; $TC p4template create extern_inst/externSizes/Register/case4 tc_numel 1 instid 4 control_path param last ptype bit8 id 1 default_value 3 tc_key index ptype bit32 id 2; $TC p4template del extern_inst/externSizes/Register/case4; printf bounded'",
+        "matchCount": "1",
+        "matchPattern": "bounded",
+        "teardown": [
+            "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/externSizes 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf \"%s\\n\" \"$output\" >&2; exit \"$rc\"'",
+            "$TC p4template del extern/root/Register",
+            "rm -f /tmp/p4tc-size-$TESTID.err /tmp/p4tc-size-$TESTID.json"
+        ]
+    },
+    {
+        "id": "6a9b",
+        "name": "Create rejects 65 bytes when final parameter adds eight bytes",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/externSizes pipeid 22 numtables 0",
+            "$TC p4template create extern/root/Register extid 1 numinstances 2"
+        ],
+        "cmdUnderTest": "$TC p4template create extern_inst/externSizes/Register/case5 tc_numel 1 instid 5 control_path tc_key index ptype bit32 id 1 param last ptype bit8 id 2 default_value 1 param tail ptype bit32 id 3 default_value 1 param v1 ptype bit64 id 4 default_value 1 param v2 ptype bit64 id 5 default_value 1 param v3 ptype bit64 id 6 default_value 1 param v4 ptype bit64 id 7 default_value 1 param v5 ptype bit64 id 8 default_value 1 param v6 ptype bit64 id 9 default_value 1 param v7 ptype bit64 id 10 default_value 1 2>/tmp/p4tc-size-$TESTID.err",
+        "expExitCode": "255",
+        "verifyCmd": "sh -c 'set -eu; python3 -c '\"'\"'import sys; assert open(sys.argv[1]).read().splitlines()[0] == \"Error: Maximum parameter byte size reached.\"'\"'\"' /tmp/p4tc-size-$TESTID.err; if $TC -j p4template get extern_inst/externSizes/Register/case5; then exit 1; else test \"$?\" -eq 255; fi; $TC p4template del extern/root/Register; $TC p4template create extern/root/Register extid 1 numinstances 2; $TC p4template create extern_inst/externSizes/Register/case5 tc_numel 1 instid 5 control_path tc_key index ptype bit32 id 1 param last ptype bit8 id 2 default_value 3; $TC p4template del extern_inst/externSizes/Register/case5; printf bounded'",
+        "matchCount": "1",
+        "matchPattern": "bounded",
+        "teardown": [
+            "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/externSizes 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf \"%s\\n\" \"$output\" >&2; exit \"$rc\"'",
+            "$TC p4template del extern/root/Register",
+            "rm -f /tmp/p4tc-size-$TESTID.err /tmp/p4tc-size-$TESTID.json"
+        ]
+    },
+    {
+        "id": "b9ba",
+        "name": "Create accepts rounded 64 bytes including one-bit parameter",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/externSizes pipeid 22 numtables 0",
+            "$TC p4template create extern/root/Register extid 1 numinstances 2"
+        ],
+        "cmdUnderTest": "$TC p4template create extern_inst/externSizes/Register/case6 tc_numel 1 instid 6 control_path tc_key index ptype bit32 id 1 param v1 ptype bit64 id 2 default_value 1 param v2 ptype bit64 id 3 default_value 1 param v3 ptype bit64 id 4 default_value 1 param v4 ptype bit64 id 5 default_value 1 param v5 ptype bit64 id 6 default_value 1 param v6 ptype bit64 id 7 default_value 1 param v7 ptype bit64 id 8 default_value 1 param tail ptype bit24 id 9 default_value 1 param last ptype bit1 id 10 default_value 1",
+        "expExitCode": "0",
+        "verifyCmd": "sh -c 'set -eu; $TC -j p4template get extern_inst/externSizes/Register/case6 >/tmp/p4tc-size-$TESTID.json; python3 -c '\"'\"'import json,sys; value=json.load(sys.stdin); items=[(p[\"name\"],p[\"id\"],p[\"value\"]) for o in value for p in o[\"control_params\"] if p[\"name\"]!=\"index\"]; assert sorted(items)==[('\"'\"'\"'\"'\"'\"'\"'\"'last'\"'\"'\"'\"'\"'\"'\"'\"', 10, 1), ('\"'\"'\"'\"'\"'\"'\"'\"'tail'\"'\"'\"'\"'\"'\"'\"'\"', 9, 1), ('\"'\"'\"'\"'\"'\"'\"'\"'v1'\"'\"'\"'\"'\"'\"'\"'\"', 2, 1), ('\"'\"'\"'\"'\"'\"'\"'\"'v2'\"'\"'\"'\"'\"'\"'\"'\"', 3, 1), ('\"'\"'\"'\"'\"'\"'\"'\"'v3'\"'\"'\"'\"'\"'\"'\"'\"', 4, 1), ('\"'\"'\"'\"'\"'\"'\"'\"'v4'\"'\"'\"'\"'\"'\"'\"'\"', 5, 1), ('\"'\"'\"'\"'\"'\"'\"'\"'v5'\"'\"'\"'\"'\"'\"'\"'\"', 6, 1), ('\"'\"'\"'\"'\"'\"'\"'\"'v6'\"'\"'\"'\"'\"'\"'\"'\"', 7, 1), ('\"'\"'\"'\"'\"'\"'\"'\"'v7'\"'\"'\"'\"'\"'\"'\"'\"', 8, 1)], (items,value)'\"'\"' </tmp/p4tc-size-$TESTID.json; $TC p4template del extern_inst/externSizes/Register/case6; printf bounded'",
+        "matchCount": "1",
+        "matchPattern": "bounded",
+        "teardown": [
+            "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/externSizes 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf \"%s\\n\" \"$output\" >&2; exit \"$rc\"'",
+            "$TC p4template del extern/root/Register",
+            "rm -f /tmp/p4tc-size-$TESTID.err /tmp/p4tc-size-$TESTID.json"
+        ]
+    },
+    {
+        "id": "2674",
+        "name": "Create rejects rounded 65 bytes including one-bit parameter",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/externSizes pipeid 22 numtables 0",
+            "$TC p4template create extern/root/Register extid 1 numinstances 2"
+        ],
+        "cmdUnderTest": "$TC p4template create extern_inst/externSizes/Register/case7 tc_numel 1 instid 7 control_path tc_key index ptype bit32 id 1 param v1 ptype bit64 id 2 default_value 1 param v2 ptype bit64 id 3 default_value 1 param v3 ptype bit64 id 4 default_value 1 param v4 ptype bit64 id 5 default_value 1 param v5 ptype bit64 id 6 default_value 1 param v6 ptype bit64 id 7 default_value 1 param v7 ptype bit64 id 8 default_value 1 param tail ptype bit25 id 9 default_value 1 param last ptype bit1 id 10 default_value 1 2>/tmp/p4tc-size-$TESTID.err",
+        "expExitCode": "255",
+        "verifyCmd": "sh -c 'set -eu; python3 -c '\"'\"'import sys; assert open(sys.argv[1]).read().splitlines()[0] == \"Error: Maximum parameter byte size reached.\"'\"'\"' /tmp/p4tc-size-$TESTID.err; if $TC -j p4template get extern_inst/externSizes/Register/case7; then exit 1; else test \"$?\" -eq 255; fi; $TC p4template del extern/root/Register; $TC p4template create extern/root/Register extid 1 numinstances 2; $TC p4template create extern_inst/externSizes/Register/case7 tc_numel 1 instid 7 control_path tc_key index ptype bit32 id 1 param v1 ptype bit64 id 2 default_value 3; $TC p4template del extern_inst/externSizes/Register/case7; printf bounded'",
+        "matchCount": "1",
+        "matchPattern": "bounded",
+        "teardown": [
+            "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/externSizes 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf \"%s\\n\" \"$output\" >&2; exit \"$rc\"'",
+            "$TC p4template del extern/root/Register",
+            "rm -f /tmp/p4tc-size-$TESTID.err /tmp/p4tc-size-$TESTID.json"
+        ]
+    },
+    {
+        "id": "b0f0",
+        "name": "Update accepts exactly 64 bytes and replaces complete values",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/externSizes pipeid 22 numtables 0",
+            "$TC p4template create extern/root/Register extid 1 numinstances 2",
+            "$TC p4template create extern_inst/externSizes/Register/case8 tc_numel 1 instid 8 control_path tc_key index ptype bit32 id 1 param v1 ptype bit64 id 2 default_value 3",
+            "$TC -j p4template get extern_inst/externSizes/Register/case8 >/tmp/p4tc-size-$TESTID.json"
+        ],
+        "cmdUnderTest": "$TC p4template update extern_inst/externSizes/Register/case8 control_path tc_key index ptype bit32 id 1 param v1 ptype bit64 id 2 default_value 1 param v2 ptype bit64 id 3 default_value 1 param v3 ptype bit64 id 4 default_value 1 param v4 ptype bit64 id 5 default_value 1 param v5 ptype bit64 id 6 default_value 1 param v6 ptype bit64 id 7 default_value 1 param v7 ptype bit64 id 8 default_value 1 param tail ptype bit32 id 9 default_value 1",
+        "expExitCode": "0",
+        "verifyCmd": "sh -c 'set -eu; $TC -j p4template get extern_inst/externSizes/Register/case8 >/tmp/p4tc-size-$TESTID.json; python3 -c '\"'\"'import json,sys; value=json.load(sys.stdin); items=[(p[\"name\"],p[\"id\"],p[\"value\"]) for o in value for p in o[\"control_params\"] if p[\"name\"]!=\"index\"]; assert sorted(items)==[('\"'\"'\"'\"'\"'\"'\"'\"'tail'\"'\"'\"'\"'\"'\"'\"'\"', 9, 1), ('\"'\"'\"'\"'\"'\"'\"'\"'v1'\"'\"'\"'\"'\"'\"'\"'\"', 2, 1), ('\"'\"'\"'\"'\"'\"'\"'\"'v2'\"'\"'\"'\"'\"'\"'\"'\"', 3, 1), ('\"'\"'\"'\"'\"'\"'\"'\"'v3'\"'\"'\"'\"'\"'\"'\"'\"', 4, 1), ('\"'\"'\"'\"'\"'\"'\"'\"'v4'\"'\"'\"'\"'\"'\"'\"'\"', 5, 1), ('\"'\"'\"'\"'\"'\"'\"'\"'v5'\"'\"'\"'\"'\"'\"'\"'\"', 6, 1), ('\"'\"'\"'\"'\"'\"'\"'\"'v6'\"'\"'\"'\"'\"'\"'\"'\"', 7, 1), ('\"'\"'\"'\"'\"'\"'\"'\"'v7'\"'\"'\"'\"'\"'\"'\"'\"', 8, 1)], (items,value)'\"'\"' </tmp/p4tc-size-$TESTID.json; $TC p4template del extern_inst/externSizes/Register/case8; printf bounded'",
+        "matchCount": "1",
+        "matchPattern": "bounded",
+        "teardown": [
+            "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/externSizes 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf \"%s\\n\" \"$output\" >&2; exit \"$rc\"'",
+            "$TC p4template del extern/root/Register",
+            "rm -f /tmp/p4tc-size-$TESTID.err /tmp/p4tc-size-$TESTID.json"
+        ]
+    },
+    {
+        "id": "f37f",
+        "name": "Update rejects 65 bytes and preserves complete installed template",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/externSizes pipeid 22 numtables 0",
+            "$TC p4template create extern/root/Register extid 1 numinstances 2",
+            "$TC p4template create extern_inst/externSizes/Register/case9 tc_numel 1 instid 9 control_path tc_key index ptype bit32 id 1 param v1 ptype bit64 id 2 default_value 3",
+            "$TC -j p4template get extern_inst/externSizes/Register/case9 >/tmp/p4tc-size-$TESTID.json"
+        ],
+        "cmdUnderTest": "$TC p4template update extern_inst/externSizes/Register/case9 control_path tc_key index ptype bit32 id 1 param v1 ptype bit64 id 2 default_value 1 param v2 ptype bit64 id 3 default_value 1 param v3 ptype bit64 id 4 default_value 1 param v4 ptype bit64 id 5 default_value 1 param v5 ptype bit64 id 6 default_value 1 param v6 ptype bit64 id 7 default_value 1 param v7 ptype bit64 id 8 default_value 1 param tail ptype bit32 id 9 default_value 1 param last ptype bit8 id 10 default_value 1 2>/tmp/p4tc-size-$TESTID.err",
+        "expExitCode": "255",
+        "verifyCmd": "sh -c 'set -eu; python3 -c '\"'\"'import sys; assert open(sys.argv[1]).read().splitlines()[0] == \"Error: Maximum parameter byte size reached.\"'\"'\"' /tmp/p4tc-size-$TESTID.err; $TC -j p4template get extern_inst/externSizes/Register/case9 | python3 -c '\"'\"'import json,sys; assert json.load(sys.stdin)==json.load(open(sys.argv[1]))'\"'\"' /tmp/p4tc-size-$TESTID.json; $TC p4template del extern_inst/externSizes/Register/case9; $TC p4template del extern/root/Register; $TC p4template create extern/root/Register extid 1 numinstances 2; $TC p4template create extern_inst/externSizes/Register/case9 tc_numel 1 instid 9 control_path tc_key index ptype bit32 id 1 param v1 ptype bit64 id 2 default_value 3; $TC p4template del extern_inst/externSizes/Register/case9; printf bounded'",
+        "matchCount": "1",
+        "matchPattern": "bounded",
+        "teardown": [
+            "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/externSizes 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf \"%s\\n\" \"$output\" >&2; exit \"$rc\"'",
+            "$TC p4template del extern/root/Register",
+            "rm -f /tmp/p4tc-size-$TESTID.err /tmp/p4tc-size-$TESTID.json"
+        ]
+    }
+]

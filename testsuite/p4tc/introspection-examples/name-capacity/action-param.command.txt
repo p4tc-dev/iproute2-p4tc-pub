@@ -1,0 +1,1 @@
+create action/names/rejected actid 2 param vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv type bit32

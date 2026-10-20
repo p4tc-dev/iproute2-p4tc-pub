@@ -1,0 +1,678 @@
+{
+    "schema_version": "1.0.0",
+    "pipeline_name": "externSizes",
+    "id": 22,
+    "externs": [
+        {
+            "id": "0x1",
+            "name": "Register",
+            "annotations": [],
+            "instances": [
+                {
+                    "inst_id": 1,
+                    "inst_name": "case1",
+                    "params": [
+                        {
+                            "id": 1,
+                            "name": "index",
+                            "type": "bit32",
+                            "bitwidth": 32,
+                            "attr": "tc_key"
+                        },
+                        {
+                            "id": 2,
+                            "name": "v1",
+                            "type": "bit64",
+                            "bitwidth": 64,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 3,
+                            "name": "v2",
+                            "type": "bit64",
+                            "bitwidth": 64,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 4,
+                            "name": "v3",
+                            "type": "bit64",
+                            "bitwidth": 64,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 5,
+                            "name": "v4",
+                            "type": "bit64",
+                            "bitwidth": 64,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 6,
+                            "name": "v5",
+                            "type": "bit64",
+                            "bitwidth": 64,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 7,
+                            "name": "v6",
+                            "type": "bit64",
+                            "bitwidth": 64,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 8,
+                            "name": "v7",
+                            "type": "bit64",
+                            "bitwidth": 64,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 9,
+                            "name": "tail",
+                            "type": "bit24",
+                            "bitwidth": 24,
+                            "attr": "tc_data"
+                        }
+                    ]
+                },
+                {
+                    "inst_id": 2,
+                    "inst_name": "case2",
+                    "params": [
+                        {
+                            "id": 1,
+                            "name": "index",
+                            "type": "bit32",
+                            "bitwidth": 32,
+                            "attr": "tc_key"
+                        },
+                        {
+                            "id": 2,
+                            "name": "v1",
+                            "type": "bit64",
+                            "bitwidth": 64,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 3,
+                            "name": "v2",
+                            "type": "bit64",
+                            "bitwidth": 64,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 4,
+                            "name": "v3",
+                            "type": "bit64",
+                            "bitwidth": 64,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 5,
+                            "name": "v4",
+                            "type": "bit64",
+                            "bitwidth": 64,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 6,
+                            "name": "v5",
+                            "type": "bit64",
+                            "bitwidth": 64,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 7,
+                            "name": "v6",
+                            "type": "bit64",
+                            "bitwidth": 64,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 8,
+                            "name": "v7",
+                            "type": "bit64",
+                            "bitwidth": 64,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 9,
+                            "name": "tail",
+                            "type": "bit32",
+                            "bitwidth": 32,
+                            "attr": "tc_data"
+                        }
+                    ]
+                },
+                {
+                    "inst_id": 3,
+                    "inst_name": "case3",
+                    "params": [
+                        {
+                            "id": 1,
+                            "name": "index",
+                            "type": "bit32",
+                            "bitwidth": 32,
+                            "attr": "tc_key"
+                        },
+                        {
+                            "id": 2,
+                            "name": "v1",
+                            "type": "bit64",
+                            "bitwidth": 64,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 3,
+                            "name": "v2",
+                            "type": "bit64",
+                            "bitwidth": 64,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 4,
+                            "name": "v3",
+                            "type": "bit64",
+                            "bitwidth": 64,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 5,
+                            "name": "v4",
+                            "type": "bit64",
+                            "bitwidth": 64,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 6,
+                            "name": "v5",
+                            "type": "bit64",
+                            "bitwidth": 64,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 7,
+                            "name": "v6",
+                            "type": "bit64",
+                            "bitwidth": 64,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 8,
+                            "name": "v7",
+                            "type": "bit64",
+                            "bitwidth": 64,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 9,
+                            "name": "tail",
+                            "type": "bit32",
+                            "bitwidth": 32,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 10,
+                            "name": "last",
+                            "type": "bit8",
+                            "bitwidth": 8,
+                            "attr": "tc_data"
+                        }
+                    ]
+                },
+                {
+                    "inst_id": 4,
+                    "inst_name": "case4",
+                    "params": [
+                        {
+                            "id": 1,
+                            "name": "last",
+                            "type": "bit8",
+                            "bitwidth": 8,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 2,
+                            "name": "index",
+                            "type": "bit32",
+                            "bitwidth": 32,
+                            "attr": "tc_key"
+                        },
+                        {
+                            "id": 3,
+                            "name": "v1",
+                            "type": "bit64",
+                            "bitwidth": 64,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 4,
+                            "name": "v2",
+                            "type": "bit64",
+                            "bitwidth": 64,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 5,
+                            "name": "v3",
+                            "type": "bit64",
+                            "bitwidth": 64,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 6,
+                            "name": "v4",
+                            "type": "bit64",
+                            "bitwidth": 64,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 7,
+                            "name": "v5",
+                            "type": "bit64",
+                            "bitwidth": 64,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 8,
+                            "name": "v6",
+                            "type": "bit64",
+                            "bitwidth": 64,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 9,
+                            "name": "v7",
+                            "type": "bit64",
+                            "bitwidth": 64,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 10,
+                            "name": "tail",
+                            "type": "bit32",
+                            "bitwidth": 32,
+                            "attr": "tc_data"
+                        }
+                    ]
+                },
+                {
+                    "inst_id": 5,
+                    "inst_name": "case5",
+                    "params": [
+                        {
+                            "id": 1,
+                            "name": "index",
+                            "type": "bit32",
+                            "bitwidth": 32,
+                            "attr": "tc_key"
+                        },
+                        {
+                            "id": 2,
+                            "name": "last",
+                            "type": "bit8",
+                            "bitwidth": 8,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 3,
+                            "name": "tail",
+                            "type": "bit32",
+                            "bitwidth": 32,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 4,
+                            "name": "v1",
+                            "type": "bit64",
+                            "bitwidth": 64,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 5,
+                            "name": "v2",
+                            "type": "bit64",
+                            "bitwidth": 64,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 6,
+                            "name": "v3",
+                            "type": "bit64",
+                            "bitwidth": 64,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 7,
+                            "name": "v4",
+                            "type": "bit64",
+                            "bitwidth": 64,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 8,
+                            "name": "v5",
+                            "type": "bit64",
+                            "bitwidth": 64,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 9,
+                            "name": "v6",
+                            "type": "bit64",
+                            "bitwidth": 64,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 10,
+                            "name": "v7",
+                            "type": "bit64",
+                            "bitwidth": 64,
+                            "attr": "tc_data"
+                        }
+                    ]
+                },
+                {
+                    "inst_id": 6,
+                    "inst_name": "case6",
+                    "params": [
+                        {
+                            "id": 1,
+                            "name": "index",
+                            "type": "bit32",
+                            "bitwidth": 32,
+                            "attr": "tc_key"
+                        },
+                        {
+                            "id": 2,
+                            "name": "v1",
+                            "type": "bit64",
+                            "bitwidth": 64,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 3,
+                            "name": "v2",
+                            "type": "bit64",
+                            "bitwidth": 64,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 4,
+                            "name": "v3",
+                            "type": "bit64",
+                            "bitwidth": 64,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 5,
+                            "name": "v4",
+                            "type": "bit64",
+                            "bitwidth": 64,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 6,
+                            "name": "v5",
+                            "type": "bit64",
+                            "bitwidth": 64,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 7,
+                            "name": "v6",
+                            "type": "bit64",
+                            "bitwidth": 64,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 8,
+                            "name": "v7",
+                            "type": "bit64",
+                            "bitwidth": 64,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 9,
+                            "name": "tail",
+                            "type": "bit24",
+                            "bitwidth": 24,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 10,
+                            "name": "last",
+                            "type": "bit1",
+                            "bitwidth": 1,
+                            "attr": "tc_data"
+                        }
+                    ]
+                },
+                {
+                    "inst_id": 7,
+                    "inst_name": "case7",
+                    "params": [
+                        {
+                            "id": 1,
+                            "name": "index",
+                            "type": "bit32",
+                            "bitwidth": 32,
+                            "attr": "tc_key"
+                        },
+                        {
+                            "id": 2,
+                            "name": "v1",
+                            "type": "bit64",
+                            "bitwidth": 64,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 3,
+                            "name": "v2",
+                            "type": "bit64",
+                            "bitwidth": 64,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 4,
+                            "name": "v3",
+                            "type": "bit64",
+                            "bitwidth": 64,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 5,
+                            "name": "v4",
+                            "type": "bit64",
+                            "bitwidth": 64,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 6,
+                            "name": "v5",
+                            "type": "bit64",
+                            "bitwidth": 64,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 7,
+                            "name": "v6",
+                            "type": "bit64",
+                            "bitwidth": 64,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 8,
+                            "name": "v7",
+                            "type": "bit64",
+                            "bitwidth": 64,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 9,
+                            "name": "tail",
+                            "type": "bit25",
+                            "bitwidth": 25,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 10,
+                            "name": "last",
+                            "type": "bit1",
+                            "bitwidth": 1,
+                            "attr": "tc_data"
+                        }
+                    ]
+                },
+                {
+                    "inst_id": 8,
+                    "inst_name": "case8",
+                    "params": [
+                        {
+                            "id": 1,
+                            "name": "index",
+                            "type": "bit32",
+                            "bitwidth": 32,
+                            "attr": "tc_key"
+                        },
+                        {
+                            "id": 2,
+                            "name": "v1",
+                            "type": "bit64",
+                            "bitwidth": 64,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 3,
+                            "name": "v2",
+                            "type": "bit64",
+                            "bitwidth": 64,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 4,
+                            "name": "v3",
+                            "type": "bit64",
+                            "bitwidth": 64,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 5,
+                            "name": "v4",
+                            "type": "bit64",
+                            "bitwidth": 64,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 6,
+                            "name": "v5",
+                            "type": "bit64",
+                            "bitwidth": 64,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 7,
+                            "name": "v6",
+                            "type": "bit64",
+                            "bitwidth": 64,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 8,
+                            "name": "v7",
+                            "type": "bit64",
+                            "bitwidth": 64,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 9,
+                            "name": "tail",
+                            "type": "bit32",
+                            "bitwidth": 32,
+                            "attr": "tc_data"
+                        }
+                    ]
+                },
+                {
+                    "inst_id": 9,
+                    "inst_name": "case9",
+                    "params": [
+                        {
+                            "id": 1,
+                            "name": "index",
+                            "type": "bit32",
+                            "bitwidth": 32,
+                            "attr": "tc_key"
+                        },
+                        {
+                            "id": 2,
+                            "name": "v1",
+                            "type": "bit64",
+                            "bitwidth": 64,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 3,
+                            "name": "v2",
+                            "type": "bit64",
+                            "bitwidth": 64,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 4,
+                            "name": "v3",
+                            "type": "bit64",
+                            "bitwidth": 64,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 5,
+                            "name": "v4",
+                            "type": "bit64",
+                            "bitwidth": 64,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 6,
+                            "name": "v5",
+                            "type": "bit64",
+                            "bitwidth": 64,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 7,
+                            "name": "v6",
+                            "type": "bit64",
+                            "bitwidth": 64,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 8,
+                            "name": "v7",
+                            "type": "bit64",
+                            "bitwidth": 64,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 9,
+                            "name": "tail",
+                            "type": "bit32",
+                            "bitwidth": 32,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 10,
+                            "name": "last",
+                            "type": "bit8",
+                            "bitwidth": 8,
+                            "attr": "tc_data"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "tables": []
+}

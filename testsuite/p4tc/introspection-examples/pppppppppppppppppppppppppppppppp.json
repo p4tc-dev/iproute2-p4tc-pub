@@ -1,0 +1,99 @@
+{
+    "schema_version": "1.0.0",
+    "pipeline_name": "pppppppppppppppppppppppppppppppp",
+    "id": 22,
+    "externs": [
+        {
+            "id": "0x1",
+            "name": "EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE",
+            "annotations": [],
+            "instances": [
+                {
+                    "inst_id": 1,
+                    "inst_name": "iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii",
+                    "params": [
+                        {
+                            "id": 1,
+                            "name": "index",
+                            "type": "bit32",
+                            "bitwidth": 32,
+                            "attr": "tc_key"
+                        },
+                        {
+                            "id": 2,
+                            "name": "vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv",
+                            "type": "bit32",
+                            "bitwidth": 32,
+                            "attr": "tc_data"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "0x1A000000",
+            "name": "DirectCounter",
+            "annotations": [],
+            "instances": [
+                {
+                    "inst_id": 1,
+                    "inst_name": "iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii",
+                    "params": [
+                        {
+                            "id": 1,
+                            "name": "index",
+                            "type": "bit32",
+                            "bitwidth": 32,
+                            "attr": "tc_key"
+                        },
+                        {
+                            "id": 2,
+                            "name": "pkts",
+                            "type": "bit64",
+                            "bitwidth": 64,
+                            "attr": "tc_data"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "tables": [
+        {
+            "name": "cccccccccccccccccccccccccccccccc/tttttttttttttttttttttttttttttttt",
+            "id": 1,
+            "tentries": 256,
+            "nummask": 8,
+            "keysize": 32,
+            "keyfields": [
+                {
+                    "id": 1,
+                    "name": "key",
+                    "type": "bit32",
+                    "match_type": "exact",
+                    "bitwidth": 32
+                }
+            ],
+            "actions": [
+                {
+                    "id": 1,
+                    "name": "cccccccccccccccccccccccccccccccc/tttttttttttttttttttttttttttttttt/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                    "action_scope": "TableAndDefault",
+                    "default_hit_action": false,
+                    "default_miss_action": false,
+                    "annotations": [],
+                    "params": [
+                        {
+                            "id": 1,
+                            "name": "vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv",
+                            "type": "bit32",
+                            "read_only": false,
+                            "annotations": [],
+                            "bitwidth": 32
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

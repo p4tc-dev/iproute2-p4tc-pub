@@ -1,0 +1,42 @@
+{
+    "schema_version": "1.0.0",
+    "pipeline_name": "scalarRules",
+    "id": 22,
+    "externs": [
+        {
+            "id": "0x1",
+            "name": "Register",
+            "annotations": [],
+            "instances": [
+                {
+                    "inst_id": 1,
+                    "inst_name": "reg1",
+                    "params": [
+                        {
+                            "id": 1,
+                            "name": "index",
+                            "type": "bit32",
+                            "bitwidth": 32,
+                            "attr": "tc_key"
+                        },
+                        {
+                            "id": 2,
+                            "name": "left",
+                            "type": "bit32",
+                            "bitwidth": 32,
+                            "attr": "tc_data"
+                        },
+                        {
+                            "id": 3,
+                            "name": "right",
+                            "type": "bit32",
+                            "bitwidth": 32,
+                            "attr": "tc_data"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "tables": []
+}
