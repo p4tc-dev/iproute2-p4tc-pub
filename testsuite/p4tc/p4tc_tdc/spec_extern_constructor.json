@@ -1,0 +1,314 @@
+[
+    {
+        "id": "cc03",
+        "name": "Single constructor at end after control parameters",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/constructorRules pipeid 22 numtables 1",
+            "$TC p4template create extern/root/DirectCounter extid 0x1A000000 numinstances 2 has_exec_method"
+        ],
+        "cmdUnderTest": "$TC p4template create extern_inst/constructorRules/DirectCounter/c1 instid 1 tc_numel 4 tbl_bindable control_path tc_key index ptype bit32 id 1 param pkts ptype bit64 id 2 constructor param type ptype bit32 id 1 0 2>/tmp/p4tc-constructor-$TESTID.err",
+        "expExitCode": "0",
+        "verifyCmd": "sh -c 'set -eu; $TC -j p4template get extern_inst/constructorRules/DirectCounter/c1 | python3 -c '\"'\"'import json,sys; value=json.load(sys.stdin); assert len(value)==1; obj=value[0]; assert obj[\"extinstname\"]==\"c1\" and obj[\"extinstid\"]==1 and obj[\"num_elems\"]==4; assert sorted((p[\"name\"],p[\"id\"],p[\"type\"]) for p in obj[\"control_params\"])==[(\"index\",1,\"bit32\"),(\"pkts\",2,\"bit64\")]; assert [(p[\"name\"],p[\"id\"],p[\"type\"],p[\"value\"]) for p in obj[\"constructor_params\"]]==[('\"'\"'\"'\"'\"'\"'\"'\"'type'\"'\"'\"'\"'\"'\"'\"'\"', 1, '\"'\"'\"'\"'\"'\"'\"'\"'bit32'\"'\"'\"'\"'\"'\"'\"'\"', 0)]'\"'\"'; $TC p4template create table/constructorRules/cb/t1 keysz 16 pna_direct_counter DirectCounter/c1; $TC p4template del table/constructorRules/cb/t1; $TC p4template del extern_inst/constructorRules/DirectCounter/c1; printf constructor_verified'",
+        "matchCount": "1",
+        "matchPattern": "constructor_verified",
+        "teardown": [
+            "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/constructorRules 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf \"%s\\n\" \"$output\" >&2; exit \"$rc\"'",
+            "$TC p4template del extern/root/DirectCounter",
+            "rm -f /tmp/p4tc-constructor-$TESTID.err"
+        ]
+    },
+    {
+        "id": "f74a",
+        "name": "Single constructor retains following control delimiter",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/constructorRules pipeid 22 numtables 1",
+            "$TC p4template create extern/root/DirectCounter extid 0x1A000000 numinstances 2 has_exec_method"
+        ],
+        "cmdUnderTest": "$TC p4template create extern_inst/constructorRules/DirectCounter/c1 instid 1 tc_numel 4 tbl_bindable constructor param type ptype bit32 id 1 0 control_path tc_key index ptype bit32 id 1 param pkts ptype bit64 id 2 2>/tmp/p4tc-constructor-$TESTID.err",
+        "expExitCode": "0",
+        "verifyCmd": "sh -c 'set -eu; $TC -j p4template get extern_inst/constructorRules/DirectCounter/c1 | python3 -c '\"'\"'import json,sys; value=json.load(sys.stdin); assert len(value)==1; obj=value[0]; assert obj[\"extinstname\"]==\"c1\" and obj[\"extinstid\"]==1 and obj[\"num_elems\"]==4; assert sorted((p[\"name\"],p[\"id\"],p[\"type\"]) for p in obj[\"control_params\"])==[(\"index\",1,\"bit32\"),(\"pkts\",2,\"bit64\")]; assert [(p[\"name\"],p[\"id\"],p[\"type\"],p[\"value\"]) for p in obj[\"constructor_params\"]]==[('\"'\"'\"'\"'\"'\"'\"'\"'type'\"'\"'\"'\"'\"'\"'\"'\"', 1, '\"'\"'\"'\"'\"'\"'\"'\"'bit32'\"'\"'\"'\"'\"'\"'\"'\"', 0)]'\"'\"'; $TC p4template create table/constructorRules/cb/t1 keysz 16 pna_direct_counter DirectCounter/c1; $TC p4template del table/constructorRules/cb/t1; $TC p4template del extern_inst/constructorRules/DirectCounter/c1; printf constructor_verified'",
+        "matchCount": "1",
+        "matchPattern": "constructor_verified",
+        "teardown": [
+            "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/constructorRules 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf \"%s\\n\" \"$output\" >&2; exit \"$rc\"'",
+            "$TC p4template del extern/root/DirectCounter",
+            "rm -f /tmp/p4tc-constructor-$TESTID.err"
+        ]
+    },
+    {
+        "id": "3826",
+        "name": "Single constructor retains trailing instance metadata",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/constructorRules pipeid 22 numtables 1",
+            "$TC p4template create extern/root/DirectCounter extid 0x1A000000 numinstances 2 has_exec_method"
+        ],
+        "cmdUnderTest": "$TC p4template create extern_inst/constructorRules/DirectCounter/c1 control_path tc_key index ptype bit32 id 1 param pkts ptype bit64 id 2 constructor param type ptype bit32 id 1 0 instid 1 tc_numel 4 tbl_bindable 2>/tmp/p4tc-constructor-$TESTID.err",
+        "expExitCode": "0",
+        "verifyCmd": "sh -c 'set -eu; $TC -j p4template get extern_inst/constructorRules/DirectCounter/c1 | python3 -c '\"'\"'import json,sys; value=json.load(sys.stdin); assert len(value)==1; obj=value[0]; assert obj[\"extinstname\"]==\"c1\" and obj[\"extinstid\"]==1 and obj[\"num_elems\"]==4; assert sorted((p[\"name\"],p[\"id\"],p[\"type\"]) for p in obj[\"control_params\"])==[(\"index\",1,\"bit32\"),(\"pkts\",2,\"bit64\")]; assert [(p[\"name\"],p[\"id\"],p[\"type\"],p[\"value\"]) for p in obj[\"constructor_params\"]]==[('\"'\"'\"'\"'\"'\"'\"'\"'type'\"'\"'\"'\"'\"'\"'\"'\"', 1, '\"'\"'\"'\"'\"'\"'\"'\"'bit32'\"'\"'\"'\"'\"'\"'\"'\"', 0)]'\"'\"'; $TC p4template create table/constructorRules/cb/t1 keysz 16 pna_direct_counter DirectCounter/c1; $TC p4template del table/constructorRules/cb/t1; $TC p4template del extern_inst/constructorRules/DirectCounter/c1; printf constructor_verified'",
+        "matchCount": "1",
+        "matchPattern": "constructor_verified",
+        "teardown": [
+            "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/constructorRules 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf \"%s\\n\" \"$output\" >&2; exit \"$rc\"'",
+            "$TC p4template del extern/root/DirectCounter",
+            "rm -f /tmp/p4tc-constructor-$TESTID.err"
+        ]
+    },
+    {
+        "id": "2ab4",
+        "name": "Multiple constructor parameters at end are all retained",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/constructorRules pipeid 22 numtables 1",
+            "$TC p4template create extern/root/DirectCounter extid 0x1A000000 numinstances 2 has_exec_method"
+        ],
+        "cmdUnderTest": "$TC p4template create extern_inst/constructorRules/DirectCounter/c1 instid 1 tc_numel 4 tbl_bindable control_path tc_key index ptype bit32 id 1 param pkts ptype bit64 id 2 constructor param type ptype bit32 id 1 0 param salt ptype bit64 id 2 42 2>/tmp/p4tc-constructor-$TESTID.err",
+        "expExitCode": "0",
+        "verifyCmd": "sh -c 'set -eu; $TC -j p4template get extern_inst/constructorRules/DirectCounter/c1 | python3 -c '\"'\"'import json,sys; value=json.load(sys.stdin); assert len(value)==1; obj=value[0]; assert obj[\"extinstname\"]==\"c1\" and obj[\"extinstid\"]==1 and obj[\"num_elems\"]==4; assert sorted((p[\"name\"],p[\"id\"],p[\"type\"]) for p in obj[\"control_params\"])==[(\"index\",1,\"bit32\"),(\"pkts\",2,\"bit64\")]; assert [(p[\"name\"],p[\"id\"],p[\"type\"],p[\"value\"]) for p in obj[\"constructor_params\"]]==[('\"'\"'\"'\"'\"'\"'\"'\"'type'\"'\"'\"'\"'\"'\"'\"'\"', 1, '\"'\"'\"'\"'\"'\"'\"'\"'bit32'\"'\"'\"'\"'\"'\"'\"'\"', 0), ('\"'\"'\"'\"'\"'\"'\"'\"'salt'\"'\"'\"'\"'\"'\"'\"'\"', 2, '\"'\"'\"'\"'\"'\"'\"'\"'bit64'\"'\"'\"'\"'\"'\"'\"'\"', 42)]'\"'\"'; $TC p4template create table/constructorRules/cb/t1 keysz 16 pna_direct_counter DirectCounter/c1; $TC p4template del table/constructorRules/cb/t1; $TC p4template del extern_inst/constructorRules/DirectCounter/c1; printf constructor_verified'",
+        "matchCount": "1",
+        "matchPattern": "constructor_verified",
+        "teardown": [
+            "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/constructorRules 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf \"%s\\n\" \"$output\" >&2; exit \"$rc\"'",
+            "$TC p4template del extern/root/DirectCounter",
+            "rm -f /tmp/p4tc-constructor-$TESTID.err"
+        ]
+    },
+    {
+        "id": "27fb",
+        "name": "Multiple constructor parameters retain following control delimiter",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/constructorRules pipeid 22 numtables 1",
+            "$TC p4template create extern/root/DirectCounter extid 0x1A000000 numinstances 2 has_exec_method"
+        ],
+        "cmdUnderTest": "$TC p4template create extern_inst/constructorRules/DirectCounter/c1 instid 1 tc_numel 4 tbl_bindable constructor param type ptype bit32 id 1 0 param salt ptype bit64 id 2 42 control_path tc_key index ptype bit32 id 1 param pkts ptype bit64 id 2 2>/tmp/p4tc-constructor-$TESTID.err",
+        "expExitCode": "0",
+        "verifyCmd": "sh -c 'set -eu; $TC -j p4template get extern_inst/constructorRules/DirectCounter/c1 | python3 -c '\"'\"'import json,sys; value=json.load(sys.stdin); assert len(value)==1; obj=value[0]; assert obj[\"extinstname\"]==\"c1\" and obj[\"extinstid\"]==1 and obj[\"num_elems\"]==4; assert sorted((p[\"name\"],p[\"id\"],p[\"type\"]) for p in obj[\"control_params\"])==[(\"index\",1,\"bit32\"),(\"pkts\",2,\"bit64\")]; assert [(p[\"name\"],p[\"id\"],p[\"type\"],p[\"value\"]) for p in obj[\"constructor_params\"]]==[('\"'\"'\"'\"'\"'\"'\"'\"'type'\"'\"'\"'\"'\"'\"'\"'\"', 1, '\"'\"'\"'\"'\"'\"'\"'\"'bit32'\"'\"'\"'\"'\"'\"'\"'\"', 0), ('\"'\"'\"'\"'\"'\"'\"'\"'salt'\"'\"'\"'\"'\"'\"'\"'\"', 2, '\"'\"'\"'\"'\"'\"'\"'\"'bit64'\"'\"'\"'\"'\"'\"'\"'\"', 42)]'\"'\"'; $TC p4template create table/constructorRules/cb/t1 keysz 16 pna_direct_counter DirectCounter/c1; $TC p4template del table/constructorRules/cb/t1; $TC p4template del extern_inst/constructorRules/DirectCounter/c1; printf constructor_verified'",
+        "matchCount": "1",
+        "matchPattern": "constructor_verified",
+        "teardown": [
+            "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/constructorRules 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf \"%s\\n\" \"$output\" >&2; exit \"$rc\"'",
+            "$TC p4template del extern/root/DirectCounter",
+            "rm -f /tmp/p4tc-constructor-$TESTID.err"
+        ]
+    },
+    {
+        "id": "9c5e",
+        "name": "Multiple constructor parameters retain trailing instance metadata",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/constructorRules pipeid 22 numtables 1",
+            "$TC p4template create extern/root/DirectCounter extid 0x1A000000 numinstances 2 has_exec_method"
+        ],
+        "cmdUnderTest": "$TC p4template create extern_inst/constructorRules/DirectCounter/c1 control_path tc_key index ptype bit32 id 1 param pkts ptype bit64 id 2 constructor param type ptype bit32 id 1 0 param salt ptype bit64 id 2 42 instid 1 tc_numel 4 tbl_bindable 2>/tmp/p4tc-constructor-$TESTID.err",
+        "expExitCode": "0",
+        "verifyCmd": "sh -c 'set -eu; $TC -j p4template get extern_inst/constructorRules/DirectCounter/c1 | python3 -c '\"'\"'import json,sys; value=json.load(sys.stdin); assert len(value)==1; obj=value[0]; assert obj[\"extinstname\"]==\"c1\" and obj[\"extinstid\"]==1 and obj[\"num_elems\"]==4; assert sorted((p[\"name\"],p[\"id\"],p[\"type\"]) for p in obj[\"control_params\"])==[(\"index\",1,\"bit32\"),(\"pkts\",2,\"bit64\")]; assert [(p[\"name\"],p[\"id\"],p[\"type\"],p[\"value\"]) for p in obj[\"constructor_params\"]]==[('\"'\"'\"'\"'\"'\"'\"'\"'type'\"'\"'\"'\"'\"'\"'\"'\"', 1, '\"'\"'\"'\"'\"'\"'\"'\"'bit32'\"'\"'\"'\"'\"'\"'\"'\"', 0), ('\"'\"'\"'\"'\"'\"'\"'\"'salt'\"'\"'\"'\"'\"'\"'\"'\"', 2, '\"'\"'\"'\"'\"'\"'\"'\"'bit64'\"'\"'\"'\"'\"'\"'\"'\"', 42)]'\"'\"'; $TC p4template create table/constructorRules/cb/t1 keysz 16 pna_direct_counter DirectCounter/c1; $TC p4template del table/constructorRules/cb/t1; $TC p4template del extern_inst/constructorRules/DirectCounter/c1; printf constructor_verified'",
+        "matchCount": "1",
+        "matchPattern": "constructor_verified",
+        "teardown": [
+            "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/constructorRules 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf \"%s\\n\" \"$output\" >&2; exit \"$rc\"'",
+            "$TC p4template del extern/root/DirectCounter",
+            "rm -f /tmp/p4tc-constructor-$TESTID.err"
+        ]
+    },
+    {
+        "id": "ad35",
+        "name": "Constructor accepts exactly 64 bytes and retains every field",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/constructorRules pipeid 22 numtables 1",
+            "$TC p4template create extern/root/DirectCounter extid 0x1A000000 numinstances 2 has_exec_method"
+        ],
+        "cmdUnderTest": "$TC p4template create extern_inst/constructorRules/DirectCounter/c1 instid 1 tc_numel 4 tbl_bindable control_path tc_key index ptype bit32 id 1 param pkts ptype bit64 id 2 constructor param type ptype bit32 id 1 0 param v1 ptype bit64 id 2 1 param v2 ptype bit64 id 3 2 param v3 ptype bit64 id 4 3 param v4 ptype bit64 id 5 4 param v5 ptype bit64 id 6 5 param v6 ptype bit64 id 7 6 param v7 ptype bit64 id 8 7 param tail ptype bit32 id 9 7 2>/tmp/p4tc-constructor-$TESTID.err",
+        "expExitCode": "0",
+        "verifyCmd": "sh -c 'set -eu; $TC -j p4template get extern_inst/constructorRules/DirectCounter/c1 | python3 -c '\"'\"'import json,sys; value=json.load(sys.stdin); assert len(value)==1; obj=value[0]; assert obj[\"extinstname\"]==\"c1\" and obj[\"extinstid\"]==1 and obj[\"num_elems\"]==4; assert sorted((p[\"name\"],p[\"id\"],p[\"type\"]) for p in obj[\"control_params\"])==[(\"index\",1,\"bit32\"),(\"pkts\",2,\"bit64\")]; assert [(p[\"name\"],p[\"id\"],p[\"type\"],p[\"value\"]) for p in obj[\"constructor_params\"]]==[('\"'\"'\"'\"'\"'\"'\"'\"'type'\"'\"'\"'\"'\"'\"'\"'\"', 1, '\"'\"'\"'\"'\"'\"'\"'\"'bit32'\"'\"'\"'\"'\"'\"'\"'\"', 0), ('\"'\"'\"'\"'\"'\"'\"'\"'v1'\"'\"'\"'\"'\"'\"'\"'\"', 2, '\"'\"'\"'\"'\"'\"'\"'\"'bit64'\"'\"'\"'\"'\"'\"'\"'\"', 1), ('\"'\"'\"'\"'\"'\"'\"'\"'v2'\"'\"'\"'\"'\"'\"'\"'\"', 3, '\"'\"'\"'\"'\"'\"'\"'\"'bit64'\"'\"'\"'\"'\"'\"'\"'\"', 2), ('\"'\"'\"'\"'\"'\"'\"'\"'v3'\"'\"'\"'\"'\"'\"'\"'\"', 4, '\"'\"'\"'\"'\"'\"'\"'\"'bit64'\"'\"'\"'\"'\"'\"'\"'\"', 3), ('\"'\"'\"'\"'\"'\"'\"'\"'v4'\"'\"'\"'\"'\"'\"'\"'\"', 5, '\"'\"'\"'\"'\"'\"'\"'\"'bit64'\"'\"'\"'\"'\"'\"'\"'\"', 4), ('\"'\"'\"'\"'\"'\"'\"'\"'v5'\"'\"'\"'\"'\"'\"'\"'\"', 6, '\"'\"'\"'\"'\"'\"'\"'\"'bit64'\"'\"'\"'\"'\"'\"'\"'\"', 5), ('\"'\"'\"'\"'\"'\"'\"'\"'v6'\"'\"'\"'\"'\"'\"'\"'\"', 7, '\"'\"'\"'\"'\"'\"'\"'\"'bit64'\"'\"'\"'\"'\"'\"'\"'\"', 6), ('\"'\"'\"'\"'\"'\"'\"'\"'v7'\"'\"'\"'\"'\"'\"'\"'\"', 8, '\"'\"'\"'\"'\"'\"'\"'\"'bit64'\"'\"'\"'\"'\"'\"'\"'\"', 7), ('\"'\"'\"'\"'\"'\"'\"'\"'tail'\"'\"'\"'\"'\"'\"'\"'\"', 9, '\"'\"'\"'\"'\"'\"'\"'\"'bit32'\"'\"'\"'\"'\"'\"'\"'\"', 7)]'\"'\"'; $TC p4template create table/constructorRules/cb/t1 keysz 16 pna_direct_counter DirectCounter/c1; $TC p4template del table/constructorRules/cb/t1; $TC p4template del extern_inst/constructorRules/DirectCounter/c1; printf constructor_verified'",
+        "matchCount": "1",
+        "matchPattern": "constructor_verified",
+        "teardown": [
+            "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/constructorRules 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf \"%s\\n\" \"$output\" >&2; exit \"$rc\"'",
+            "$TC p4template del extern/root/DirectCounter",
+            "rm -f /tmp/p4tc-constructor-$TESTID.err"
+        ]
+    },
+    {
+        "id": "df74",
+        "name": "Constructor rejects 65 bytes with a schema-valid first field",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/constructorRules pipeid 22 numtables 1",
+            "$TC p4template create extern/root/DirectCounter extid 0x1A000000 numinstances 2 has_exec_method"
+        ],
+        "cmdUnderTest": "$TC p4template create extern_inst/constructorRules/DirectCounter/c1 instid 1 tc_numel 4 tbl_bindable control_path tc_key index ptype bit32 id 1 param pkts ptype bit64 id 2 constructor param type ptype bit32 id 1 0 param v1 ptype bit64 id 2 1 param v2 ptype bit64 id 3 2 param v3 ptype bit64 id 4 3 param v4 ptype bit64 id 5 4 param v5 ptype bit64 id 6 5 param v6 ptype bit64 id 7 6 param v7 ptype bit64 id 8 7 param tail ptype bit32 id 9 7 param last ptype bit8 id 10 1 2>/tmp/p4tc-constructor-$TESTID.err",
+        "expExitCode": "255",
+        "verifyCmd": "sh -c 'set -eu; python3 -c '\"'\"'import sys; assert open(sys.argv[1]).read().splitlines()[0]==\"Error: Maximum parameter byte size reached.\"'\"'\"' /tmp/p4tc-constructor-$TESTID.err; if $TC -j p4template get extern_inst/constructorRules/DirectCounter/c1; then exit 1; else test \"$?\" -eq 255; fi; $TC p4template del extern/root/DirectCounter; $TC p4template create extern/root/DirectCounter extid 0x1A000000 numinstances 2 has_exec_method; printf constructor_verified'",
+        "matchCount": "1",
+        "matchPattern": "constructor_verified",
+        "teardown": [
+            "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/constructorRules 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf \"%s\\n\" \"$output\" >&2; exit \"$rc\"'",
+            "$TC p4template del extern/root/DirectCounter",
+            "rm -f /tmp/p4tc-constructor-$TESTID.err"
+        ]
+    },
+    {
+        "id": "2c09",
+        "name": "Invalid second constructor value is rejected rather than dropped",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/constructorRules pipeid 22 numtables 1",
+            "$TC p4template create extern/root/DirectCounter extid 0x1A000000 numinstances 2 has_exec_method"
+        ],
+        "cmdUnderTest": "$TC p4template create extern_inst/constructorRules/DirectCounter/c1 instid 1 tc_numel 4 tbl_bindable control_path tc_key index ptype bit32 id 1 param pkts ptype bit64 id 2 constructor param type ptype bit32 id 1 0 param salt ptype bit64 id 2 invalid 2>/tmp/p4tc-constructor-$TESTID.err",
+        "expExitCode": "255",
+        "verifyCmd": "sh -c 'set -eu; if $TC -j p4template get extern_inst/constructorRules/DirectCounter/c1; then exit 1; else test \"$?\" -eq 255; fi; $TC p4template del extern/root/DirectCounter; $TC p4template create extern/root/DirectCounter extid 0x1A000000 numinstances 2 has_exec_method; printf constructor_verified'",
+        "matchCount": "1",
+        "matchPattern": "constructor_verified",
+        "teardown": [
+            "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/constructorRules 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf \"%s\\n\" \"$output\" >&2; exit \"$rc\"'",
+            "$TC p4template del extern/root/DirectCounter",
+            "rm -f /tmp/p4tc-constructor-$TESTID.err"
+        ]
+    },
+    {
+        "id": "bce0",
+        "name": "Missing second constructor value is rejected rather than dropped",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/constructorRules pipeid 22 numtables 1",
+            "$TC p4template create extern/root/DirectCounter extid 0x1A000000 numinstances 2 has_exec_method"
+        ],
+        "cmdUnderTest": "$TC p4template create extern_inst/constructorRules/DirectCounter/c1 instid 1 tc_numel 4 tbl_bindable control_path tc_key index ptype bit32 id 1 param pkts ptype bit64 id 2 constructor param type ptype bit32 id 1 0 param salt ptype bit64 id 2 2>/tmp/p4tc-constructor-$TESTID.err",
+        "expExitCode": "255",
+        "verifyCmd": "sh -c 'set -eu; python3 -c '\"'\"'import sys; assert \"value\" in open(sys.argv[1]).read()'\"'\"' /tmp/p4tc-constructor-$TESTID.err; if $TC -j p4template get extern_inst/constructorRules/DirectCounter/c1; then exit 1; else test \"$?\" -eq 255; fi; $TC p4template del extern/root/DirectCounter; $TC p4template create extern/root/DirectCounter extid 0x1A000000 numinstances 2 has_exec_method; printf constructor_verified'",
+        "matchCount": "1",
+        "matchPattern": "constructor_verified",
+        "teardown": [
+            "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/constructorRules 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf \"%s\\n\" \"$output\" >&2; exit \"$rc\"'",
+            "$TC p4template del extern/root/DirectCounter",
+            "rm -f /tmp/p4tc-constructor-$TESTID.err"
+        ]
+    },
+    {
+        "id": "14cc",
+        "name": "Missing first constructor value fails cleanly before sending",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/constructorRules pipeid 22 numtables 1",
+            "$TC p4template create extern/root/DirectCounter extid 0x1A000000 numinstances 2 has_exec_method"
+        ],
+        "cmdUnderTest": "$TC p4template create extern_inst/constructorRules/DirectCounter/c1 instid 1 tc_numel 4 tbl_bindable control_path tc_key index ptype bit32 id 1 param pkts ptype bit64 id 2 constructor param type ptype bit32 id 1 2>/tmp/p4tc-constructor-$TESTID.err",
+        "expExitCode": "255",
+        "verifyCmd": "sh -c 'set -eu; python3 -c '\"'\"'import sys; assert \"value\" in open(sys.argv[1]).read()'\"'\"' /tmp/p4tc-constructor-$TESTID.err; if $TC -j p4template get extern_inst/constructorRules/DirectCounter/c1; then exit 1; else test \"$?\" -eq 255; fi; $TC p4template del extern/root/DirectCounter; $TC p4template create extern/root/DirectCounter extid 0x1A000000 numinstances 2 has_exec_method; printf constructor_verified'",
+        "matchCount": "1",
+        "matchPattern": "constructor_verified",
+        "teardown": [
+            "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/constructorRules 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf \"%s\\n\" \"$output\" >&2; exit \"$rc\"'",
+            "$TC p4template del extern/root/DirectCounter",
+            "rm -f /tmp/p4tc-constructor-$TESTID.err"
+        ]
+    },
+    {
+        "id": "ba78",
+        "name": "Oversized constructor parameters reject before module schema and release template",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/externSizes pipeid 22 numtables 0",
+            "$TC p4template create extern/root/DirectCounter extid 0x1A000000 numinstances 2 has_exec_method"
+        ],
+        "cmdUnderTest": "$TC p4template create extern_inst/externSizes/DirectCounter/rejected tc_numel 1 instid 1 tbl_bindable constructor param v1 ptype bit64 id 1 1 param v2 ptype bit64 id 2 1 param v3 ptype bit64 id 3 1 param v4 ptype bit64 id 4 1 param v5 ptype bit64 id 5 1 param v6 ptype bit64 id 6 1 param v7 ptype bit64 id 7 1 param v8 ptype bit64 id 8 1 param last ptype bit8 id 9 1 control_path tc_key index ptype bit32 id 1 param pkts ptype bit64 id 2 2>/tmp/p4tc-size-$TESTID.err",
+        "expExitCode": "255",
+        "verifyCmd": "sh -c 'set -eu; python3 -c '\"'\"'import sys; assert open(sys.argv[1]).read().splitlines()[0] == \"Error: Maximum parameter byte size reached.\"'\"'\"' /tmp/p4tc-size-$TESTID.err; $TC p4template del extern/root/DirectCounter; $TC p4template create extern/root/DirectCounter extid 0x1A000000 numinstances 2 has_exec_method; printf bounded'",
+        "matchCount": "1",
+        "matchPattern": "bounded",
+        "teardown": [
+            "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/externSizes 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf \"%s\\n\" \"$output\" >&2; exit \"$rc\"'",
+            "$TC p4template del extern/root/DirectCounter",
+            "rm -f /tmp/p4tc-size-$TESTID.err"
+        ]
+    }
+]

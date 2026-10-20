@@ -1,0 +1,34 @@
+[
+    {
+        "id": "a701",
+        "name": "Empty instance flush rejects an unknown extern name",
+        "category": ["p4tc", "template", "spec_empty_flush"],
+        "setup": [
+            "$TC p4template create pipeline/flush_probe pipeid 24 numtables 0"
+        ],
+        "cmdUnderTest": "$TC p4template del extern_inst/flush_probe/NoSuchFlushExt/",
+        "expExitCode": "255",
+        "verifyCmd": "$TC -j p4template get pipeline/flush_probe",
+        "matchPattern": "\"pname\":\\s*\"flush_probe\"",
+        "matchCount": "1",
+        "teardown": [
+            "$TC p4template del pipeline/flush_probe"
+        ]
+    },
+    {
+        "id": "a702",
+        "name": "Empty instance flush rejects an unknown extern ID",
+        "category": ["p4tc", "template", "spec_empty_flush"],
+        "setup": [
+            "$TC p4template create pipeline/flush_probe pipeid 24 numtables 0"
+        ],
+        "cmdUnderTest": "$TC p4template del extern_inst/flush_probe/ extid 65535",
+        "expExitCode": "255",
+        "verifyCmd": "$TC -j p4template get pipeline/flush_probe",
+        "matchPattern": "\"pname\":\\s*\"flush_probe\"",
+        "matchCount": "1",
+        "teardown": [
+            "$TC p4template del pipeline/flush_probe"
+        ]
+    }
+]

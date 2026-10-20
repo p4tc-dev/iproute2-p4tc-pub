@@ -1,0 +1,457 @@
+[
+    {
+        "id": "1f8b",
+        "name": "Last extern instance deletion permits immediate template replacement",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 1",
+            "$TC p4template create extern/root/myext extid 1 numinstances 2",
+            "$TC p4template create extern_inst/ptables/myext/one instid 1 control_path tc_key index ptype bit32 param value ptype bit32"
+        ],
+        "cmdUnderTest": "sh -c 'set -eu; $TC p4template del extern_inst/ptables/myext/one'",
+        "expExitCode": "0",
+        "verifyCmd": "sh -c 'set -eu; $TC p4template del extern/root/myext; $TC p4template create extern/root/myext extid 1 numinstances 2; $TC p4template create extern_inst/ptables/myext/one instid 1 control_path tc_key index ptype bit32 param value ptype bit32; $TC p4template del extern_inst/ptables/myext/one; $TC p4template del extern/root/myext; $TC p4template create extern/root/myext extid 1 numinstances 2; printf released'",
+        "matchCount": "1",
+        "matchPattern": "released",
+        "teardown": [
+            "$TC p4template del pipeline/ptables",
+            "$TC p4template del extern/root/myext"
+        ]
+    },
+    {
+        "id": "ef71",
+        "name": "Deleting one instance retains its sibling and template reference",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 1",
+            "$TC p4template create extern/root/myext extid 1 numinstances 2",
+            "$TC p4template create extern_inst/ptables/myext/one instid 1 control_path tc_key index ptype bit32 param value ptype bit32",
+            "$TC p4template create extern_inst/ptables/myext/two instid 2 control_path tc_key index ptype bit32 param value ptype bit32",
+            "$TC -j p4template get extern_inst/ptables/myext/two >/tmp/p4tc-extlife-$TESTID.json"
+        ],
+        "cmdUnderTest": "sh -c 'set -eu; $TC p4template del extern_inst/ptables/myext/one'",
+        "expExitCode": "0",
+        "verifyCmd": "sh -c 'set -eu; $TC -j p4template get extern_inst/ptables/myext/two | python3 -c '\"'\"'import json,sys; assert json.load(sys.stdin)==json.load(open(sys.argv[1]))'\"'\"' /tmp/p4tc-extlife-$TESTID.json; if $TC p4template del extern/root/myext; then exit 1; else test \"$?\" -eq 255; fi; $TC p4template del extern_inst/ptables/myext/two; $TC p4template del extern/root/myext; $TC p4template create extern/root/myext extid 1 numinstances 2; $TC p4template create extern_inst/ptables/myext/one instid 1 control_path tc_key index ptype bit32 param value ptype bit32; $TC p4template del extern_inst/ptables/myext/one; $TC p4template del extern/root/myext; $TC p4template create extern/root/myext extid 1 numinstances 2; printf released'",
+        "matchCount": "1",
+        "matchPattern": "released",
+        "teardown": [
+            "$TC p4template del pipeline/ptables",
+            "$TC p4template del extern/root/myext",
+            "rm -f /tmp/p4tc-extlife-$TESTID.json"
+        ]
+    },
+    {
+        "id": "9032",
+        "name": "Template remains referenced until the last pipeline releases it",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 1",
+            "$TC p4template create pipeline/other pipeid 23 numtables 0",
+            "$TC p4template create extern/root/myext extid 1 numinstances 2",
+            "$TC p4template create extern_inst/ptables/myext/one instid 1 control_path tc_key index ptype bit32 param value ptype bit32",
+            "$TC p4template create extern_inst/other/myext/one instid 1 control_path tc_key index ptype bit32 param value ptype bit32"
+        ],
+        "cmdUnderTest": "sh -c 'set -eu; $TC p4template del extern_inst/ptables/myext/one'",
+        "expExitCode": "0",
+        "verifyCmd": "sh -c 'set -eu; if $TC p4template del extern/root/myext; then exit 1; else test \"$?\" -eq 255; fi; $TC p4template get extern_inst/other/myext/one; $TC p4template del extern_inst/other/myext/one; $TC p4template del extern/root/myext; $TC p4template create extern/root/myext extid 1 numinstances 2; $TC p4template create extern_inst/ptables/myext/one instid 1 control_path tc_key index ptype bit32 param value ptype bit32; $TC p4template del extern_inst/ptables/myext/one; $TC p4template del extern/root/myext; $TC p4template create extern/root/myext extid 1 numinstances 2; printf released'",
+        "matchCount": "1",
+        "matchPattern": "released",
+        "teardown": [
+            "$TC p4template del pipeline/ptables",
+            "$TC p4template del pipeline/other",
+            "$TC p4template del extern/root/myext"
+        ]
+    },
+    {
+        "id": "5c62",
+        "name": "Extern flush releases its container after iterating all instances",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 1",
+            "$TC p4template create extern/root/myext extid 1 numinstances 2",
+            "$TC p4template create extern_inst/ptables/myext/one instid 1 control_path tc_key index ptype bit32 param value ptype bit32",
+            "$TC p4template create extern_inst/ptables/myext/two instid 2 control_path tc_key index ptype bit32 param value ptype bit32"
+        ],
+        "cmdUnderTest": "sh -c 'set -eu; $TC p4template del extern_inst/ptables/myext'",
+        "expExitCode": "0",
+        "verifyCmd": "sh -c 'set -eu; $TC p4template del extern/root/myext; $TC p4template create extern/root/myext extid 1 numinstances 2; $TC p4template create extern_inst/ptables/myext/one instid 1 control_path tc_key index ptype bit32 param value ptype bit32; $TC p4template del extern_inst/ptables/myext/one; $TC p4template del extern/root/myext; $TC p4template create extern/root/myext extid 1 numinstances 2; printf released'",
+        "matchCount": "1",
+        "matchPattern": "released",
+        "teardown": [
+            "$TC p4template del pipeline/ptables",
+            "$TC p4template del extern/root/myext"
+        ]
+    },
+    {
+        "id": "5b40",
+        "name": "Rejected table bindability releases the empty extern container",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 1",
+            "$TC p4template create extern/root/myext extid 1 numinstances 2"
+        ],
+        "cmdUnderTest": "sh -c 'set -eu; $TC p4template create extern_inst/ptables/myext/one instid 1 tbl_bindable control_path tc_key index ptype bit32 param value ptype bit32'",
+        "expExitCode": "255",
+        "verifyCmd": "sh -c 'set -eu; $TC p4template del extern/root/myext; $TC p4template create extern/root/myext extid 1 numinstances 2; $TC p4template create extern_inst/ptables/myext/one instid 1 control_path tc_key index ptype bit32 param value ptype bit32; $TC p4template del extern_inst/ptables/myext/one; $TC p4template del extern/root/myext; $TC p4template create extern/root/myext extid 1 numinstances 2; printf released'",
+        "matchCount": "1",
+        "matchPattern": "released",
+        "teardown": [
+            "$TC p4template del pipeline/ptables",
+            "$TC p4template del extern/root/myext"
+        ]
+    },
+    {
+        "id": "05d9",
+        "name": "Invalid control parameters release the prospective instance reference",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 1",
+            "$TC p4template create extern/root/myext extid 1 numinstances 2"
+        ],
+        "cmdUnderTest": "sh -c 'set -eu; $TC p4template create extern_inst/ptables/myext/one instid 1 control_path tc_key index ptype bit32'",
+        "expExitCode": "255",
+        "verifyCmd": "sh -c 'set -eu; $TC p4template del extern/root/myext; $TC p4template create extern/root/myext extid 1 numinstances 2; $TC p4template create extern_inst/ptables/myext/one instid 1 control_path tc_key index ptype bit32 param value ptype bit32; $TC p4template del extern_inst/ptables/myext/one; $TC p4template del extern/root/myext; $TC p4template create extern/root/myext extid 1 numinstances 2; printf released'",
+        "matchCount": "1",
+        "matchPattern": "released",
+        "teardown": [
+            "$TC p4template del pipeline/ptables",
+            "$TC p4template del extern/root/myext"
+        ]
+    },
+    {
+        "id": "0078",
+        "name": "Rejected extern constructor releases the empty container",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 1",
+            "$TC p4template create extern/root/Meter extid 0x1B000000 numinstances 2 has_exec_method"
+        ],
+        "cmdUnderTest": "sh -c 'set -eu; $TC p4template create extern_inst/ptables/Meter/one instid 1 tc_numel 16 constructor param type ptype bit32 2 control_path tc_key index ptype bit32 id 1 param cir ptype rate id 2 param cbs ptype bit64 id 3 param pir ptype rate id 4 param pbs ptype bit64 id 5'",
+        "expExitCode": "255",
+        "verifyCmd": "sh -c 'set -eu; $TC p4template del extern/root/Meter; $TC p4template create extern/root/Meter extid 0x1B000000 numinstances 2 has_exec_method; printf released'",
+        "matchCount": "1",
+        "matchPattern": "released",
+        "teardown": [
+            "$TC p4template del pipeline/ptables",
+            "$TC p4template del extern/root/Meter"
+        ]
+    },
+    {
+        "id": "b384",
+        "name": "Duplicate creation drops only the tentative reference",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 1",
+            "$TC p4template create extern/root/myext extid 1 numinstances 2",
+            "$TC p4template create extern_inst/ptables/myext/one instid 1 control_path tc_key index ptype bit32 param value ptype bit32"
+        ],
+        "cmdUnderTest": "sh -c 'set -eu; $TC p4template create extern_inst/ptables/myext/one instid 1 control_path tc_key index ptype bit32 param value ptype bit32'",
+        "expExitCode": "255",
+        "verifyCmd": "sh -c 'set -eu; $TC p4template get extern_inst/ptables/myext/one; if $TC p4template del extern/root/myext; then exit 1; else test \"$?\" -eq 255; fi; $TC p4template del extern_inst/ptables/myext/one; $TC p4template del extern/root/myext; $TC p4template create extern/root/myext extid 1 numinstances 2; $TC p4template create extern_inst/ptables/myext/one instid 1 control_path tc_key index ptype bit32 param value ptype bit32; $TC p4template del extern_inst/ptables/myext/one; $TC p4template del extern/root/myext; $TC p4template create extern/root/myext extid 1 numinstances 2; printf released'",
+        "matchCount": "1",
+        "matchPattern": "released",
+        "teardown": [
+            "$TC p4template del pipeline/ptables",
+            "$TC p4template del extern/root/myext"
+        ]
+    },
+    {
+        "id": "08c7",
+        "name": "A live table binding prevents premature extern instance release",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 1",
+            "$TC p4template create extern/root/DirectCounter extid 0x1A000000 numinstances 2 has_exec_method",
+            "$TC p4template create extern_inst/ptables/DirectCounter/one instid 1 tc_numel 16 tbl_bindable constructor param type ptype bit32 0 control_path tc_key index ptype bit32 id 1 param pkts ptype bit64 id 2",
+            "$TC p4template create table/ptables/cb/tname keysz 16 pna_direct_counter DirectCounter/one"
+        ],
+        "cmdUnderTest": "sh -c 'set -eu; $TC p4template del extern_inst/ptables/DirectCounter/one'",
+        "expExitCode": "255",
+        "verifyCmd": "sh -c 'set -eu; $TC p4template get extern_inst/ptables/DirectCounter/one; if $TC p4template del extern/root/DirectCounter; then exit 1; else test \"$?\" -eq 255; fi; $TC p4template del table/ptables/cb/tname; $TC p4template del extern_inst/ptables/DirectCounter/one; $TC p4template del extern/root/DirectCounter; $TC p4template create extern/root/DirectCounter extid 0x1A000000 numinstances 2 has_exec_method; printf released'",
+        "matchCount": "1",
+        "matchPattern": "released",
+        "teardown": [
+            "$TC p4template del pipeline/ptables",
+            "$TC p4template del extern/root/DirectCounter"
+        ]
+    },
+    {
+        "id": "ec5e",
+        "name": "Absent-container get by name retains instance diagnostic",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 0",
+            "$TC p4template create extern/root/myext extid 1 numinstances 2",
+            "$TC -j p4template get extern/root/myext >/tmp/p4tc-extdiag-$TESTID.json"
+        ],
+        "cmdUnderTest": "$TC p4template get extern_inst/ptables/myext/missing 2>/tmp/p4tc-extdiag-$TESTID.err",
+        "expExitCode": "255",
+        "verifyCmd": "sh -c 'set -eu; cat /tmp/p4tc-extdiag-$TESTID.err; $TC -j p4template get extern/root/myext | python3 -c '\"'\"'import json,sys; assert json.load(sys.stdin)==json.load(open(sys.argv[1]))'\"'\"' /tmp/p4tc-extdiag-$TESTID.json; $TC p4template del extern/root/myext; $TC p4template create extern/root/myext extid 1 numinstances 2; printf released'",
+        "matchCount": "1",
+        "matchPattern": "Error: Instance\\ name\\ not\\ found\\ missing[\\s\\S]*released",
+        "teardown": [
+            "$TC p4template del pipeline/ptables",
+            "$TC p4template del extern/root/myext",
+            "rm -f /tmp/p4tc-extdiag-$TESTID.err /tmp/p4tc-extdiag-$TESTID.json"
+        ]
+    },
+    {
+        "id": "984f",
+        "name": "Absent-container get by id retains instance diagnostic",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 0",
+            "$TC p4template create extern/root/myext extid 1 numinstances 2",
+            "$TC -j p4template get extern/root/myext >/tmp/p4tc-extdiag-$TESTID.json"
+        ],
+        "cmdUnderTest": "$TC p4template get extern_inst/ptables/ extid 1 instid 17 2>/tmp/p4tc-extdiag-$TESTID.err",
+        "expExitCode": "255",
+        "verifyCmd": "sh -c 'set -eu; cat /tmp/p4tc-extdiag-$TESTID.err; $TC -j p4template get extern/root/myext | python3 -c '\"'\"'import json,sys; assert json.load(sys.stdin)==json.load(open(sys.argv[1]))'\"'\"' /tmp/p4tc-extdiag-$TESTID.json; $TC p4template del extern/root/myext; $TC p4template create extern/root/myext extid 1 numinstances 2; printf released'",
+        "matchCount": "1",
+        "matchPattern": "Error: Unable\\ to\\ find\\ instance\\ by\\ id[\\s\\S]*released",
+        "teardown": [
+            "$TC p4template del pipeline/ptables",
+            "$TC p4template del extern/root/myext",
+            "rm -f /tmp/p4tc-extdiag-$TESTID.err /tmp/p4tc-extdiag-$TESTID.json"
+        ]
+    },
+    {
+        "id": "e3df",
+        "name": "Absent-container del by name retains instance diagnostic",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 0",
+            "$TC p4template create extern/root/myext extid 1 numinstances 2",
+            "$TC -j p4template get extern/root/myext >/tmp/p4tc-extdiag-$TESTID.json"
+        ],
+        "cmdUnderTest": "$TC p4template del extern_inst/ptables/myext/missing 2>/tmp/p4tc-extdiag-$TESTID.err",
+        "expExitCode": "255",
+        "verifyCmd": "sh -c 'set -eu; cat /tmp/p4tc-extdiag-$TESTID.err; $TC -j p4template get extern/root/myext | python3 -c '\"'\"'import json,sys; assert json.load(sys.stdin)==json.load(open(sys.argv[1]))'\"'\"' /tmp/p4tc-extdiag-$TESTID.json; $TC p4template del extern/root/myext; $TC p4template create extern/root/myext extid 1 numinstances 2; printf released'",
+        "matchCount": "1",
+        "matchPattern": "Error: Instance\\ name\\ not\\ found\\ missing[\\s\\S]*released",
+        "teardown": [
+            "$TC p4template del pipeline/ptables",
+            "$TC p4template del extern/root/myext",
+            "rm -f /tmp/p4tc-extdiag-$TESTID.err /tmp/p4tc-extdiag-$TESTID.json"
+        ]
+    },
+    {
+        "id": "7890",
+        "name": "Absent-container del by id retains instance diagnostic",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 0",
+            "$TC p4template create extern/root/myext extid 1 numinstances 2",
+            "$TC -j p4template get extern/root/myext >/tmp/p4tc-extdiag-$TESTID.json"
+        ],
+        "cmdUnderTest": "$TC p4template del extern_inst/ptables/ extid 1 instid 17 2>/tmp/p4tc-extdiag-$TESTID.err",
+        "expExitCode": "255",
+        "verifyCmd": "sh -c 'set -eu; cat /tmp/p4tc-extdiag-$TESTID.err; $TC -j p4template get extern/root/myext | python3 -c '\"'\"'import json,sys; assert json.load(sys.stdin)==json.load(open(sys.argv[1]))'\"'\"' /tmp/p4tc-extdiag-$TESTID.json; $TC p4template del extern/root/myext; $TC p4template create extern/root/myext extid 1 numinstances 2; printf released'",
+        "matchCount": "1",
+        "matchPattern": "Error: Unable\\ to\\ find\\ instance\\ by\\ id[\\s\\S]*released",
+        "teardown": [
+            "$TC p4template del pipeline/ptables",
+            "$TC p4template del extern/root/myext",
+            "rm -f /tmp/p4tc-extdiag-$TESTID.err /tmp/p4tc-extdiag-$TESTID.json"
+        ]
+    },
+    {
+        "id": "1753",
+        "name": "Absent-container get by name retains extern diagnostic",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 0",
+            "$TC p4template create extern/root/myext extid 1 numinstances 2",
+            "$TC -j p4template get extern/root/myext >/tmp/p4tc-extdiag-$TESTID.json"
+        ],
+        "cmdUnderTest": "$TC p4template get extern_inst/ptables/unknown/missing 2>/tmp/p4tc-extdiag-$TESTID.err",
+        "expExitCode": "255",
+        "verifyCmd": "sh -c 'set -eu; cat /tmp/p4tc-extdiag-$TESTID.err; $TC -j p4template get extern/root/myext | python3 -c '\"'\"'import json,sys; assert json.load(sys.stdin)==json.load(open(sys.argv[1]))'\"'\"' /tmp/p4tc-extdiag-$TESTID.json; $TC p4template del extern/root/myext; $TC p4template create extern/root/myext extid 1 numinstances 2; printf released'",
+        "matchCount": "1",
+        "matchPattern": "Error: Extern\\ name\\ not\\ found[\\s\\S]*released",
+        "teardown": [
+            "$TC p4template del pipeline/ptables",
+            "$TC p4template del extern/root/myext",
+            "rm -f /tmp/p4tc-extdiag-$TESTID.err /tmp/p4tc-extdiag-$TESTID.json"
+        ]
+    },
+    {
+        "id": "8eea",
+        "name": "Absent-container get by id retains extern diagnostic",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 0",
+            "$TC p4template create extern/root/myext extid 1 numinstances 2",
+            "$TC -j p4template get extern/root/myext >/tmp/p4tc-extdiag-$TESTID.json"
+        ],
+        "cmdUnderTest": "$TC p4template get extern_inst/ptables/ extid 65535 instid 17 2>/tmp/p4tc-extdiag-$TESTID.err",
+        "expExitCode": "255",
+        "verifyCmd": "sh -c 'set -eu; cat /tmp/p4tc-extdiag-$TESTID.err; $TC -j p4template get extern/root/myext | python3 -c '\"'\"'import json,sys; assert json.load(sys.stdin)==json.load(open(sys.argv[1]))'\"'\"' /tmp/p4tc-extdiag-$TESTID.json; $TC p4template del extern/root/myext; $TC p4template create extern/root/myext extid 1 numinstances 2; printf released'",
+        "matchCount": "1",
+        "matchPattern": "Error: Unable\\ to\\ find\\ extern[\\s\\S]*released",
+        "teardown": [
+            "$TC p4template del pipeline/ptables",
+            "$TC p4template del extern/root/myext",
+            "rm -f /tmp/p4tc-extdiag-$TESTID.err /tmp/p4tc-extdiag-$TESTID.json"
+        ]
+    },
+    {
+        "id": "da0a",
+        "name": "Absent-container del by name retains extern diagnostic",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 0",
+            "$TC p4template create extern/root/myext extid 1 numinstances 2",
+            "$TC -j p4template get extern/root/myext >/tmp/p4tc-extdiag-$TESTID.json"
+        ],
+        "cmdUnderTest": "$TC p4template del extern_inst/ptables/unknown/missing 2>/tmp/p4tc-extdiag-$TESTID.err",
+        "expExitCode": "255",
+        "verifyCmd": "sh -c 'set -eu; cat /tmp/p4tc-extdiag-$TESTID.err; $TC -j p4template get extern/root/myext | python3 -c '\"'\"'import json,sys; assert json.load(sys.stdin)==json.load(open(sys.argv[1]))'\"'\"' /tmp/p4tc-extdiag-$TESTID.json; $TC p4template del extern/root/myext; $TC p4template create extern/root/myext extid 1 numinstances 2; printf released'",
+        "matchCount": "1",
+        "matchPattern": "Error: Extern\\ name\\ not\\ found[\\s\\S]*released",
+        "teardown": [
+            "$TC p4template del pipeline/ptables",
+            "$TC p4template del extern/root/myext",
+            "rm -f /tmp/p4tc-extdiag-$TESTID.err /tmp/p4tc-extdiag-$TESTID.json"
+        ]
+    },
+    {
+        "id": "737b",
+        "name": "Absent-container del by id retains extern diagnostic",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 0",
+            "$TC p4template create extern/root/myext extid 1 numinstances 2",
+            "$TC -j p4template get extern/root/myext >/tmp/p4tc-extdiag-$TESTID.json"
+        ],
+        "cmdUnderTest": "$TC p4template del extern_inst/ptables/ extid 65535 instid 17 2>/tmp/p4tc-extdiag-$TESTID.err",
+        "expExitCode": "255",
+        "verifyCmd": "sh -c 'set -eu; cat /tmp/p4tc-extdiag-$TESTID.err; $TC -j p4template get extern/root/myext | python3 -c '\"'\"'import json,sys; assert json.load(sys.stdin)==json.load(open(sys.argv[1]))'\"'\"' /tmp/p4tc-extdiag-$TESTID.json; $TC p4template del extern/root/myext; $TC p4template create extern/root/myext extid 1 numinstances 2; printf released'",
+        "matchCount": "1",
+        "matchPattern": "Error: Unable\\ to\\ find\\ extern[\\s\\S]*released",
+        "teardown": [
+            "$TC p4template del pipeline/ptables",
+            "$TC p4template del extern/root/myext",
+            "rm -f /tmp/p4tc-extdiag-$TESTID.err /tmp/p4tc-extdiag-$TESTID.json"
+        ]
+    }
+]

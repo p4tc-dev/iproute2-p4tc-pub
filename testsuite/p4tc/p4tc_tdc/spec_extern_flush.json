@@ -1,0 +1,351 @@
+[
+    {
+        "id": "39ff",
+        "name": "Template flush reports busy with 1 referenced templates and preserves all objects",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/flushRules pipeid 22 numtables 2",
+            "$TC p4template create extern/root/ext1 extid 1 numinstances 2",
+            "$TC p4template create extern_inst/flushRules/ext1/one instid 1 control_path tc_key index ptype bit32 param value ptype bit32",
+            "$TC -j p4template get extern/root/ext1 >/tmp/p4tc-flush-$TESTID-1.json"
+        ],
+        "cmdUnderTest": "$TC p4template del extern/root/ 2>/tmp/p4tc-flush-$TESTID.err",
+        "expExitCode": "255",
+        "verifyCmd": "sh -c 'set -eu; python3 -c '\"'\"'import sys; assert open(sys.argv[1]).read().splitlines()[0] == '\"'\"'\"'\"'\"'\"'\"'\"'Error: Unable to flush any externs.'\"'\"'\"'\"'\"'\"'\"'\"''\"'\"' /tmp/p4tc-flush-$TESTID.err; $TC -j p4template get extern/root/ext1 | python3 -c '\"'\"'import json,sys; assert json.load(sys.stdin)==json.load(open(sys.argv[1]))'\"'\"' /tmp/p4tc-flush-$TESTID-1.json; $TC -j p4template get extern_inst/flushRules/ext1/one; $TC p4template del extern_inst/flushRules/ext1/one; $TC p4template del extern/root/; $TC p4template create extern/root/ext1 extid 1 numinstances 2; printf flushed'",
+        "matchCount": "1",
+        "matchPattern": "flushed",
+        "teardown": [
+            "sh -c 'set -eu; for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/flushRules 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf \"%s\\n\" \"$output\" >&2; exit \"$rc\"'",
+            "$TC p4template del extern/root/",
+            "rm -f /tmp/p4tc-flush-$TESTID.err /tmp/p4tc-flush-$TESTID-*.json"
+        ]
+    },
+    {
+        "id": "87fe",
+        "name": "Template flush reports busy with 2 referenced templates and preserves all objects",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/flushRules pipeid 22 numtables 2",
+            "$TC p4template create extern/root/ext1 extid 1 numinstances 2",
+            "$TC p4template create extern_inst/flushRules/ext1/one instid 1 control_path tc_key index ptype bit32 param value ptype bit32",
+            "$TC -j p4template get extern/root/ext1 >/tmp/p4tc-flush-$TESTID-1.json",
+            "$TC p4template create extern/root/ext2 extid 2 numinstances 2",
+            "$TC p4template create extern_inst/flushRules/ext2/one instid 1 control_path tc_key index ptype bit32 param value ptype bit32",
+            "$TC -j p4template get extern/root/ext2 >/tmp/p4tc-flush-$TESTID-2.json"
+        ],
+        "cmdUnderTest": "$TC p4template del extern/root/ 2>/tmp/p4tc-flush-$TESTID.err",
+        "expExitCode": "255",
+        "verifyCmd": "sh -c 'set -eu; python3 -c '\"'\"'import sys; assert open(sys.argv[1]).read().splitlines()[0] == '\"'\"'\"'\"'\"'\"'\"'\"'Error: Unable to flush any externs.'\"'\"'\"'\"'\"'\"'\"'\"''\"'\"' /tmp/p4tc-flush-$TESTID.err; $TC -j p4template get extern/root/ext1 | python3 -c '\"'\"'import json,sys; assert json.load(sys.stdin)==json.load(open(sys.argv[1]))'\"'\"' /tmp/p4tc-flush-$TESTID-1.json; $TC -j p4template get extern_inst/flushRules/ext1/one; $TC -j p4template get extern/root/ext2 | python3 -c '\"'\"'import json,sys; assert json.load(sys.stdin)==json.load(open(sys.argv[1]))'\"'\"' /tmp/p4tc-flush-$TESTID-2.json; $TC -j p4template get extern_inst/flushRules/ext2/one; $TC p4template del extern_inst/flushRules/ext1/one; $TC p4template del extern_inst/flushRules/ext2/one; $TC p4template del extern/root/; $TC p4template create extern/root/ext1 extid 1 numinstances 2; $TC p4template create extern/root/ext2 extid 2 numinstances 2; printf flushed'",
+        "matchCount": "1",
+        "matchPattern": "flushed",
+        "teardown": [
+            "sh -c 'set -eu; for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/flushRules 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf \"%s\\n\" \"$output\" >&2; exit \"$rc\"'",
+            "$TC p4template del extern/root/",
+            "rm -f /tmp/p4tc-flush-$TESTID.err /tmp/p4tc-flush-$TESTID-*.json"
+        ]
+    },
+    {
+        "id": "d185",
+        "name": "Partial template flush removes only free template when busy ID is 1",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/flushRules pipeid 22 numtables 2",
+            "$TC p4template create extern/root/ext1 extid 1 numinstances 2",
+            "$TC p4template create extern/root/ext2 extid 2 numinstances 2",
+            "$TC p4template create extern_inst/flushRules/ext1/one instid 1 control_path tc_key index ptype bit32 param value ptype bit32",
+            "$TC -j p4template get extern/root/ext1 >/tmp/p4tc-flush-$TESTID-1.json"
+        ],
+        "cmdUnderTest": "$TC p4template del extern/root/ 2>/tmp/p4tc-flush-$TESTID.err",
+        "expExitCode": "0",
+        "verifyCmd": "sh -c 'set -eu; $TC -j p4template get extern/root/ext1 | python3 -c '\"'\"'import json,sys; assert json.load(sys.stdin)==json.load(open(sys.argv[1]))'\"'\"' /tmp/p4tc-flush-$TESTID-1.json; if $TC -j p4template get extern/root/ext2; then exit 1; else test \"$?\" -eq 255; fi; $TC -j p4template get extern_inst/flushRules/ext1/one; $TC p4template del extern_inst/flushRules/ext1/one; $TC p4template del extern/root/; $TC p4template create extern/root/ext1 extid 1 numinstances 2; $TC p4template create extern/root/ext2 extid 2 numinstances 2; printf flushed'",
+        "matchCount": "1",
+        "matchPattern": "flushed",
+        "teardown": [
+            "sh -c 'set -eu; for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/flushRules 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf \"%s\\n\" \"$output\" >&2; exit \"$rc\"'",
+            "$TC p4template del extern/root/",
+            "rm -f /tmp/p4tc-flush-$TESTID.err /tmp/p4tc-flush-$TESTID-*.json"
+        ]
+    },
+    {
+        "id": "de43",
+        "name": "Partial template flush removes only free template when busy ID is 2",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/flushRules pipeid 22 numtables 2",
+            "$TC p4template create extern/root/ext1 extid 1 numinstances 2",
+            "$TC p4template create extern/root/ext2 extid 2 numinstances 2",
+            "$TC p4template create extern_inst/flushRules/ext2/one instid 1 control_path tc_key index ptype bit32 param value ptype bit32",
+            "$TC -j p4template get extern/root/ext2 >/tmp/p4tc-flush-$TESTID-2.json"
+        ],
+        "cmdUnderTest": "$TC p4template del extern/root/ 2>/tmp/p4tc-flush-$TESTID.err",
+        "expExitCode": "0",
+        "verifyCmd": "sh -c 'set -eu; $TC -j p4template get extern/root/ext2 | python3 -c '\"'\"'import json,sys; assert json.load(sys.stdin)==json.load(open(sys.argv[1]))'\"'\"' /tmp/p4tc-flush-$TESTID-2.json; if $TC -j p4template get extern/root/ext1; then exit 1; else test \"$?\" -eq 255; fi; $TC -j p4template get extern_inst/flushRules/ext2/one; $TC p4template del extern_inst/flushRules/ext2/one; $TC p4template del extern/root/; $TC p4template create extern/root/ext1 extid 1 numinstances 2; $TC p4template create extern/root/ext2 extid 2 numinstances 2; printf flushed'",
+        "matchCount": "1",
+        "matchPattern": "flushed",
+        "teardown": [
+            "sh -c 'set -eu; for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/flushRules 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf \"%s\\n\" \"$output\" >&2; exit \"$rc\"'",
+            "$TC p4template del extern/root/",
+            "rm -f /tmp/p4tc-flush-$TESTID.err /tmp/p4tc-flush-$TESTID-*.json"
+        ]
+    },
+    {
+        "id": "3f78",
+        "name": "Template flush removes all unreferenced templates and permits immediate recreation",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/flushRules pipeid 22 numtables 2",
+            "$TC p4template create extern/root/ext1 extid 1 numinstances 2",
+            "$TC p4template create extern/root/ext2 extid 2 numinstances 2"
+        ],
+        "cmdUnderTest": "$TC p4template del extern/root/ 2>/tmp/p4tc-flush-$TESTID.err",
+        "expExitCode": "0",
+        "verifyCmd": "sh -c 'set -eu; if $TC -j p4template get extern/root/ext1; then exit 1; else test \"$?\" -eq 255; fi; if $TC -j p4template get extern/root/ext2; then exit 1; else test \"$?\" -eq 255; fi; $TC p4template create extern/root/ext1 extid 1 numinstances 2; $TC p4template create extern/root/ext2 extid 2 numinstances 2; printf flushed'",
+        "matchCount": "1",
+        "matchPattern": "flushed",
+        "teardown": [
+            "sh -c 'set -eu; for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/flushRules 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf \"%s\\n\" \"$output\" >&2; exit \"$rc\"'",
+            "$TC p4template del extern/root/",
+            "rm -f /tmp/p4tc-flush-$TESTID.err /tmp/p4tc-flush-$TESTID-*.json"
+        ]
+    },
+    {
+        "id": "65ec",
+        "name": "Empty template flush retains successful no-op semantics",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/flushRules pipeid 22 numtables 2"
+        ],
+        "cmdUnderTest": "$TC p4template del extern/root/ 2>/tmp/p4tc-flush-$TESTID.err",
+        "expExitCode": "0",
+        "verifyCmd": "sh -c 'set -eu; $TC p4template create extern/root/ext1 extid 1 numinstances 2; printf flushed'",
+        "matchCount": "1",
+        "matchPattern": "flushed",
+        "teardown": [
+            "sh -c 'set -eu; for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/flushRules 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf \"%s\\n\" \"$output\" >&2; exit \"$rc\"'",
+            "$TC p4template del extern/root/",
+            "rm -f /tmp/p4tc-flush-$TESTID.err /tmp/p4tc-flush-$TESTID-*.json"
+        ]
+    },
+    {
+        "id": "802f",
+        "name": "Instance flush reports busy with 1 table-bound instances and preserves bindings",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/flushRules pipeid 22 numtables 2",
+            "$TC p4template create extern/root/DirectCounter extid 0x1A000000 numinstances 2 has_exec_method",
+            "$TC p4template create extern_inst/flushRules/DirectCounter/c1 instid 1 tc_numel 4 tbl_bindable constructor param type ptype bit32 0 control_path tc_key index ptype bit32 id 1 param pkts ptype bit64 id 2",
+            "$TC p4template create table/flushRules/cb/t1 keysz 16 pna_direct_counter DirectCounter/c1",
+            "sh -c 'set -eu; $TC -j p4template get extern_inst/flushRules/DirectCounter/c1 >/tmp/p4tc-flush-$TESTID-1.json; python3 -c '\"'\"'import json,sys; value=json.load(sys.stdin); assert len(value)==1; obj=value[0]; assert obj[\"extinstname\"]==\"c1\" and obj[\"extinstid\"]==1; assert obj[\"extname\"]==\"DirectCounter\" and obj[\"extid\"]==0x1A000000; assert obj[\"num_elems\"]==4; assert sorted((p[\"name\"],p[\"id\"],p[\"type\"]) for p in obj[\"control_params\"])==[(\"index\",1,\"bit32\"),(\"pkts\",2,\"bit64\")]; assert [(p[\"name\"],p[\"type\"],p[\"value\"]) for p in obj[\"constructor_params\"]]==[(\"type\",\"bit32\",0)]'\"'\"' </tmp/p4tc-flush-$TESTID-1.json'",
+            "sh -c 'set -eu; $TC -j p4template get table/flushRules/cb/t1 >/tmp/p4tc-flush-$TESTID-3.json; python3 -c '\"'\"'import json,sys; value=json.load(sys.stdin); assert len(value)==1; obj=value[0]; assert obj[\"counter_inst_path\"]==\"c1\"'\"'\"' </tmp/p4tc-flush-$TESTID-3.json'"
+        ],
+        "cmdUnderTest": "$TC p4template del extern_inst/flushRules/DirectCounter 2>/tmp/p4tc-flush-$TESTID.err",
+        "expExitCode": "255",
+        "verifyCmd": "sh -c 'set -eu; python3 -c '\"'\"'import sys; assert open(sys.argv[1]).read().splitlines()[0] == '\"'\"'\"'\"'\"'\"'\"'\"'Error: Unable to flush any externs instance.'\"'\"'\"'\"'\"'\"'\"'\"''\"'\"' /tmp/p4tc-flush-$TESTID.err; $TC -j p4template get extern_inst/flushRules/DirectCounter/c1 | python3 -c '\"'\"'import json,sys; assert json.load(sys.stdin)==json.load(open(sys.argv[1]))'\"'\"' /tmp/p4tc-flush-$TESTID-1.json; $TC -j p4template get table/flushRules/cb/t1 | python3 -c '\"'\"'import json,sys; assert json.load(sys.stdin)==json.load(open(sys.argv[1]))'\"'\"' /tmp/p4tc-flush-$TESTID-3.json; $TC p4template del table/flushRules/cb/t1; $TC p4template del extern_inst/flushRules/DirectCounter; $TC p4template del extern/root/DirectCounter; $TC p4template create extern/root/DirectCounter extid 0x1A000000 numinstances 2 has_exec_method; $TC p4template create extern_inst/flushRules/DirectCounter/c1 instid 1 tc_numel 4 tbl_bindable constructor param type ptype bit32 0 control_path tc_key index ptype bit32 id 1 param pkts ptype bit64 id 2; $TC p4template del extern_inst/flushRules/DirectCounter; printf flushed'",
+        "matchCount": "1",
+        "matchPattern": "flushed",
+        "teardown": [
+            "sh -c 'set -eu; for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/flushRules 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf \"%s\\n\" \"$output\" >&2; exit \"$rc\"'",
+            "$TC p4template del extern/root/",
+            "rm -f /tmp/p4tc-flush-$TESTID.err /tmp/p4tc-flush-$TESTID-*.json"
+        ]
+    },
+    {
+        "id": "cfbb",
+        "name": "Instance flush reports busy with 2 table-bound instances and preserves bindings",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/flushRules pipeid 22 numtables 2",
+            "$TC p4template create extern/root/DirectCounter extid 0x1A000000 numinstances 2 has_exec_method",
+            "$TC p4template create extern_inst/flushRules/DirectCounter/c1 instid 1 tc_numel 4 tbl_bindable constructor param type ptype bit32 0 control_path tc_key index ptype bit32 id 1 param pkts ptype bit64 id 2",
+            "$TC p4template create table/flushRules/cb/t1 keysz 16 pna_direct_counter DirectCounter/c1",
+            "sh -c 'set -eu; $TC -j p4template get extern_inst/flushRules/DirectCounter/c1 >/tmp/p4tc-flush-$TESTID-1.json; python3 -c '\"'\"'import json,sys; value=json.load(sys.stdin); assert len(value)==1; obj=value[0]; assert obj[\"extinstname\"]==\"c1\" and obj[\"extinstid\"]==1; assert obj[\"extname\"]==\"DirectCounter\" and obj[\"extid\"]==0x1A000000; assert obj[\"num_elems\"]==4; assert sorted((p[\"name\"],p[\"id\"],p[\"type\"]) for p in obj[\"control_params\"])==[(\"index\",1,\"bit32\"),(\"pkts\",2,\"bit64\")]; assert [(p[\"name\"],p[\"type\"],p[\"value\"]) for p in obj[\"constructor_params\"]]==[(\"type\",\"bit32\",0)]'\"'\"' </tmp/p4tc-flush-$TESTID-1.json'",
+            "sh -c 'set -eu; $TC -j p4template get table/flushRules/cb/t1 >/tmp/p4tc-flush-$TESTID-3.json; python3 -c '\"'\"'import json,sys; value=json.load(sys.stdin); assert len(value)==1; obj=value[0]; assert obj[\"counter_inst_path\"]==\"c1\"'\"'\"' </tmp/p4tc-flush-$TESTID-3.json'",
+            "$TC p4template create extern_inst/flushRules/DirectCounter/c2 instid 2 tc_numel 4 tbl_bindable constructor param type ptype bit32 0 control_path tc_key index ptype bit32 id 1 param pkts ptype bit64 id 2",
+            "$TC p4template create table/flushRules/cb/t2 keysz 16 pna_direct_counter DirectCounter/c2",
+            "sh -c 'set -eu; $TC -j p4template get extern_inst/flushRules/DirectCounter/c2 >/tmp/p4tc-flush-$TESTID-2.json; python3 -c '\"'\"'import json,sys; value=json.load(sys.stdin); assert len(value)==1; obj=value[0]; assert obj[\"extinstname\"]==\"c2\" and obj[\"extinstid\"]==2; assert obj[\"extname\"]==\"DirectCounter\" and obj[\"extid\"]==0x1A000000; assert obj[\"num_elems\"]==4; assert sorted((p[\"name\"],p[\"id\"],p[\"type\"]) for p in obj[\"control_params\"])==[(\"index\",1,\"bit32\"),(\"pkts\",2,\"bit64\")]; assert [(p[\"name\"],p[\"type\"],p[\"value\"]) for p in obj[\"constructor_params\"]]==[(\"type\",\"bit32\",0)]'\"'\"' </tmp/p4tc-flush-$TESTID-2.json'",
+            "sh -c 'set -eu; $TC -j p4template get table/flushRules/cb/t2 >/tmp/p4tc-flush-$TESTID-4.json; python3 -c '\"'\"'import json,sys; value=json.load(sys.stdin); assert len(value)==1; obj=value[0]; assert obj[\"counter_inst_path\"]==\"c2\"'\"'\"' </tmp/p4tc-flush-$TESTID-4.json'"
+        ],
+        "cmdUnderTest": "$TC p4template del extern_inst/flushRules/DirectCounter 2>/tmp/p4tc-flush-$TESTID.err",
+        "expExitCode": "255",
+        "verifyCmd": "sh -c 'set -eu; python3 -c '\"'\"'import sys; assert open(sys.argv[1]).read().splitlines()[0] == '\"'\"'\"'\"'\"'\"'\"'\"'Error: Unable to flush any externs instance.'\"'\"'\"'\"'\"'\"'\"'\"''\"'\"' /tmp/p4tc-flush-$TESTID.err; $TC -j p4template get extern_inst/flushRules/DirectCounter/c1 | python3 -c '\"'\"'import json,sys; assert json.load(sys.stdin)==json.load(open(sys.argv[1]))'\"'\"' /tmp/p4tc-flush-$TESTID-1.json; $TC -j p4template get table/flushRules/cb/t1 | python3 -c '\"'\"'import json,sys; assert json.load(sys.stdin)==json.load(open(sys.argv[1]))'\"'\"' /tmp/p4tc-flush-$TESTID-3.json; $TC -j p4template get extern_inst/flushRules/DirectCounter/c2 | python3 -c '\"'\"'import json,sys; assert json.load(sys.stdin)==json.load(open(sys.argv[1]))'\"'\"' /tmp/p4tc-flush-$TESTID-2.json; $TC -j p4template get table/flushRules/cb/t2 | python3 -c '\"'\"'import json,sys; assert json.load(sys.stdin)==json.load(open(sys.argv[1]))'\"'\"' /tmp/p4tc-flush-$TESTID-4.json; $TC p4template del table/flushRules/cb/t1; $TC p4template del table/flushRules/cb/t2; $TC p4template del extern_inst/flushRules/DirectCounter; $TC p4template del extern/root/DirectCounter; $TC p4template create extern/root/DirectCounter extid 0x1A000000 numinstances 2 has_exec_method; $TC p4template create extern_inst/flushRules/DirectCounter/c1 instid 1 tc_numel 4 tbl_bindable constructor param type ptype bit32 0 control_path tc_key index ptype bit32 id 1 param pkts ptype bit64 id 2; $TC p4template del extern_inst/flushRules/DirectCounter; printf flushed'",
+        "matchCount": "1",
+        "matchPattern": "flushed",
+        "teardown": [
+            "sh -c 'set -eu; for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/flushRules 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf \"%s\\n\" \"$output\" >&2; exit \"$rc\"'",
+            "$TC p4template del extern/root/",
+            "rm -f /tmp/p4tc-flush-$TESTID.err /tmp/p4tc-flush-$TESTID-*.json"
+        ]
+    },
+    {
+        "id": "36f9",
+        "name": "Partial instance flush removes only free instance when bound ID is 1",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/flushRules pipeid 22 numtables 2",
+            "$TC p4template create extern/root/DirectCounter extid 0x1A000000 numinstances 2 has_exec_method",
+            "$TC p4template create extern_inst/flushRules/DirectCounter/c1 instid 1 tc_numel 4 tbl_bindable constructor param type ptype bit32 0 control_path tc_key index ptype bit32 id 1 param pkts ptype bit64 id 2",
+            "$TC p4template create extern_inst/flushRules/DirectCounter/c2 instid 2 tc_numel 4 tbl_bindable constructor param type ptype bit32 0 control_path tc_key index ptype bit32 id 1 param pkts ptype bit64 id 2",
+            "$TC p4template create table/flushRules/cb/t1 keysz 16 pna_direct_counter DirectCounter/c1",
+            "sh -c 'set -eu; $TC -j p4template get extern_inst/flushRules/DirectCounter/c1 >/tmp/p4tc-flush-$TESTID-1.json; python3 -c '\"'\"'import json,sys; value=json.load(sys.stdin); assert len(value)==1; obj=value[0]; assert obj[\"extinstname\"]==\"c1\" and obj[\"extinstid\"]==1; assert obj[\"extname\"]==\"DirectCounter\" and obj[\"extid\"]==0x1A000000; assert obj[\"num_elems\"]==4; assert sorted((p[\"name\"],p[\"id\"],p[\"type\"]) for p in obj[\"control_params\"])==[(\"index\",1,\"bit32\"),(\"pkts\",2,\"bit64\")]; assert [(p[\"name\"],p[\"type\"],p[\"value\"]) for p in obj[\"constructor_params\"]]==[(\"type\",\"bit32\",0)]'\"'\"' </tmp/p4tc-flush-$TESTID-1.json'",
+            "sh -c 'set -eu; $TC -j p4template get table/flushRules/cb/t1 >/tmp/p4tc-flush-$TESTID-3.json; python3 -c '\"'\"'import json,sys; value=json.load(sys.stdin); assert len(value)==1; obj=value[0]; assert obj[\"counter_inst_path\"]==\"c1\"'\"'\"' </tmp/p4tc-flush-$TESTID-3.json'"
+        ],
+        "cmdUnderTest": "$TC p4template del extern_inst/flushRules/DirectCounter 2>/tmp/p4tc-flush-$TESTID.err",
+        "expExitCode": "0",
+        "verifyCmd": "sh -c 'set -eu; $TC -j p4template get extern_inst/flushRules/DirectCounter/c1 | python3 -c '\"'\"'import json,sys; assert json.load(sys.stdin)==json.load(open(sys.argv[1]))'\"'\"' /tmp/p4tc-flush-$TESTID-1.json; $TC -j p4template get table/flushRules/cb/t1 | python3 -c '\"'\"'import json,sys; assert json.load(sys.stdin)==json.load(open(sys.argv[1]))'\"'\"' /tmp/p4tc-flush-$TESTID-3.json; if $TC -j p4template get extern_inst/flushRules/DirectCounter/c2; then exit 1; else test \"$?\" -eq 255; fi; $TC p4template del table/flushRules/cb/t1; $TC p4template del extern_inst/flushRules/DirectCounter; $TC p4template del extern/root/DirectCounter; $TC p4template create extern/root/DirectCounter extid 0x1A000000 numinstances 2 has_exec_method; $TC p4template create extern_inst/flushRules/DirectCounter/c1 instid 1 tc_numel 4 tbl_bindable constructor param type ptype bit32 0 control_path tc_key index ptype bit32 id 1 param pkts ptype bit64 id 2; $TC p4template del extern_inst/flushRules/DirectCounter; printf flushed'",
+        "matchCount": "1",
+        "matchPattern": "flushed",
+        "teardown": [
+            "sh -c 'set -eu; for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/flushRules 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf \"%s\\n\" \"$output\" >&2; exit \"$rc\"'",
+            "$TC p4template del extern/root/",
+            "rm -f /tmp/p4tc-flush-$TESTID.err /tmp/p4tc-flush-$TESTID-*.json"
+        ]
+    },
+    {
+        "id": "9d2e",
+        "name": "Partial instance flush removes only free instance when bound ID is 2",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/flushRules pipeid 22 numtables 2",
+            "$TC p4template create extern/root/DirectCounter extid 0x1A000000 numinstances 2 has_exec_method",
+            "$TC p4template create extern_inst/flushRules/DirectCounter/c1 instid 1 tc_numel 4 tbl_bindable constructor param type ptype bit32 0 control_path tc_key index ptype bit32 id 1 param pkts ptype bit64 id 2",
+            "$TC p4template create extern_inst/flushRules/DirectCounter/c2 instid 2 tc_numel 4 tbl_bindable constructor param type ptype bit32 0 control_path tc_key index ptype bit32 id 1 param pkts ptype bit64 id 2",
+            "$TC p4template create table/flushRules/cb/t2 keysz 16 pna_direct_counter DirectCounter/c2",
+            "sh -c 'set -eu; $TC -j p4template get extern_inst/flushRules/DirectCounter/c2 >/tmp/p4tc-flush-$TESTID-2.json; python3 -c '\"'\"'import json,sys; value=json.load(sys.stdin); assert len(value)==1; obj=value[0]; assert obj[\"extinstname\"]==\"c2\" and obj[\"extinstid\"]==2; assert obj[\"extname\"]==\"DirectCounter\" and obj[\"extid\"]==0x1A000000; assert obj[\"num_elems\"]==4; assert sorted((p[\"name\"],p[\"id\"],p[\"type\"]) for p in obj[\"control_params\"])==[(\"index\",1,\"bit32\"),(\"pkts\",2,\"bit64\")]; assert [(p[\"name\"],p[\"type\"],p[\"value\"]) for p in obj[\"constructor_params\"]]==[(\"type\",\"bit32\",0)]'\"'\"' </tmp/p4tc-flush-$TESTID-2.json'",
+            "sh -c 'set -eu; $TC -j p4template get table/flushRules/cb/t2 >/tmp/p4tc-flush-$TESTID-4.json; python3 -c '\"'\"'import json,sys; value=json.load(sys.stdin); assert len(value)==1; obj=value[0]; assert obj[\"counter_inst_path\"]==\"c2\"'\"'\"' </tmp/p4tc-flush-$TESTID-4.json'"
+        ],
+        "cmdUnderTest": "$TC p4template del extern_inst/flushRules/DirectCounter 2>/tmp/p4tc-flush-$TESTID.err",
+        "expExitCode": "0",
+        "verifyCmd": "sh -c 'set -eu; $TC -j p4template get extern_inst/flushRules/DirectCounter/c2 | python3 -c '\"'\"'import json,sys; assert json.load(sys.stdin)==json.load(open(sys.argv[1]))'\"'\"' /tmp/p4tc-flush-$TESTID-2.json; $TC -j p4template get table/flushRules/cb/t2 | python3 -c '\"'\"'import json,sys; assert json.load(sys.stdin)==json.load(open(sys.argv[1]))'\"'\"' /tmp/p4tc-flush-$TESTID-4.json; if $TC -j p4template get extern_inst/flushRules/DirectCounter/c1; then exit 1; else test \"$?\" -eq 255; fi; $TC p4template del table/flushRules/cb/t2; $TC p4template del extern_inst/flushRules/DirectCounter; $TC p4template del extern/root/DirectCounter; $TC p4template create extern/root/DirectCounter extid 0x1A000000 numinstances 2 has_exec_method; $TC p4template create extern_inst/flushRules/DirectCounter/c1 instid 1 tc_numel 4 tbl_bindable constructor param type ptype bit32 0 control_path tc_key index ptype bit32 id 1 param pkts ptype bit64 id 2; $TC p4template del extern_inst/flushRules/DirectCounter; printf flushed'",
+        "matchCount": "1",
+        "matchPattern": "flushed",
+        "teardown": [
+            "sh -c 'set -eu; for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/flushRules 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf \"%s\\n\" \"$output\" >&2; exit \"$rc\"'",
+            "$TC p4template del extern/root/",
+            "rm -f /tmp/p4tc-flush-$TESTID.err /tmp/p4tc-flush-$TESTID-*.json"
+        ]
+    },
+    {
+        "id": "faaa",
+        "name": "Instance flush removes all free instances, releases container and permits repeated empty flush",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/flushRules pipeid 22 numtables 2",
+            "$TC p4template create extern/root/DirectCounter extid 0x1A000000 numinstances 2 has_exec_method",
+            "$TC p4template create extern_inst/flushRules/DirectCounter/c1 instid 1 tc_numel 4 tbl_bindable constructor param type ptype bit32 0 control_path tc_key index ptype bit32 id 1 param pkts ptype bit64 id 2",
+            "$TC p4template create extern_inst/flushRules/DirectCounter/c2 instid 2 tc_numel 4 tbl_bindable constructor param type ptype bit32 0 control_path tc_key index ptype bit32 id 1 param pkts ptype bit64 id 2"
+        ],
+        "cmdUnderTest": "$TC p4template del extern_inst/flushRules/DirectCounter 2>/tmp/p4tc-flush-$TESTID.err",
+        "expExitCode": "0",
+        "verifyCmd": "sh -c 'set -eu; if $TC -j p4template get extern_inst/flushRules/DirectCounter/c1; then exit 1; else test \"$?\" -eq 255; fi; if $TC -j p4template get extern_inst/flushRules/DirectCounter/c2; then exit 1; else test \"$?\" -eq 255; fi; $TC p4template del extern_inst/flushRules/DirectCounter; $TC p4template del extern/root/DirectCounter; $TC p4template create extern/root/DirectCounter extid 0x1A000000 numinstances 2 has_exec_method; $TC p4template create extern_inst/flushRules/DirectCounter/c1 instid 1 tc_numel 4 tbl_bindable constructor param type ptype bit32 0 control_path tc_key index ptype bit32 id 1 param pkts ptype bit64 id 2; $TC p4template del extern_inst/flushRules/DirectCounter; printf flushed'",
+        "matchCount": "1",
+        "matchPattern": "flushed",
+        "teardown": [
+            "sh -c 'set -eu; for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/flushRules 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf \"%s\\n\" \"$output\" >&2; exit \"$rc\"'",
+            "$TC p4template del extern/root/",
+            "rm -f /tmp/p4tc-flush-$TESTID.err /tmp/p4tc-flush-$TESTID-*.json"
+        ]
+    },
+    {
+        "id": "7ef8",
+        "name": "Instance flush without an allocated container retains successful no-op semantics",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/flushRules pipeid 22 numtables 2",
+            "$TC p4template create extern/root/DirectCounter extid 0x1A000000 numinstances 2 has_exec_method"
+        ],
+        "cmdUnderTest": "$TC p4template del extern_inst/flushRules/DirectCounter 2>/tmp/p4tc-flush-$TESTID.err",
+        "expExitCode": "0",
+        "verifyCmd": "sh -c 'set -eu; $TC p4template create extern_inst/flushRules/DirectCounter/c1 instid 1 tc_numel 4 tbl_bindable constructor param type ptype bit32 0 control_path tc_key index ptype bit32 id 1 param pkts ptype bit64 id 2; $TC p4template del extern_inst/flushRules/DirectCounter; $TC p4template del extern_inst/flushRules/DirectCounter; printf flushed'",
+        "matchCount": "1",
+        "matchPattern": "flushed",
+        "teardown": [
+            "sh -c 'set -eu; for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/flushRules 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf \"%s\\n\" \"$output\" >&2; exit \"$rc\"'",
+            "$TC p4template del extern/root/",
+            "rm -f /tmp/p4tc-flush-$TESTID.err /tmp/p4tc-flush-$TESTID-*.json"
+        ]
+    }
+]

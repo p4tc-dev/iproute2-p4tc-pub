@@ -1,0 +1,354 @@
+[
+    {
+        "id": "c801",
+        "name": "Template: Both defaults retain distinct permissions in order hit then miss",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_table"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 1",
+            "$TC p4template create action/ptables/test actid 1 param param1 type bit32",
+            "$TC p4template update action/ptables/test num_prealloc_acts 16 state active",
+            "$TC p4template create table/ptables/cb/tname tblid 1 keysz 16 table_acts act name ptables/test act name NoAction default_hit_action action ptables/test param param1 7 index 17",
+            "$TC p4template update table/ptables/cb/tname default_miss_action action ptables/test param param1 9 index 18",
+            "$TC -j p4template get table/ptables/cb/tname >/tmp/p4tc-defparse-$TESTID.json"
+        ],
+        "cmdUnderTest": "$TC p4template update table/ptables/cb/tname default_hit_action permissions 0x1424 default_miss_action permissions 0x1c24",
+        "expExitCode": "0",
+        "verifyCmd": "sh -c '$TC -j p4template get table/ptables/cb/tname | python3 -c '\"'\"'import json,sys; before=json.load(open(sys.argv[1])); after=json.load(sys.stdin); assert len(before)==len(after)==1; before[0][\"default_hit\"][\"permissions\"]=\"-R-D----R--X--\"; before[0][\"default_miss\"][\"permissions\"]=\"-RUD----R--X--\"; assert after==before,(before,after); print(\"preserved\")'\"'\"' /tmp/p4tc-defparse-$TESTID.json'",
+        "matchCount": "1",
+        "matchPattern": "preserved",
+        "teardown": [
+            "$TC p4template del pipeline/ptables",
+            "rm -f /tmp/p4tc-defparse-$TESTID.json"
+        ]
+    },
+    {
+        "id": "c802",
+        "name": "Template: Both defaults retain distinct permissions in order miss then hit",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_table"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 1",
+            "$TC p4template create action/ptables/test actid 1 param param1 type bit32",
+            "$TC p4template update action/ptables/test num_prealloc_acts 16 state active",
+            "$TC p4template create table/ptables/cb/tname tblid 1 keysz 16 table_acts act name ptables/test act name NoAction default_hit_action action ptables/test param param1 7 index 17",
+            "$TC p4template update table/ptables/cb/tname default_miss_action action ptables/test param param1 9 index 18",
+            "$TC -j p4template get table/ptables/cb/tname >/tmp/p4tc-defparse-$TESTID.json"
+        ],
+        "cmdUnderTest": "$TC p4template update table/ptables/cb/tname default_miss_action permissions 0x1c24 default_hit_action permissions 0x1424",
+        "expExitCode": "0",
+        "verifyCmd": "sh -c '$TC -j p4template get table/ptables/cb/tname | python3 -c '\"'\"'import json,sys; before=json.load(open(sys.argv[1])); after=json.load(sys.stdin); assert len(before)==len(after)==1; before[0][\"default_hit\"][\"permissions\"]=\"-R-D----R--X--\"; before[0][\"default_miss\"][\"permissions\"]=\"-RUD----R--X--\"; assert after==before,(before,after); print(\"preserved\")'\"'\"' /tmp/p4tc-defparse-$TESTID.json'",
+        "matchCount": "1",
+        "matchPattern": "preserved",
+        "teardown": [
+            "$TC p4template del pipeline/ptables",
+            "rm -f /tmp/p4tc-defparse-$TESTID.json"
+        ]
+    },
+    {
+        "id": "c803",
+        "name": "Template: NoAction and its permissions stop before the next table field",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_table"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 1",
+            "$TC p4template create action/ptables/test actid 1 param param1 type bit32",
+            "$TC p4template update action/ptables/test num_prealloc_acts 16 state active",
+            "$TC p4template create table/ptables/cb/tname tblid 1 keysz 16 table_acts act name ptables/test act name NoAction default_hit_action action NoAction",
+            "$TC p4template update table/ptables/cb/tname default_miss_action action NoAction",
+            "$TC -j p4template get table/ptables/cb/tname >/tmp/p4tc-defparse-$TESTID.json"
+        ],
+        "cmdUnderTest": "$TC p4template update table/ptables/cb/tname default_hit_action action NoAction permissions 0x1424 keysz 32",
+        "expExitCode": "0",
+        "verifyCmd": "sh -c '$TC -j p4template get table/ptables/cb/tname | python3 -c '\"'\"'import json,sys; before=json.load(open(sys.argv[1])); after=json.load(sys.stdin); assert len(before)==len(after)==1; before[0][\"default_hit\"][\"permissions\"]=\"-R-D----R--X--\"; before[0][\"keysz\"]=32; assert after==before,(before,after); print(\"preserved\")'\"'\"' /tmp/p4tc-defparse-$TESTID.json'",
+        "matchCount": "1",
+        "matchPattern": "preserved",
+        "teardown": [
+            "$TC p4template del pipeline/ptables",
+            "rm -f /tmp/p4tc-defparse-$TESTID.json"
+        ]
+    },
+    {
+        "id": "c804",
+        "name": "Template: Permission-only default leaves following table fields for the outer parser",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_table"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 1",
+            "$TC p4template create action/ptables/test actid 1 param param1 type bit32",
+            "$TC p4template update action/ptables/test num_prealloc_acts 16 state active",
+            "$TC p4template create table/ptables/cb/tname tblid 1 keysz 16 table_acts act name ptables/test act name NoAction default_hit_action action ptables/test param param1 7 index 17",
+            "$TC p4template update table/ptables/cb/tname default_miss_action action ptables/test param param1 9 index 18",
+            "$TC -j p4template get table/ptables/cb/tname >/tmp/p4tc-defparse-$TESTID.json"
+        ],
+        "cmdUnderTest": "$TC p4template update table/ptables/cb/tname default_hit_action permissions 0x1424 keysz 32 tentries 99 nummasks 4",
+        "expExitCode": "0",
+        "verifyCmd": "sh -c '$TC -j p4template get table/ptables/cb/tname | python3 -c '\"'\"'import json,sys; before=json.load(open(sys.argv[1])); after=json.load(sys.stdin); assert len(before)==len(after)==1; before[0][\"default_hit\"][\"permissions\"]=\"-R-D----R--X--\"; before[0][\"keysz\"]=32; before[0][\"max_entries\"]=99; before[0][\"masks\"]=4; assert after==before,(before,after); print(\"preserved\")'\"'\"' /tmp/p4tc-defparse-$TESTID.json'",
+        "matchCount": "1",
+        "matchPattern": "preserved",
+        "teardown": [
+            "$TC p4template del pipeline/ptables",
+            "rm -f /tmp/p4tc-defparse-$TESTID.json"
+        ]
+    },
+    {
+        "id": "c805",
+        "name": "Template: Parsed action leaves the following allowed-action list intact",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_table"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 1",
+            "$TC p4template create action/ptables/test actid 1 param param1 type bit32",
+            "$TC p4template update action/ptables/test num_prealloc_acts 16 state active",
+            "$TC p4template create table/ptables/cb/tname tblid 1 keysz 16 table_acts act name ptables/test act name NoAction default_hit_action action ptables/test param param1 7 index 17",
+            "$TC p4template update table/ptables/cb/tname default_miss_action action ptables/test param param1 9 index 18",
+            "$TC -j p4template get table/ptables/cb/tname >/tmp/p4tc-defparse-$TESTID.json"
+        ],
+        "cmdUnderTest": "$TC p4template update table/ptables/cb/tname default_hit_action action ptables/test param param1 7 index 17 table_acts act name ptables/test flags defaultonly",
+        "expExitCode": "0",
+        "verifyCmd": "sh -c '$TC -j p4template get table/ptables/cb/tname | python3 -c '\"'\"'import json,sys; before=json.load(open(sys.argv[1])); after=json.load(sys.stdin); assert len(before)==len(after)==1; before[0][\"acts_list\"]=[{\"act_name\":\"test\",\"flags\":\"defaultonly\"}]; assert after==before,(before,after); print(\"preserved\")'\"'\"' /tmp/p4tc-defparse-$TESTID.json'",
+        "matchCount": "1",
+        "matchPattern": "preserved",
+        "teardown": [
+            "$TC p4template del pipeline/ptables",
+            "rm -f /tmp/p4tc-defparse-$TESTID.json"
+        ]
+    },
+    {
+        "id": "c806",
+        "name": "Template: Mixed permissions update rejects an absent miss default and retains hit state",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_table"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 1",
+            "$TC p4template create action/ptables/test actid 1 param param1 type bit32",
+            "$TC p4template update action/ptables/test num_prealloc_acts 16 state active",
+            "$TC p4template create table/ptables/cb/tname tblid 1 keysz 16 table_acts act name ptables/test act name NoAction default_hit_action action ptables/test param param1 7 index 17",
+            "$TC -j p4template get table/ptables/cb/tname >/tmp/p4tc-defparse-$TESTID.json"
+        ],
+        "cmdUnderTest": "$TC p4template update table/ptables/cb/tname default_hit_action permissions 0x1424 default_miss_action permissions 0x1c24",
+        "expExitCode": "255",
+        "verifyCmd": "sh -c '$TC -j p4template get table/ptables/cb/tname | python3 -c '\"'\"'import json,sys; before=json.load(open(sys.argv[1])); after=json.load(sys.stdin); assert len(before)==len(after)==1; assert after==before,(before,after); print(\"preserved\")'\"'\"' /tmp/p4tc-defparse-$TESTID.json'",
+        "matchCount": "1",
+        "matchPattern": "preserved",
+        "teardown": [
+            "$TC p4template del pipeline/ptables",
+            "rm -f /tmp/p4tc-defparse-$TESTID.json"
+        ]
+    },
+    {
+        "id": "c807",
+        "name": "Template: Unknown following template token is rejected instead of ignored",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_table"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 1",
+            "$TC p4template create action/ptables/test actid 1 param param1 type bit32",
+            "$TC p4template update action/ptables/test num_prealloc_acts 16 state active",
+            "$TC p4template create table/ptables/cb/tname tblid 1 keysz 16 table_acts act name ptables/test act name NoAction default_hit_action action ptables/test param param1 7 index 17",
+            "$TC p4template update table/ptables/cb/tname default_miss_action action ptables/test param param1 9 index 18",
+            "$TC -j p4template get table/ptables/cb/tname >/tmp/p4tc-defparse-$TESTID.json"
+        ],
+        "cmdUnderTest": "$TC p4template update table/ptables/cb/tname default_hit_action permissions 0x1424 invalid_default_tail",
+        "expExitCode": "255",
+        "verifyCmd": "sh -c '$TC -j p4template get table/ptables/cb/tname | python3 -c '\"'\"'import json,sys; before=json.load(open(sys.argv[1])); after=json.load(sys.stdin); assert len(before)==len(after)==1; assert after==before,(before,after); print(\"preserved\")'\"'\"' /tmp/p4tc-defparse-$TESTID.json'",
+        "matchCount": "1",
+        "matchPattern": "preserved",
+        "teardown": [
+            "$TC p4template del pipeline/ptables",
+            "rm -f /tmp/p4tc-defparse-$TESTID.json"
+        ]
+    },
+    {
+        "id": "c808",
+        "name": "Runtime: Both defaults retain distinct permissions in order hit then miss",
+        "category": [
+            "p4tc",
+            "entries",
+            "spec_table"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 1",
+            "$TC p4template create action/ptables/test actid 1 param param1 type bit32",
+            "$TC p4template update action/ptables/test num_prealloc_acts 16 state active",
+            "$TC p4template create table/ptables/cb/tname tblid 1 keysz 16 table_acts act name ptables/test act name NoAction default_hit_action action ptables/test param param1 7 index 17",
+            "$TC p4template update table/ptables/cb/tname default_miss_action action ptables/test param param1 9 index 18",
+            "$TC p4template update pipeline/ptables state ready",
+            "$TC -j p4template get table/ptables/cb/tname >/tmp/p4tc-defparse-$TESTID.json"
+        ],
+        "cmdUnderTest": "$TC p4ctrl update ptables/table/cb/tname tbl_attrs default_hit_action permissions 0x1424 default_miss_action permissions 0x1c24",
+        "expExitCode": "0",
+        "verifyCmd": "sh -c '$TC -j p4template get table/ptables/cb/tname | python3 -c '\"'\"'import json,sys; before=json.load(open(sys.argv[1])); after=json.load(sys.stdin); assert len(before)==len(after)==1; before[0][\"default_hit\"][\"permissions\"]=\"-R-D----R--X--\"; before[0][\"default_miss\"][\"permissions\"]=\"-RUD----R--X--\"; assert after==before,(before,after); print(\"preserved\")'\"'\"' /tmp/p4tc-defparse-$TESTID.json'",
+        "matchCount": "1",
+        "matchPattern": "preserved",
+        "teardown": [
+            "$TC p4template del pipeline/ptables",
+            "rm -f /tmp/p4tc-defparse-$TESTID.json"
+        ]
+    },
+    {
+        "id": "c809",
+        "name": "Runtime: Both defaults retain distinct permissions in order miss then hit",
+        "category": [
+            "p4tc",
+            "entries",
+            "spec_table"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 1",
+            "$TC p4template create action/ptables/test actid 1 param param1 type bit32",
+            "$TC p4template update action/ptables/test num_prealloc_acts 16 state active",
+            "$TC p4template create table/ptables/cb/tname tblid 1 keysz 16 table_acts act name ptables/test act name NoAction default_hit_action action ptables/test param param1 7 index 17",
+            "$TC p4template update table/ptables/cb/tname default_miss_action action ptables/test param param1 9 index 18",
+            "$TC p4template update pipeline/ptables state ready",
+            "$TC -j p4template get table/ptables/cb/tname >/tmp/p4tc-defparse-$TESTID.json"
+        ],
+        "cmdUnderTest": "$TC p4ctrl update ptables/table/cb/tname tbl_attrs default_miss_action permissions 0x1c24 default_hit_action permissions 0x1424",
+        "expExitCode": "0",
+        "verifyCmd": "sh -c '$TC -j p4template get table/ptables/cb/tname | python3 -c '\"'\"'import json,sys; before=json.load(open(sys.argv[1])); after=json.load(sys.stdin); assert len(before)==len(after)==1; before[0][\"default_hit\"][\"permissions\"]=\"-R-D----R--X--\"; before[0][\"default_miss\"][\"permissions\"]=\"-RUD----R--X--\"; assert after==before,(before,after); print(\"preserved\")'\"'\"' /tmp/p4tc-defparse-$TESTID.json'",
+        "matchCount": "1",
+        "matchPattern": "preserved",
+        "teardown": [
+            "$TC p4template del pipeline/ptables",
+            "rm -f /tmp/p4tc-defparse-$TESTID.json"
+        ]
+    },
+    {
+        "id": "c80a",
+        "name": "Runtime: Default then timer then table permissions retain each nested boundary",
+        "category": [
+            "p4tc",
+            "entries",
+            "spec_table"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 1",
+            "$TC p4template create action/ptables/test actid 1 param param1 type bit32",
+            "$TC p4template update action/ptables/test num_prealloc_acts 16 state active",
+            "$TC p4template create table/ptables/cb/tname tblid 1 keysz 16 table_acts act name ptables/test act name NoAction default_hit_action action ptables/test param param1 7 index 17",
+            "$TC p4template update table/ptables/cb/tname default_miss_action action ptables/test param param1 9 index 18",
+            "$TC p4template update pipeline/ptables state ready",
+            "$TC -j p4template get table/ptables/cb/tname >/tmp/p4tc-defparse-$TESTID.json"
+        ],
+        "cmdUnderTest": "$TC p4ctrl update ptables/table/cb/tname tbl_attrs default_hit_action permissions 0x1424 timer_profile id 1 aging 12345 tbl_permissions 0x3c24",
+        "expExitCode": "0",
+        "verifyCmd": "sh -c '$TC -j p4template get table/ptables/cb/tname | python3 -c '\"'\"'import json,sys; before=json.load(open(sys.argv[1])); after=json.load(sys.stdin); assert len(before)==len(after)==1; before[0][\"default_hit\"][\"permissions\"]=\"-R-D----R--X--\"; before[0][\"profiles\"][1][\"profile_aging\"]=12345; before[0][\"permissions\"]=\"CRUD----R--X--\"; assert after==before,(before,after); print(\"preserved\")'\"'\"' /tmp/p4tc-defparse-$TESTID.json'",
+        "matchCount": "1",
+        "matchPattern": "preserved",
+        "teardown": [
+            "$TC p4template del pipeline/ptables",
+            "rm -f /tmp/p4tc-defparse-$TESTID.json"
+        ]
+    },
+    {
+        "id": "c80b",
+        "name": "Runtime: Timer parser returns the following default keyword without skipping it",
+        "category": [
+            "p4tc",
+            "entries",
+            "spec_table"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 1",
+            "$TC p4template create action/ptables/test actid 1 param param1 type bit32",
+            "$TC p4template update action/ptables/test num_prealloc_acts 16 state active",
+            "$TC p4template create table/ptables/cb/tname tblid 1 keysz 16 table_acts act name ptables/test act name NoAction default_hit_action action ptables/test param param1 7 index 17",
+            "$TC p4template update table/ptables/cb/tname default_miss_action action ptables/test param param1 9 index 18",
+            "$TC p4template update pipeline/ptables state ready",
+            "$TC -j p4template get table/ptables/cb/tname >/tmp/p4tc-defparse-$TESTID.json"
+        ],
+        "cmdUnderTest": "$TC p4ctrl update ptables/table/cb/tname tbl_attrs timer_profile id 1 aging 12345 default_hit_action permissions 0x1424",
+        "expExitCode": "0",
+        "verifyCmd": "sh -c '$TC -j p4template get table/ptables/cb/tname | python3 -c '\"'\"'import json,sys; before=json.load(open(sys.argv[1])); after=json.load(sys.stdin); assert len(before)==len(after)==1; before[0][\"default_hit\"][\"permissions\"]=\"-R-D----R--X--\"; before[0][\"profiles\"][1][\"profile_aging\"]=12345; assert after==before,(before,after); print(\"preserved\")'\"'\"' /tmp/p4tc-defparse-$TESTID.json'",
+        "matchCount": "1",
+        "matchPattern": "preserved",
+        "teardown": [
+            "$TC p4template del pipeline/ptables",
+            "rm -f /tmp/p4tc-defparse-$TESTID.json"
+        ]
+    },
+    {
+        "id": "c80c",
+        "name": "Runtime: Both defaults retain distinct permissions in order hit then miss",
+        "category": [
+            "p4tc",
+            "entries",
+            "spec_table"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 1",
+            "$TC p4template create action/ptables/test actid 1 param param1 type bit32",
+            "$TC p4template update action/ptables/test num_prealloc_acts 16 state active",
+            "$TC p4template create table/ptables/cb/tname tblid 1 keysz 16 table_acts act name ptables/test act name NoAction default_hit_action action NoAction",
+            "$TC p4template update table/ptables/cb/tname default_miss_action action NoAction",
+            "$TC p4template update pipeline/ptables state ready",
+            "$TC -j p4template get table/ptables/cb/tname >/tmp/p4tc-defparse-$TESTID.json"
+        ],
+        "cmdUnderTest": "$TC p4ctrl update ptables/table/cb/tname tbl_attrs default_hit_action permissions 0x1424 default_miss_action permissions 0x1c24",
+        "expExitCode": "0",
+        "verifyCmd": "sh -c '$TC -j p4template get table/ptables/cb/tname | python3 -c '\"'\"'import json,sys; before=json.load(open(sys.argv[1])); after=json.load(sys.stdin); assert len(before)==len(after)==1; before[0][\"default_hit\"][\"permissions\"]=\"-R-D----R--X--\"; before[0][\"default_miss\"][\"permissions\"]=\"-RUD----R--X--\"; assert after==before,(before,after); print(\"preserved\")'\"'\"' /tmp/p4tc-defparse-$TESTID.json'",
+        "matchCount": "1",
+        "matchPattern": "preserved",
+        "teardown": [
+            "$TC p4template del pipeline/ptables",
+            "rm -f /tmp/p4tc-defparse-$TESTID.json"
+        ]
+    }
+]

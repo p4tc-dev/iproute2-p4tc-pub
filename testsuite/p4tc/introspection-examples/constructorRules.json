@@ -1,0 +1,35 @@
+{
+    "schema_version": "1.0.0",
+    "pipeline_name": "constructorRules",
+    "id": 22,
+    "tables": [],
+    "externs": [
+        {
+            "id": "0x1A000000",
+            "name": "DirectCounter",
+            "annotations": [],
+            "instances": [
+                {
+                    "inst_id": 1,
+                    "inst_name": "c1",
+                    "params": [
+                        {
+                            "id": 1,
+                            "name": "index",
+                            "type": "bit32",
+                            "bitwidth": 32,
+                            "attr": "tc_key"
+                        },
+                        {
+                            "id": 2,
+                            "name": "pkts",
+                            "type": "bit64",
+                            "bitwidth": 64,
+                            "attr": "tc_data"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

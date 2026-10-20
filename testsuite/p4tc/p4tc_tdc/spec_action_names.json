@@ -1,0 +1,30 @@
+[
+    {
+        "id": "a704",
+        "name": "Action names retain distinct 31/32-byte names and reject 33/34-byte names without mutation",
+        "category": [
+            "p4tc",
+            "action"
+        ],
+        "setup": [
+            [
+                "$TC p4template del pipeline/ptables",
+                0,
+                1,
+                255
+            ],
+            "$TC p4template create pipeline/ptables pipeid 22 numtables 1"
+        ],
+        "cmdUnderTest": "$TC p4template create action/ptables/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa actid 3",
+        "expExitCode": "255",
+        "verifyCmd": "python3 \"$INTROSPECTION/name_capacity_actions.py\" \"$TC\"",
+        "matchPattern": "ACTION_NAME_ROUNDTRIP_OK",
+        "matchCount": "1",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do out=$(\"$1\" p4template del pipeline/ptables 2>&1); rc=$?; case \"$out\" in *\"Pipeline in use\"*) sleep 0.05;; *) exit \"$rc\";; esac; done; exit 1' sh \"$TC\"",
+                0
+            ]
+        ]
+    }
+]

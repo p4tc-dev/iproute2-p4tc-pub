@@ -1,0 +1,557 @@
+[
+    {
+        "id": "fc60",
+        "name": "Extern create indexed/indexed, key none: retain values and addressing",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/scalarRules pipeid 22 numtables 0",
+            "$TC p4template create extern/root/Register extid 1 numinstances 2"
+        ],
+        "cmdUnderTest": "$TC p4template create extern_inst/scalarRules/Register/reg1 tc_numel 1 instid 1 control_path param left ptype bit32 id 2 default_value 11 param right ptype bit32 id 3 default_value 22",
+        "expExitCode": "0",
+        "verifyCmd": "sh -c 'set -eu; $TC -j p4template get extern_inst/scalarRules/Register/reg1 >/tmp/p4tc-scalar-$TESTID.json; python3 -c '\"'\"'import json,sys; value=json.load(sys.stdin); walk=lambda x: ([x] if isinstance(x,dict) else []) + [v for child in (x.values() if isinstance(x,dict) else x if isinstance(x,list) else []) for v in walk(child)]; items=[(p[\"name\"],p[\"value\"]) for p in walk(value) if p.get(\"name\") in (\"left\",\"right\") and \"value\" in p]; assert sorted(items)==[('\"'\"'\"'\"'\"'\"'\"'\"'left'\"'\"'\"'\"'\"'\"'\"'\"', 11), ('\"'\"'\"'\"'\"'\"'\"'\"'right'\"'\"'\"'\"'\"'\"'\"'\"', 22)], (items,value)'\"'\"' </tmp/p4tc-scalar-$TESTID.json; printf consistent'",
+        "matchCount": "1",
+        "matchPattern": "consistent",
+        "teardown": [
+            "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/scalarRules 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf \"%s\\n\" \"$output\" >&2; exit \"$rc\"'",
+            "$TC p4template del extern/root/Register",
+            "rm -f /tmp/p4tc-scalar-$TESTID.err /tmp/p4tc-scalar-$TESTID.json"
+        ]
+    },
+    {
+        "id": "1831",
+        "name": "Extern create indexed/indexed, key first: retain values and addressing",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/scalarRules pipeid 22 numtables 0",
+            "$TC p4template create extern/root/Register extid 1 numinstances 2"
+        ],
+        "cmdUnderTest": "$TC p4template create extern_inst/scalarRules/Register/reg1 tc_numel 1 instid 1 control_path tc_key index ptype bit32 id 1 param left ptype bit32 id 2 default_value 11 param right ptype bit32 id 3 default_value 22",
+        "expExitCode": "0",
+        "verifyCmd": "sh -c 'set -eu; $TC -j p4template get extern_inst/scalarRules/Register/reg1 >/tmp/p4tc-scalar-$TESTID.json; python3 -c '\"'\"'import json,sys; value=json.load(sys.stdin); walk=lambda x: ([x] if isinstance(x,dict) else []) + [v for child in (x.values() if isinstance(x,dict) else x if isinstance(x,list) else []) for v in walk(child)]; items=[(p[\"name\"],p[\"value\"]) for p in walk(value) if p.get(\"name\") in (\"left\",\"right\") and \"value\" in p]; assert sorted(items)==[('\"'\"'\"'\"'\"'\"'\"'\"'left'\"'\"'\"'\"'\"'\"'\"'\"', 11), ('\"'\"'\"'\"'\"'\"'\"'\"'right'\"'\"'\"'\"'\"'\"'\"'\"', 22)], (items,value)'\"'\"' </tmp/p4tc-scalar-$TESTID.json; $TC p4template update pipeline/scalarRules state ready; $TC p4ctrl update scalarRules/extern/Register/reg1 tc_key index 1 param left 31 param right 42; $TC -j p4ctrl get scalarRules/extern/Register/reg1 tc_key index 1 >/tmp/p4tc-scalar-$TESTID.json; python3 -c '\"'\"'import json,sys; value=json.load(sys.stdin); walk=lambda x: ([x] if isinstance(x,dict) else []) + [v for child in (x.values() if isinstance(x,dict) else x if isinstance(x,list) else []) for v in walk(child)]; items=[(p[\"name\"],p[\"value\"]) for p in walk(value) if p.get(\"name\") in (\"left\",\"right\") and \"value\" in p]; assert sorted(items)==[('\"'\"'\"'\"'\"'\"'\"'\"'left'\"'\"'\"'\"'\"'\"'\"'\"', 31), ('\"'\"'\"'\"'\"'\"'\"'\"'right'\"'\"'\"'\"'\"'\"'\"'\"', 42)], (items,value)'\"'\"' </tmp/p4tc-scalar-$TESTID.json; printf consistent'",
+        "matchCount": "1",
+        "matchPattern": "consistent",
+        "teardown": [
+            "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/scalarRules 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf \"%s\\n\" \"$output\" >&2; exit \"$rc\"'",
+            "$TC p4template del extern/root/Register",
+            "rm -f /tmp/p4tc-scalar-$TESTID.err /tmp/p4tc-scalar-$TESTID.json"
+        ]
+    },
+    {
+        "id": "ca57",
+        "name": "Extern create indexed/indexed, key middle: retain values and addressing",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/scalarRules pipeid 22 numtables 0",
+            "$TC p4template create extern/root/Register extid 1 numinstances 2"
+        ],
+        "cmdUnderTest": "$TC p4template create extern_inst/scalarRules/Register/reg1 tc_numel 1 instid 1 control_path param left ptype bit32 id 2 default_value 11 tc_key index ptype bit32 id 1 param right ptype bit32 id 3 default_value 22",
+        "expExitCode": "0",
+        "verifyCmd": "sh -c 'set -eu; $TC -j p4template get extern_inst/scalarRules/Register/reg1 >/tmp/p4tc-scalar-$TESTID.json; python3 -c '\"'\"'import json,sys; value=json.load(sys.stdin); walk=lambda x: ([x] if isinstance(x,dict) else []) + [v for child in (x.values() if isinstance(x,dict) else x if isinstance(x,list) else []) for v in walk(child)]; items=[(p[\"name\"],p[\"value\"]) for p in walk(value) if p.get(\"name\") in (\"left\",\"right\") and \"value\" in p]; assert sorted(items)==[('\"'\"'\"'\"'\"'\"'\"'\"'left'\"'\"'\"'\"'\"'\"'\"'\"', 11), ('\"'\"'\"'\"'\"'\"'\"'\"'right'\"'\"'\"'\"'\"'\"'\"'\"', 22)], (items,value)'\"'\"' </tmp/p4tc-scalar-$TESTID.json; $TC p4template update pipeline/scalarRules state ready; $TC p4ctrl update scalarRules/extern/Register/reg1 tc_key index 1 param left 31 param right 42; $TC -j p4ctrl get scalarRules/extern/Register/reg1 tc_key index 1 >/tmp/p4tc-scalar-$TESTID.json; python3 -c '\"'\"'import json,sys; value=json.load(sys.stdin); walk=lambda x: ([x] if isinstance(x,dict) else []) + [v for child in (x.values() if isinstance(x,dict) else x if isinstance(x,list) else []) for v in walk(child)]; items=[(p[\"name\"],p[\"value\"]) for p in walk(value) if p.get(\"name\") in (\"left\",\"right\") and \"value\" in p]; assert sorted(items)==[('\"'\"'\"'\"'\"'\"'\"'\"'left'\"'\"'\"'\"'\"'\"'\"'\"', 31), ('\"'\"'\"'\"'\"'\"'\"'\"'right'\"'\"'\"'\"'\"'\"'\"'\"', 42)], (items,value)'\"'\"' </tmp/p4tc-scalar-$TESTID.json; printf consistent'",
+        "matchCount": "1",
+        "matchPattern": "consistent",
+        "teardown": [
+            "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/scalarRules 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf \"%s\\n\" \"$output\" >&2; exit \"$rc\"'",
+            "$TC p4template del extern/root/Register",
+            "rm -f /tmp/p4tc-scalar-$TESTID.err /tmp/p4tc-scalar-$TESTID.json"
+        ]
+    },
+    {
+        "id": "7686",
+        "name": "Extern create indexed/indexed, key last: retain values and addressing",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/scalarRules pipeid 22 numtables 0",
+            "$TC p4template create extern/root/Register extid 1 numinstances 2"
+        ],
+        "cmdUnderTest": "$TC p4template create extern_inst/scalarRules/Register/reg1 tc_numel 1 instid 1 control_path param left ptype bit32 id 2 default_value 11 param right ptype bit32 id 3 default_value 22 tc_key index ptype bit32 id 1",
+        "expExitCode": "0",
+        "verifyCmd": "sh -c 'set -eu; $TC -j p4template get extern_inst/scalarRules/Register/reg1 >/tmp/p4tc-scalar-$TESTID.json; python3 -c '\"'\"'import json,sys; value=json.load(sys.stdin); walk=lambda x: ([x] if isinstance(x,dict) else []) + [v for child in (x.values() if isinstance(x,dict) else x if isinstance(x,list) else []) for v in walk(child)]; items=[(p[\"name\"],p[\"value\"]) for p in walk(value) if p.get(\"name\") in (\"left\",\"right\") and \"value\" in p]; assert sorted(items)==[('\"'\"'\"'\"'\"'\"'\"'\"'left'\"'\"'\"'\"'\"'\"'\"'\"', 11), ('\"'\"'\"'\"'\"'\"'\"'\"'right'\"'\"'\"'\"'\"'\"'\"'\"', 22)], (items,value)'\"'\"' </tmp/p4tc-scalar-$TESTID.json; $TC p4template update pipeline/scalarRules state ready; $TC p4ctrl update scalarRules/extern/Register/reg1 tc_key index 1 param left 31 param right 42; $TC -j p4ctrl get scalarRules/extern/Register/reg1 tc_key index 1 >/tmp/p4tc-scalar-$TESTID.json; python3 -c '\"'\"'import json,sys; value=json.load(sys.stdin); walk=lambda x: ([x] if isinstance(x,dict) else []) + [v for child in (x.values() if isinstance(x,dict) else x if isinstance(x,list) else []) for v in walk(child)]; items=[(p[\"name\"],p[\"value\"]) for p in walk(value) if p.get(\"name\") in (\"left\",\"right\") and \"value\" in p]; assert sorted(items)==[('\"'\"'\"'\"'\"'\"'\"'\"'left'\"'\"'\"'\"'\"'\"'\"'\"', 31), ('\"'\"'\"'\"'\"'\"'\"'\"'right'\"'\"'\"'\"'\"'\"'\"'\"', 42)], (items,value)'\"'\"' </tmp/p4tc-scalar-$TESTID.json; printf consistent'",
+        "matchCount": "1",
+        "matchPattern": "consistent",
+        "teardown": [
+            "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/scalarRules 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf \"%s\\n\" \"$output\" >&2; exit \"$rc\"'",
+            "$TC p4template del extern/root/Register",
+            "rm -f /tmp/p4tc-scalar-$TESTID.err /tmp/p4tc-scalar-$TESTID.json"
+        ]
+    },
+    {
+        "id": "5988",
+        "name": "Extern create scalar/scalar, key none: retain values and addressing",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/scalarRules pipeid 22 numtables 0",
+            "$TC p4template create extern/root/Register extid 1 numinstances 2"
+        ],
+        "cmdUnderTest": "$TC p4template create extern_inst/scalarRules/Register/reg1 tc_numel 1 instid 1 control_path tc_data_scalar left ptype bit32 id 2 default_value 11 tc_data_scalar right ptype bit32 id 3 default_value 22",
+        "expExitCode": "0",
+        "verifyCmd": "sh -c 'set -eu; $TC -j p4template get extern_inst/scalarRules/Register/reg1 >/tmp/p4tc-scalar-$TESTID.json; python3 -c '\"'\"'import json,sys; value=json.load(sys.stdin); walk=lambda x: ([x] if isinstance(x,dict) else []) + [v for child in (x.values() if isinstance(x,dict) else x if isinstance(x,list) else []) for v in walk(child)]; items=[(p[\"name\"],p[\"value\"]) for p in walk(value) if p.get(\"name\") in (\"left\",\"right\") and \"value\" in p]; assert sorted(items)==[('\"'\"'\"'\"'\"'\"'\"'\"'left'\"'\"'\"'\"'\"'\"'\"'\"', 11), ('\"'\"'\"'\"'\"'\"'\"'\"'right'\"'\"'\"'\"'\"'\"'\"'\"', 22)], (items,value)'\"'\"' </tmp/p4tc-scalar-$TESTID.json; $TC p4template update pipeline/scalarRules state ready; $TC p4ctrl update scalarRules/extern/Register/reg1 tc_data_scalar left 31 tc_data_scalar right 42; $TC -j p4ctrl get scalarRules/extern/Register/reg1 tc_key index 1 >/tmp/p4tc-scalar-$TESTID.json; python3 -c '\"'\"'import json,sys; value=json.load(sys.stdin); walk=lambda x: ([x] if isinstance(x,dict) else []) + [v for child in (x.values() if isinstance(x,dict) else x if isinstance(x,list) else []) for v in walk(child)]; items=[(p[\"name\"],p[\"value\"]) for p in walk(value) if p.get(\"name\") in (\"left\",\"right\") and \"value\" in p]; assert sorted(items)==[('\"'\"'\"'\"'\"'\"'\"'\"'left'\"'\"'\"'\"'\"'\"'\"'\"', 31), ('\"'\"'\"'\"'\"'\"'\"'\"'right'\"'\"'\"'\"'\"'\"'\"'\"', 42)], (items,value)'\"'\"' </tmp/p4tc-scalar-$TESTID.json; if $TC p4ctrl update scalarRules/extern/Register/reg1 tc_key index 2 tc_data_scalar left 99 tc_data_scalar right 100; then exit 1; else test \"$?\" -eq 255; fi; $TC -j p4ctrl get scalarRules/extern/Register/reg1 tc_key index 1 >/tmp/p4tc-scalar-$TESTID.json; python3 -c '\"'\"'import json,sys; value=json.load(sys.stdin); walk=lambda x: ([x] if isinstance(x,dict) else []) + [v for child in (x.values() if isinstance(x,dict) else x if isinstance(x,list) else []) for v in walk(child)]; items=[(p[\"name\"],p[\"value\"]) for p in walk(value) if p.get(\"name\") in (\"left\",\"right\") and \"value\" in p]; assert sorted(items)==[('\"'\"'\"'\"'\"'\"'\"'\"'left'\"'\"'\"'\"'\"'\"'\"'\"', 31), ('\"'\"'\"'\"'\"'\"'\"'\"'right'\"'\"'\"'\"'\"'\"'\"'\"', 42)], (items,value)'\"'\"' </tmp/p4tc-scalar-$TESTID.json; printf consistent'",
+        "matchCount": "1",
+        "matchPattern": "consistent",
+        "teardown": [
+            "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/scalarRules 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf \"%s\\n\" \"$output\" >&2; exit \"$rc\"'",
+            "$TC p4template del extern/root/Register",
+            "rm -f /tmp/p4tc-scalar-$TESTID.err /tmp/p4tc-scalar-$TESTID.json"
+        ]
+    },
+    {
+        "id": "b08d",
+        "name": "Extern create scalar/scalar, key first: retain values and addressing",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/scalarRules pipeid 22 numtables 0",
+            "$TC p4template create extern/root/Register extid 1 numinstances 2"
+        ],
+        "cmdUnderTest": "$TC p4template create extern_inst/scalarRules/Register/reg1 tc_numel 1 instid 1 control_path tc_key index ptype bit32 id 1 tc_data_scalar left ptype bit32 id 2 default_value 11 tc_data_scalar right ptype bit32 id 3 default_value 22",
+        "expExitCode": "0",
+        "verifyCmd": "sh -c 'set -eu; $TC -j p4template get extern_inst/scalarRules/Register/reg1 >/tmp/p4tc-scalar-$TESTID.json; python3 -c '\"'\"'import json,sys; value=json.load(sys.stdin); walk=lambda x: ([x] if isinstance(x,dict) else []) + [v for child in (x.values() if isinstance(x,dict) else x if isinstance(x,list) else []) for v in walk(child)]; items=[(p[\"name\"],p[\"value\"]) for p in walk(value) if p.get(\"name\") in (\"left\",\"right\") and \"value\" in p]; assert sorted(items)==[('\"'\"'\"'\"'\"'\"'\"'\"'left'\"'\"'\"'\"'\"'\"'\"'\"', 11), ('\"'\"'\"'\"'\"'\"'\"'\"'right'\"'\"'\"'\"'\"'\"'\"'\"', 22)], (items,value)'\"'\"' </tmp/p4tc-scalar-$TESTID.json; $TC p4template update pipeline/scalarRules state ready; $TC p4ctrl update scalarRules/extern/Register/reg1 tc_data_scalar left 31 tc_data_scalar right 42; $TC -j p4ctrl get scalarRules/extern/Register/reg1 tc_key index 1 >/tmp/p4tc-scalar-$TESTID.json; python3 -c '\"'\"'import json,sys; value=json.load(sys.stdin); walk=lambda x: ([x] if isinstance(x,dict) else []) + [v for child in (x.values() if isinstance(x,dict) else x if isinstance(x,list) else []) for v in walk(child)]; items=[(p[\"name\"],p[\"value\"]) for p in walk(value) if p.get(\"name\") in (\"left\",\"right\") and \"value\" in p]; assert sorted(items)==[('\"'\"'\"'\"'\"'\"'\"'\"'left'\"'\"'\"'\"'\"'\"'\"'\"', 31), ('\"'\"'\"'\"'\"'\"'\"'\"'right'\"'\"'\"'\"'\"'\"'\"'\"', 42)], (items,value)'\"'\"' </tmp/p4tc-scalar-$TESTID.json; if $TC p4ctrl update scalarRules/extern/Register/reg1 tc_key index 2 tc_data_scalar left 99 tc_data_scalar right 100; then exit 1; else test \"$?\" -eq 255; fi; $TC -j p4ctrl get scalarRules/extern/Register/reg1 tc_key index 1 >/tmp/p4tc-scalar-$TESTID.json; python3 -c '\"'\"'import json,sys; value=json.load(sys.stdin); walk=lambda x: ([x] if isinstance(x,dict) else []) + [v for child in (x.values() if isinstance(x,dict) else x if isinstance(x,list) else []) for v in walk(child)]; items=[(p[\"name\"],p[\"value\"]) for p in walk(value) if p.get(\"name\") in (\"left\",\"right\") and \"value\" in p]; assert sorted(items)==[('\"'\"'\"'\"'\"'\"'\"'\"'left'\"'\"'\"'\"'\"'\"'\"'\"', 31), ('\"'\"'\"'\"'\"'\"'\"'\"'right'\"'\"'\"'\"'\"'\"'\"'\"', 42)], (items,value)'\"'\"' </tmp/p4tc-scalar-$TESTID.json; printf consistent'",
+        "matchCount": "1",
+        "matchPattern": "consistent",
+        "teardown": [
+            "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/scalarRules 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf \"%s\\n\" \"$output\" >&2; exit \"$rc\"'",
+            "$TC p4template del extern/root/Register",
+            "rm -f /tmp/p4tc-scalar-$TESTID.err /tmp/p4tc-scalar-$TESTID.json"
+        ]
+    },
+    {
+        "id": "0265",
+        "name": "Extern create scalar/scalar, key middle: retain values and addressing",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/scalarRules pipeid 22 numtables 0",
+            "$TC p4template create extern/root/Register extid 1 numinstances 2"
+        ],
+        "cmdUnderTest": "$TC p4template create extern_inst/scalarRules/Register/reg1 tc_numel 1 instid 1 control_path tc_data_scalar left ptype bit32 id 2 default_value 11 tc_key index ptype bit32 id 1 tc_data_scalar right ptype bit32 id 3 default_value 22",
+        "expExitCode": "0",
+        "verifyCmd": "sh -c 'set -eu; $TC -j p4template get extern_inst/scalarRules/Register/reg1 >/tmp/p4tc-scalar-$TESTID.json; python3 -c '\"'\"'import json,sys; value=json.load(sys.stdin); walk=lambda x: ([x] if isinstance(x,dict) else []) + [v for child in (x.values() if isinstance(x,dict) else x if isinstance(x,list) else []) for v in walk(child)]; items=[(p[\"name\"],p[\"value\"]) for p in walk(value) if p.get(\"name\") in (\"left\",\"right\") and \"value\" in p]; assert sorted(items)==[('\"'\"'\"'\"'\"'\"'\"'\"'left'\"'\"'\"'\"'\"'\"'\"'\"', 11), ('\"'\"'\"'\"'\"'\"'\"'\"'right'\"'\"'\"'\"'\"'\"'\"'\"', 22)], (items,value)'\"'\"' </tmp/p4tc-scalar-$TESTID.json; $TC p4template update pipeline/scalarRules state ready; $TC p4ctrl update scalarRules/extern/Register/reg1 tc_data_scalar left 31 tc_data_scalar right 42; $TC -j p4ctrl get scalarRules/extern/Register/reg1 tc_key index 1 >/tmp/p4tc-scalar-$TESTID.json; python3 -c '\"'\"'import json,sys; value=json.load(sys.stdin); walk=lambda x: ([x] if isinstance(x,dict) else []) + [v for child in (x.values() if isinstance(x,dict) else x if isinstance(x,list) else []) for v in walk(child)]; items=[(p[\"name\"],p[\"value\"]) for p in walk(value) if p.get(\"name\") in (\"left\",\"right\") and \"value\" in p]; assert sorted(items)==[('\"'\"'\"'\"'\"'\"'\"'\"'left'\"'\"'\"'\"'\"'\"'\"'\"', 31), ('\"'\"'\"'\"'\"'\"'\"'\"'right'\"'\"'\"'\"'\"'\"'\"'\"', 42)], (items,value)'\"'\"' </tmp/p4tc-scalar-$TESTID.json; if $TC p4ctrl update scalarRules/extern/Register/reg1 tc_key index 2 tc_data_scalar left 99 tc_data_scalar right 100; then exit 1; else test \"$?\" -eq 255; fi; $TC -j p4ctrl get scalarRules/extern/Register/reg1 tc_key index 1 >/tmp/p4tc-scalar-$TESTID.json; python3 -c '\"'\"'import json,sys; value=json.load(sys.stdin); walk=lambda x: ([x] if isinstance(x,dict) else []) + [v for child in (x.values() if isinstance(x,dict) else x if isinstance(x,list) else []) for v in walk(child)]; items=[(p[\"name\"],p[\"value\"]) for p in walk(value) if p.get(\"name\") in (\"left\",\"right\") and \"value\" in p]; assert sorted(items)==[('\"'\"'\"'\"'\"'\"'\"'\"'left'\"'\"'\"'\"'\"'\"'\"'\"', 31), ('\"'\"'\"'\"'\"'\"'\"'\"'right'\"'\"'\"'\"'\"'\"'\"'\"', 42)], (items,value)'\"'\"' </tmp/p4tc-scalar-$TESTID.json; printf consistent'",
+        "matchCount": "1",
+        "matchPattern": "consistent",
+        "teardown": [
+            "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/scalarRules 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf \"%s\\n\" \"$output\" >&2; exit \"$rc\"'",
+            "$TC p4template del extern/root/Register",
+            "rm -f /tmp/p4tc-scalar-$TESTID.err /tmp/p4tc-scalar-$TESTID.json"
+        ]
+    },
+    {
+        "id": "100c",
+        "name": "Extern create scalar/scalar, key last: retain values and addressing",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/scalarRules pipeid 22 numtables 0",
+            "$TC p4template create extern/root/Register extid 1 numinstances 2"
+        ],
+        "cmdUnderTest": "$TC p4template create extern_inst/scalarRules/Register/reg1 tc_numel 1 instid 1 control_path tc_data_scalar left ptype bit32 id 2 default_value 11 tc_data_scalar right ptype bit32 id 3 default_value 22 tc_key index ptype bit32 id 1",
+        "expExitCode": "0",
+        "verifyCmd": "sh -c 'set -eu; $TC -j p4template get extern_inst/scalarRules/Register/reg1 >/tmp/p4tc-scalar-$TESTID.json; python3 -c '\"'\"'import json,sys; value=json.load(sys.stdin); walk=lambda x: ([x] if isinstance(x,dict) else []) + [v for child in (x.values() if isinstance(x,dict) else x if isinstance(x,list) else []) for v in walk(child)]; items=[(p[\"name\"],p[\"value\"]) for p in walk(value) if p.get(\"name\") in (\"left\",\"right\") and \"value\" in p]; assert sorted(items)==[('\"'\"'\"'\"'\"'\"'\"'\"'left'\"'\"'\"'\"'\"'\"'\"'\"', 11), ('\"'\"'\"'\"'\"'\"'\"'\"'right'\"'\"'\"'\"'\"'\"'\"'\"', 22)], (items,value)'\"'\"' </tmp/p4tc-scalar-$TESTID.json; $TC p4template update pipeline/scalarRules state ready; $TC p4ctrl update scalarRules/extern/Register/reg1 tc_data_scalar left 31 tc_data_scalar right 42; $TC -j p4ctrl get scalarRules/extern/Register/reg1 tc_key index 1 >/tmp/p4tc-scalar-$TESTID.json; python3 -c '\"'\"'import json,sys; value=json.load(sys.stdin); walk=lambda x: ([x] if isinstance(x,dict) else []) + [v for child in (x.values() if isinstance(x,dict) else x if isinstance(x,list) else []) for v in walk(child)]; items=[(p[\"name\"],p[\"value\"]) for p in walk(value) if p.get(\"name\") in (\"left\",\"right\") and \"value\" in p]; assert sorted(items)==[('\"'\"'\"'\"'\"'\"'\"'\"'left'\"'\"'\"'\"'\"'\"'\"'\"', 31), ('\"'\"'\"'\"'\"'\"'\"'\"'right'\"'\"'\"'\"'\"'\"'\"'\"', 42)], (items,value)'\"'\"' </tmp/p4tc-scalar-$TESTID.json; if $TC p4ctrl update scalarRules/extern/Register/reg1 tc_key index 2 tc_data_scalar left 99 tc_data_scalar right 100; then exit 1; else test \"$?\" -eq 255; fi; $TC -j p4ctrl get scalarRules/extern/Register/reg1 tc_key index 1 >/tmp/p4tc-scalar-$TESTID.json; python3 -c '\"'\"'import json,sys; value=json.load(sys.stdin); walk=lambda x: ([x] if isinstance(x,dict) else []) + [v for child in (x.values() if isinstance(x,dict) else x if isinstance(x,list) else []) for v in walk(child)]; items=[(p[\"name\"],p[\"value\"]) for p in walk(value) if p.get(\"name\") in (\"left\",\"right\") and \"value\" in p]; assert sorted(items)==[('\"'\"'\"'\"'\"'\"'\"'\"'left'\"'\"'\"'\"'\"'\"'\"'\"', 31), ('\"'\"'\"'\"'\"'\"'\"'\"'right'\"'\"'\"'\"'\"'\"'\"'\"', 42)], (items,value)'\"'\"' </tmp/p4tc-scalar-$TESTID.json; printf consistent'",
+        "matchCount": "1",
+        "matchPattern": "consistent",
+        "teardown": [
+            "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/scalarRules 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf \"%s\\n\" \"$output\" >&2; exit \"$rc\"'",
+            "$TC p4template del extern/root/Register",
+            "rm -f /tmp/p4tc-scalar-$TESTID.err /tmp/p4tc-scalar-$TESTID.json"
+        ]
+    },
+    {
+        "id": "0c75",
+        "name": "Extern create indexed/scalar, key none: reject mixed data and release template",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/scalarRules pipeid 22 numtables 0",
+            "$TC p4template create extern/root/Register extid 1 numinstances 2"
+        ],
+        "cmdUnderTest": "$TC p4template create extern_inst/scalarRules/Register/reg1 tc_numel 1 instid 1 control_path param left ptype bit32 id 2 default_value 11 tc_data_scalar right ptype bit32 id 3 default_value 22 2>/tmp/p4tc-scalar-$TESTID.err",
+        "expExitCode": "255",
+        "verifyCmd": "sh -c 'set -eu; python3 -c '\"'\"'import sys; assert open(sys.argv[1]).read().splitlines()[0] == \"Error: All data parameters must be scalars.\"'\"'\"' /tmp/p4tc-scalar-$TESTID.err; if $TC -j p4template get extern_inst/scalarRules/Register/reg1; then exit 1; else test \"$?\" -eq 255; fi; $TC p4template del extern/root/Register; $TC p4template create extern/root/Register extid 1 numinstances 2; $TC p4template create extern_inst/scalarRules/Register/reg1 tc_numel 1 instid 1 control_path tc_key index ptype bit32 id 1 param left ptype bit32 id 2 default_value 11 param right ptype bit32 id 3 default_value 22; $TC p4template del extern_inst/scalarRules/Register/reg1; $TC p4template del extern/root/Register; $TC p4template create extern/root/Register extid 1 numinstances 2; printf consistent'",
+        "matchCount": "1",
+        "matchPattern": "consistent",
+        "teardown": [
+            "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/scalarRules 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf \"%s\\n\" \"$output\" >&2; exit \"$rc\"'",
+            "$TC p4template del extern/root/Register",
+            "rm -f /tmp/p4tc-scalar-$TESTID.err /tmp/p4tc-scalar-$TESTID.json"
+        ]
+    },
+    {
+        "id": "e8b5",
+        "name": "Extern create indexed/scalar, key first: reject mixed data and release template",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/scalarRules pipeid 22 numtables 0",
+            "$TC p4template create extern/root/Register extid 1 numinstances 2"
+        ],
+        "cmdUnderTest": "$TC p4template create extern_inst/scalarRules/Register/reg1 tc_numel 1 instid 1 control_path tc_key index ptype bit32 id 1 param left ptype bit32 id 2 default_value 11 tc_data_scalar right ptype bit32 id 3 default_value 22 2>/tmp/p4tc-scalar-$TESTID.err",
+        "expExitCode": "255",
+        "verifyCmd": "sh -c 'set -eu; python3 -c '\"'\"'import sys; assert open(sys.argv[1]).read().splitlines()[0] == \"Error: All data parameters must be scalars.\"'\"'\"' /tmp/p4tc-scalar-$TESTID.err; if $TC -j p4template get extern_inst/scalarRules/Register/reg1; then exit 1; else test \"$?\" -eq 255; fi; $TC p4template del extern/root/Register; $TC p4template create extern/root/Register extid 1 numinstances 2; $TC p4template create extern_inst/scalarRules/Register/reg1 tc_numel 1 instid 1 control_path tc_key index ptype bit32 id 1 param left ptype bit32 id 2 default_value 11 param right ptype bit32 id 3 default_value 22; $TC p4template del extern_inst/scalarRules/Register/reg1; $TC p4template del extern/root/Register; $TC p4template create extern/root/Register extid 1 numinstances 2; printf consistent'",
+        "matchCount": "1",
+        "matchPattern": "consistent",
+        "teardown": [
+            "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/scalarRules 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf \"%s\\n\" \"$output\" >&2; exit \"$rc\"'",
+            "$TC p4template del extern/root/Register",
+            "rm -f /tmp/p4tc-scalar-$TESTID.err /tmp/p4tc-scalar-$TESTID.json"
+        ]
+    },
+    {
+        "id": "845f",
+        "name": "Extern create indexed/scalar, key middle: reject mixed data and release template",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/scalarRules pipeid 22 numtables 0",
+            "$TC p4template create extern/root/Register extid 1 numinstances 2"
+        ],
+        "cmdUnderTest": "$TC p4template create extern_inst/scalarRules/Register/reg1 tc_numel 1 instid 1 control_path param left ptype bit32 id 2 default_value 11 tc_key index ptype bit32 id 1 tc_data_scalar right ptype bit32 id 3 default_value 22 2>/tmp/p4tc-scalar-$TESTID.err",
+        "expExitCode": "255",
+        "verifyCmd": "sh -c 'set -eu; python3 -c '\"'\"'import sys; assert open(sys.argv[1]).read().splitlines()[0] == \"Error: All data parameters must be scalars.\"'\"'\"' /tmp/p4tc-scalar-$TESTID.err; if $TC -j p4template get extern_inst/scalarRules/Register/reg1; then exit 1; else test \"$?\" -eq 255; fi; $TC p4template del extern/root/Register; $TC p4template create extern/root/Register extid 1 numinstances 2; $TC p4template create extern_inst/scalarRules/Register/reg1 tc_numel 1 instid 1 control_path tc_key index ptype bit32 id 1 param left ptype bit32 id 2 default_value 11 param right ptype bit32 id 3 default_value 22; $TC p4template del extern_inst/scalarRules/Register/reg1; $TC p4template del extern/root/Register; $TC p4template create extern/root/Register extid 1 numinstances 2; printf consistent'",
+        "matchCount": "1",
+        "matchPattern": "consistent",
+        "teardown": [
+            "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/scalarRules 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf \"%s\\n\" \"$output\" >&2; exit \"$rc\"'",
+            "$TC p4template del extern/root/Register",
+            "rm -f /tmp/p4tc-scalar-$TESTID.err /tmp/p4tc-scalar-$TESTID.json"
+        ]
+    },
+    {
+        "id": "9d88",
+        "name": "Extern create indexed/scalar, key last: reject mixed data and release template",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/scalarRules pipeid 22 numtables 0",
+            "$TC p4template create extern/root/Register extid 1 numinstances 2"
+        ],
+        "cmdUnderTest": "$TC p4template create extern_inst/scalarRules/Register/reg1 tc_numel 1 instid 1 control_path param left ptype bit32 id 2 default_value 11 tc_data_scalar right ptype bit32 id 3 default_value 22 tc_key index ptype bit32 id 1 2>/tmp/p4tc-scalar-$TESTID.err",
+        "expExitCode": "255",
+        "verifyCmd": "sh -c 'set -eu; python3 -c '\"'\"'import sys; assert open(sys.argv[1]).read().splitlines()[0] == \"Error: All data parameters must be scalars.\"'\"'\"' /tmp/p4tc-scalar-$TESTID.err; if $TC -j p4template get extern_inst/scalarRules/Register/reg1; then exit 1; else test \"$?\" -eq 255; fi; $TC p4template del extern/root/Register; $TC p4template create extern/root/Register extid 1 numinstances 2; $TC p4template create extern_inst/scalarRules/Register/reg1 tc_numel 1 instid 1 control_path tc_key index ptype bit32 id 1 param left ptype bit32 id 2 default_value 11 param right ptype bit32 id 3 default_value 22; $TC p4template del extern_inst/scalarRules/Register/reg1; $TC p4template del extern/root/Register; $TC p4template create extern/root/Register extid 1 numinstances 2; printf consistent'",
+        "matchCount": "1",
+        "matchPattern": "consistent",
+        "teardown": [
+            "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/scalarRules 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf \"%s\\n\" \"$output\" >&2; exit \"$rc\"'",
+            "$TC p4template del extern/root/Register",
+            "rm -f /tmp/p4tc-scalar-$TESTID.err /tmp/p4tc-scalar-$TESTID.json"
+        ]
+    },
+    {
+        "id": "65f6",
+        "name": "Extern create scalar/indexed, key none: reject mixed data and release template",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/scalarRules pipeid 22 numtables 0",
+            "$TC p4template create extern/root/Register extid 1 numinstances 2"
+        ],
+        "cmdUnderTest": "$TC p4template create extern_inst/scalarRules/Register/reg1 tc_numel 1 instid 1 control_path tc_data_scalar left ptype bit32 id 2 default_value 11 param right ptype bit32 id 3 default_value 22 2>/tmp/p4tc-scalar-$TESTID.err",
+        "expExitCode": "255",
+        "verifyCmd": "sh -c 'set -eu; python3 -c '\"'\"'import sys; assert open(sys.argv[1]).read().splitlines()[0] == \"Error: All data parameters must be scalars.\"'\"'\"' /tmp/p4tc-scalar-$TESTID.err; if $TC -j p4template get extern_inst/scalarRules/Register/reg1; then exit 1; else test \"$?\" -eq 255; fi; $TC p4template del extern/root/Register; $TC p4template create extern/root/Register extid 1 numinstances 2; $TC p4template create extern_inst/scalarRules/Register/reg1 tc_numel 1 instid 1 control_path tc_key index ptype bit32 id 1 param left ptype bit32 id 2 default_value 11 param right ptype bit32 id 3 default_value 22; $TC p4template del extern_inst/scalarRules/Register/reg1; $TC p4template del extern/root/Register; $TC p4template create extern/root/Register extid 1 numinstances 2; printf consistent'",
+        "matchCount": "1",
+        "matchPattern": "consistent",
+        "teardown": [
+            "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/scalarRules 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf \"%s\\n\" \"$output\" >&2; exit \"$rc\"'",
+            "$TC p4template del extern/root/Register",
+            "rm -f /tmp/p4tc-scalar-$TESTID.err /tmp/p4tc-scalar-$TESTID.json"
+        ]
+    },
+    {
+        "id": "5791",
+        "name": "Extern create scalar/indexed, key first: reject mixed data and release template",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/scalarRules pipeid 22 numtables 0",
+            "$TC p4template create extern/root/Register extid 1 numinstances 2"
+        ],
+        "cmdUnderTest": "$TC p4template create extern_inst/scalarRules/Register/reg1 tc_numel 1 instid 1 control_path tc_key index ptype bit32 id 1 tc_data_scalar left ptype bit32 id 2 default_value 11 param right ptype bit32 id 3 default_value 22 2>/tmp/p4tc-scalar-$TESTID.err",
+        "expExitCode": "255",
+        "verifyCmd": "sh -c 'set -eu; python3 -c '\"'\"'import sys; assert open(sys.argv[1]).read().splitlines()[0] == \"Error: All data parameters must be scalars.\"'\"'\"' /tmp/p4tc-scalar-$TESTID.err; if $TC -j p4template get extern_inst/scalarRules/Register/reg1; then exit 1; else test \"$?\" -eq 255; fi; $TC p4template del extern/root/Register; $TC p4template create extern/root/Register extid 1 numinstances 2; $TC p4template create extern_inst/scalarRules/Register/reg1 tc_numel 1 instid 1 control_path tc_key index ptype bit32 id 1 param left ptype bit32 id 2 default_value 11 param right ptype bit32 id 3 default_value 22; $TC p4template del extern_inst/scalarRules/Register/reg1; $TC p4template del extern/root/Register; $TC p4template create extern/root/Register extid 1 numinstances 2; printf consistent'",
+        "matchCount": "1",
+        "matchPattern": "consistent",
+        "teardown": [
+            "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/scalarRules 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf \"%s\\n\" \"$output\" >&2; exit \"$rc\"'",
+            "$TC p4template del extern/root/Register",
+            "rm -f /tmp/p4tc-scalar-$TESTID.err /tmp/p4tc-scalar-$TESTID.json"
+        ]
+    },
+    {
+        "id": "6734",
+        "name": "Extern create scalar/indexed, key middle: reject mixed data and release template",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/scalarRules pipeid 22 numtables 0",
+            "$TC p4template create extern/root/Register extid 1 numinstances 2"
+        ],
+        "cmdUnderTest": "$TC p4template create extern_inst/scalarRules/Register/reg1 tc_numel 1 instid 1 control_path tc_data_scalar left ptype bit32 id 2 default_value 11 tc_key index ptype bit32 id 1 param right ptype bit32 id 3 default_value 22 2>/tmp/p4tc-scalar-$TESTID.err",
+        "expExitCode": "255",
+        "verifyCmd": "sh -c 'set -eu; python3 -c '\"'\"'import sys; assert open(sys.argv[1]).read().splitlines()[0] == \"Error: All data parameters must be scalars.\"'\"'\"' /tmp/p4tc-scalar-$TESTID.err; if $TC -j p4template get extern_inst/scalarRules/Register/reg1; then exit 1; else test \"$?\" -eq 255; fi; $TC p4template del extern/root/Register; $TC p4template create extern/root/Register extid 1 numinstances 2; $TC p4template create extern_inst/scalarRules/Register/reg1 tc_numel 1 instid 1 control_path tc_key index ptype bit32 id 1 param left ptype bit32 id 2 default_value 11 param right ptype bit32 id 3 default_value 22; $TC p4template del extern_inst/scalarRules/Register/reg1; $TC p4template del extern/root/Register; $TC p4template create extern/root/Register extid 1 numinstances 2; printf consistent'",
+        "matchCount": "1",
+        "matchPattern": "consistent",
+        "teardown": [
+            "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/scalarRules 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf \"%s\\n\" \"$output\" >&2; exit \"$rc\"'",
+            "$TC p4template del extern/root/Register",
+            "rm -f /tmp/p4tc-scalar-$TESTID.err /tmp/p4tc-scalar-$TESTID.json"
+        ]
+    },
+    {
+        "id": "c325",
+        "name": "Extern create scalar/indexed, key last: reject mixed data and release template",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/scalarRules pipeid 22 numtables 0",
+            "$TC p4template create extern/root/Register extid 1 numinstances 2"
+        ],
+        "cmdUnderTest": "$TC p4template create extern_inst/scalarRules/Register/reg1 tc_numel 1 instid 1 control_path tc_data_scalar left ptype bit32 id 2 default_value 11 param right ptype bit32 id 3 default_value 22 tc_key index ptype bit32 id 1 2>/tmp/p4tc-scalar-$TESTID.err",
+        "expExitCode": "255",
+        "verifyCmd": "sh -c 'set -eu; python3 -c '\"'\"'import sys; assert open(sys.argv[1]).read().splitlines()[0] == \"Error: All data parameters must be scalars.\"'\"'\"' /tmp/p4tc-scalar-$TESTID.err; if $TC -j p4template get extern_inst/scalarRules/Register/reg1; then exit 1; else test \"$?\" -eq 255; fi; $TC p4template del extern/root/Register; $TC p4template create extern/root/Register extid 1 numinstances 2; $TC p4template create extern_inst/scalarRules/Register/reg1 tc_numel 1 instid 1 control_path tc_key index ptype bit32 id 1 param left ptype bit32 id 2 default_value 11 param right ptype bit32 id 3 default_value 22; $TC p4template del extern_inst/scalarRules/Register/reg1; $TC p4template del extern/root/Register; $TC p4template create extern/root/Register extid 1 numinstances 2; printf consistent'",
+        "matchCount": "1",
+        "matchPattern": "consistent",
+        "teardown": [
+            "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/scalarRules 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf \"%s\\n\" \"$output\" >&2; exit \"$rc\"'",
+            "$TC p4template del extern/root/Register",
+            "rm -f /tmp/p4tc-scalar-$TESTID.err /tmp/p4tc-scalar-$TESTID.json"
+        ]
+    },
+    {
+        "id": "c18d",
+        "name": "Extern update indexed/indexed: replace values and addressing",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/scalarRules pipeid 22 numtables 0",
+            "$TC p4template create extern/root/Register extid 1 numinstances 2",
+            "$TC p4template create extern_inst/scalarRules/Register/reg1 tc_numel 1 instid 1 control_path tc_key index ptype bit32 id 1 param left ptype bit32 id 2 default_value 11 param right ptype bit32 id 3 default_value 22",
+            "$TC -j p4template get extern_inst/scalarRules/Register/reg1 >/tmp/p4tc-scalar-$TESTID.json"
+        ],
+        "cmdUnderTest": "$TC p4template update extern_inst/scalarRules/Register/reg1 control_path tc_key index ptype bit32 id 1 param left ptype bit32 id 2 default_value 21 param right ptype bit32 id 3 default_value 32",
+        "expExitCode": "0",
+        "verifyCmd": "sh -c 'set -eu; $TC -j p4template get extern_inst/scalarRules/Register/reg1 >/tmp/p4tc-scalar-$TESTID.json; python3 -c '\"'\"'import json,sys; value=json.load(sys.stdin); walk=lambda x: ([x] if isinstance(x,dict) else []) + [v for child in (x.values() if isinstance(x,dict) else x if isinstance(x,list) else []) for v in walk(child)]; items=[(p[\"name\"],p[\"value\"]) for p in walk(value) if p.get(\"name\") in (\"left\",\"right\") and \"value\" in p]; assert sorted(items)==[('\"'\"'\"'\"'\"'\"'\"'\"'left'\"'\"'\"'\"'\"'\"'\"'\"', 21), ('\"'\"'\"'\"'\"'\"'\"'\"'right'\"'\"'\"'\"'\"'\"'\"'\"', 32)], (items,value)'\"'\"' </tmp/p4tc-scalar-$TESTID.json; $TC p4template update pipeline/scalarRules state ready; $TC p4ctrl update scalarRules/extern/Register/reg1 tc_key index 1 param left 31 param right 42; $TC -j p4ctrl get scalarRules/extern/Register/reg1 tc_key index 1 >/tmp/p4tc-scalar-$TESTID.json; python3 -c '\"'\"'import json,sys; value=json.load(sys.stdin); walk=lambda x: ([x] if isinstance(x,dict) else []) + [v for child in (x.values() if isinstance(x,dict) else x if isinstance(x,list) else []) for v in walk(child)]; items=[(p[\"name\"],p[\"value\"]) for p in walk(value) if p.get(\"name\") in (\"left\",\"right\") and \"value\" in p]; assert sorted(items)==[('\"'\"'\"'\"'\"'\"'\"'\"'left'\"'\"'\"'\"'\"'\"'\"'\"', 31), ('\"'\"'\"'\"'\"'\"'\"'\"'right'\"'\"'\"'\"'\"'\"'\"'\"', 42)], (items,value)'\"'\"' </tmp/p4tc-scalar-$TESTID.json; printf consistent'",
+        "matchCount": "1",
+        "matchPattern": "consistent",
+        "teardown": [
+            "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/scalarRules 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf \"%s\\n\" \"$output\" >&2; exit \"$rc\"'",
+            "$TC p4template del extern/root/Register",
+            "rm -f /tmp/p4tc-scalar-$TESTID.err /tmp/p4tc-scalar-$TESTID.json"
+        ]
+    },
+    {
+        "id": "d3bf",
+        "name": "Extern update scalar/scalar: replace values and addressing",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/scalarRules pipeid 22 numtables 0",
+            "$TC p4template create extern/root/Register extid 1 numinstances 2",
+            "$TC p4template create extern_inst/scalarRules/Register/reg1 tc_numel 1 instid 1 control_path tc_key index ptype bit32 id 1 param left ptype bit32 id 2 default_value 11 param right ptype bit32 id 3 default_value 22",
+            "$TC -j p4template get extern_inst/scalarRules/Register/reg1 >/tmp/p4tc-scalar-$TESTID.json"
+        ],
+        "cmdUnderTest": "$TC p4template update extern_inst/scalarRules/Register/reg1 control_path tc_key index ptype bit32 id 1 tc_data_scalar left ptype bit32 id 2 default_value 21 tc_data_scalar right ptype bit32 id 3 default_value 32",
+        "expExitCode": "0",
+        "verifyCmd": "sh -c 'set -eu; $TC -j p4template get extern_inst/scalarRules/Register/reg1 >/tmp/p4tc-scalar-$TESTID.json; python3 -c '\"'\"'import json,sys; value=json.load(sys.stdin); walk=lambda x: ([x] if isinstance(x,dict) else []) + [v for child in (x.values() if isinstance(x,dict) else x if isinstance(x,list) else []) for v in walk(child)]; items=[(p[\"name\"],p[\"value\"]) for p in walk(value) if p.get(\"name\") in (\"left\",\"right\") and \"value\" in p]; assert sorted(items)==[('\"'\"'\"'\"'\"'\"'\"'\"'left'\"'\"'\"'\"'\"'\"'\"'\"', 21), ('\"'\"'\"'\"'\"'\"'\"'\"'right'\"'\"'\"'\"'\"'\"'\"'\"', 32)], (items,value)'\"'\"' </tmp/p4tc-scalar-$TESTID.json; $TC p4template update pipeline/scalarRules state ready; $TC p4ctrl update scalarRules/extern/Register/reg1 tc_data_scalar left 31 tc_data_scalar right 42; $TC -j p4ctrl get scalarRules/extern/Register/reg1 tc_key index 1 >/tmp/p4tc-scalar-$TESTID.json; python3 -c '\"'\"'import json,sys; value=json.load(sys.stdin); walk=lambda x: ([x] if isinstance(x,dict) else []) + [v for child in (x.values() if isinstance(x,dict) else x if isinstance(x,list) else []) for v in walk(child)]; items=[(p[\"name\"],p[\"value\"]) for p in walk(value) if p.get(\"name\") in (\"left\",\"right\") and \"value\" in p]; assert sorted(items)==[('\"'\"'\"'\"'\"'\"'\"'\"'left'\"'\"'\"'\"'\"'\"'\"'\"', 31), ('\"'\"'\"'\"'\"'\"'\"'\"'right'\"'\"'\"'\"'\"'\"'\"'\"', 42)], (items,value)'\"'\"' </tmp/p4tc-scalar-$TESTID.json; if $TC p4ctrl update scalarRules/extern/Register/reg1 tc_key index 2 tc_data_scalar left 99 tc_data_scalar right 100; then exit 1; else test \"$?\" -eq 255; fi; $TC -j p4ctrl get scalarRules/extern/Register/reg1 tc_key index 1 >/tmp/p4tc-scalar-$TESTID.json; python3 -c '\"'\"'import json,sys; value=json.load(sys.stdin); walk=lambda x: ([x] if isinstance(x,dict) else []) + [v for child in (x.values() if isinstance(x,dict) else x if isinstance(x,list) else []) for v in walk(child)]; items=[(p[\"name\"],p[\"value\"]) for p in walk(value) if p.get(\"name\") in (\"left\",\"right\") and \"value\" in p]; assert sorted(items)==[('\"'\"'\"'\"'\"'\"'\"'\"'left'\"'\"'\"'\"'\"'\"'\"'\"', 31), ('\"'\"'\"'\"'\"'\"'\"'\"'right'\"'\"'\"'\"'\"'\"'\"'\"', 42)], (items,value)'\"'\"' </tmp/p4tc-scalar-$TESTID.json; printf consistent'",
+        "matchCount": "1",
+        "matchPattern": "consistent",
+        "teardown": [
+            "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/scalarRules 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf \"%s\\n\" \"$output\" >&2; exit \"$rc\"'",
+            "$TC p4template del extern/root/Register",
+            "rm -f /tmp/p4tc-scalar-$TESTID.err /tmp/p4tc-scalar-$TESTID.json"
+        ]
+    },
+    {
+        "id": "6864",
+        "name": "Extern update indexed/scalar: reject and preserve complete installed template",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/scalarRules pipeid 22 numtables 0",
+            "$TC p4template create extern/root/Register extid 1 numinstances 2",
+            "$TC p4template create extern_inst/scalarRules/Register/reg1 tc_numel 1 instid 1 control_path tc_key index ptype bit32 id 1 param left ptype bit32 id 2 default_value 11 param right ptype bit32 id 3 default_value 22",
+            "$TC -j p4template get extern_inst/scalarRules/Register/reg1 >/tmp/p4tc-scalar-$TESTID.json"
+        ],
+        "cmdUnderTest": "$TC p4template update extern_inst/scalarRules/Register/reg1 control_path tc_key index ptype bit32 id 1 param left ptype bit32 id 2 default_value 21 tc_data_scalar right ptype bit32 id 3 default_value 32 2>/tmp/p4tc-scalar-$TESTID.err",
+        "expExitCode": "255",
+        "verifyCmd": "sh -c 'set -eu; python3 -c '\"'\"'import sys; assert open(sys.argv[1]).read().splitlines()[0] == \"Error: All data parameters must be scalars.\"'\"'\"' /tmp/p4tc-scalar-$TESTID.err; $TC -j p4template get extern_inst/scalarRules/Register/reg1 | python3 -c '\"'\"'import json,sys; assert json.load(sys.stdin)==json.load(open(sys.argv[1]))'\"'\"' /tmp/p4tc-scalar-$TESTID.json; $TC p4template del extern_inst/scalarRules/Register/reg1; $TC p4template del extern/root/Register; $TC p4template create extern/root/Register extid 1 numinstances 2; printf consistent'",
+        "matchCount": "1",
+        "matchPattern": "consistent",
+        "teardown": [
+            "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/scalarRules 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf \"%s\\n\" \"$output\" >&2; exit \"$rc\"'",
+            "$TC p4template del extern/root/Register",
+            "rm -f /tmp/p4tc-scalar-$TESTID.err /tmp/p4tc-scalar-$TESTID.json"
+        ]
+    },
+    {
+        "id": "194c",
+        "name": "Extern update scalar/indexed: reject and preserve complete installed template",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/scalarRules pipeid 22 numtables 0",
+            "$TC p4template create extern/root/Register extid 1 numinstances 2",
+            "$TC p4template create extern_inst/scalarRules/Register/reg1 tc_numel 1 instid 1 control_path tc_key index ptype bit32 id 1 param left ptype bit32 id 2 default_value 11 param right ptype bit32 id 3 default_value 22",
+            "$TC -j p4template get extern_inst/scalarRules/Register/reg1 >/tmp/p4tc-scalar-$TESTID.json"
+        ],
+        "cmdUnderTest": "$TC p4template update extern_inst/scalarRules/Register/reg1 control_path tc_key index ptype bit32 id 1 tc_data_scalar left ptype bit32 id 2 default_value 21 param right ptype bit32 id 3 default_value 32 2>/tmp/p4tc-scalar-$TESTID.err",
+        "expExitCode": "255",
+        "verifyCmd": "sh -c 'set -eu; python3 -c '\"'\"'import sys; assert open(sys.argv[1]).read().splitlines()[0] == \"Error: All data parameters must be scalars.\"'\"'\"' /tmp/p4tc-scalar-$TESTID.err; $TC -j p4template get extern_inst/scalarRules/Register/reg1 | python3 -c '\"'\"'import json,sys; assert json.load(sys.stdin)==json.load(open(sys.argv[1]))'\"'\"' /tmp/p4tc-scalar-$TESTID.json; $TC p4template del extern_inst/scalarRules/Register/reg1; $TC p4template del extern/root/Register; $TC p4template create extern/root/Register extid 1 numinstances 2; printf consistent'",
+        "matchCount": "1",
+        "matchPattern": "consistent",
+        "teardown": [
+            "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/scalarRules 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf \"%s\\n\" \"$output\" >&2; exit \"$rc\"'",
+            "$TC p4template del extern/root/Register",
+            "rm -f /tmp/p4tc-scalar-$TESTID.err /tmp/p4tc-scalar-$TESTID.json"
+        ]
+    },
+    {
+        "id": "e908",
+        "name": "Extern update without control params preserves scalar classification",
+        "category": [
+            "p4tc",
+            "template",
+            "spec_extern_inst"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/scalarRules pipeid 22 numtables 0",
+            "$TC p4template create extern/root/Register extid 1 numinstances 2",
+            "$TC p4template create extern_inst/scalarRules/Register/reg1 tc_numel 1 instid 1 control_path tc_data_scalar left ptype bit32 id 2 default_value 11 tc_data_scalar right ptype bit32 id 3 default_value 22"
+        ],
+        "cmdUnderTest": "$TC p4template update extern_inst/scalarRules/Register/reg1 tc_numel 1",
+        "expExitCode": "0",
+        "verifyCmd": "sh -c 'set -eu; $TC p4template update pipeline/scalarRules state ready; $TC p4ctrl update scalarRules/extern/Register/reg1 tc_data_scalar left 31 tc_data_scalar right 42; $TC -j p4ctrl get scalarRules/extern/Register/reg1 tc_key index 1 >/tmp/p4tc-scalar-$TESTID.json; python3 -c '\"'\"'import json,sys; value=json.load(sys.stdin); walk=lambda x: ([x] if isinstance(x,dict) else []) + [v for child in (x.values() if isinstance(x,dict) else x if isinstance(x,list) else []) for v in walk(child)]; items=[(p[\"name\"],p[\"value\"]) for p in walk(value) if p.get(\"name\") in (\"left\",\"right\") and \"value\" in p]; assert sorted(items)==[(\"left\",31),(\"right\",42)], (items,value); print(\"consistent\")'\"'\"' </tmp/p4tc-scalar-$TESTID.json'",
+        "matchCount": "1",
+        "matchPattern": "consistent",
+        "teardown": [
+            "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/scalarRules 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf \"%s\\n\" \"$output\" >&2; exit \"$rc\"'",
+            "$TC p4template del extern/root/Register",
+            "rm -f /tmp/p4tc-scalar-$TESTID.err /tmp/p4tc-scalar-$TESTID.json"
+        ]
+    }
+]

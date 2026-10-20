@@ -1,0 +1,1 @@
+create extern_inst/names/Register/iiiiiiiiiiiiiiiiiiiiiiiiiiiiiii instid 2 control_path tc_key index ptype bit32 param value ptype bit32

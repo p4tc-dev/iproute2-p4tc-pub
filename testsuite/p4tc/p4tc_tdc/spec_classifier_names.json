@@ -1,0 +1,164 @@
+[
+    {
+        "id": "bb7c",
+        "name": "Classifier raw name 31 bytes with pipeid 0",
+        "category": [
+            "p4tc",
+            "classifier",
+            "name_capacity"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/ppppppppppppppppppppppppppppppp pipeid 22 numtables 0",
+            "$TC p4template update pipeline/ppppppppppppppppppppppppppppppp state ready",
+            "ip link add dev p4d$TESTID type dummy",
+            "$TC qdisc add dev p4d$TESTID clsact"
+        ],
+        "cmdUnderTest": "python3 \"$INTROSPECTION/classifier_name_boundary.py\" \"$TC\" p4d$TESTID 31 0",
+        "expExitCode": "0",
+        "verifyCmd": "$TC -j p4template get pipeline/ppppppppppppppppppppppppppppppp",
+        "matchPattern": "\"pname\":\\s*\"ppppppppppppppppppppppppppppppp\"",
+        "matchCount": "1",
+        "teardown": [
+            "ip link del dev p4d$TESTID",
+            "sh -c 'for id in 22 23; do for attempt in $(seq 1 200); do out=$($TC p4template del pipeline/ pipeid \"$id\" 2>&1); rc=$?; case \"$out\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ \"$rc\" -eq 0 ] || [ \"$rc\" -eq 255 ] || exit \"$rc\"; done'"
+        ]
+    },
+    {
+        "id": "a9da",
+        "name": "Classifier raw name 31 bytes with pipeid 22",
+        "category": [
+            "p4tc",
+            "classifier",
+            "name_capacity"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/ppppppppppppppppppppppppppppppp pipeid 22 numtables 0",
+            "$TC p4template update pipeline/ppppppppppppppppppppppppppppppp state ready",
+            "ip link add dev p4d$TESTID type dummy",
+            "$TC qdisc add dev p4d$TESTID clsact"
+        ],
+        "cmdUnderTest": "python3 \"$INTROSPECTION/classifier_name_boundary.py\" \"$TC\" p4d$TESTID 31 22",
+        "expExitCode": "0",
+        "verifyCmd": "$TC -j p4template get pipeline/ppppppppppppppppppppppppppppppp",
+        "matchPattern": "\"pname\":\\s*\"ppppppppppppppppppppppppppppppp\"",
+        "matchCount": "1",
+        "teardown": [
+            "ip link del dev p4d$TESTID",
+            "sh -c 'for id in 22 23; do for attempt in $(seq 1 200); do out=$($TC p4template del pipeline/ pipeid \"$id\" 2>&1); rc=$?; case \"$out\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ \"$rc\" -eq 0 ] || [ \"$rc\" -eq 255 ] || exit \"$rc\"; done'"
+        ]
+    },
+    {
+        "id": "576f",
+        "name": "Classifier raw name 32 bytes with pipeid 0",
+        "category": [
+            "p4tc",
+            "classifier",
+            "name_capacity"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/ppppppppppppppppppppppppppppppp pipeid 23 numtables 0",
+            "$TC p4template update pipeline/ppppppppppppppppppppppppppppppp state ready",
+            "ip link add dev p4d$TESTID type dummy",
+            "$TC qdisc add dev p4d$TESTID clsact"
+        ],
+        "cmdUnderTest": "python3 \"$INTROSPECTION/classifier_name_boundary.py\" \"$TC\" p4d$TESTID 32 0",
+        "expExitCode": "0",
+        "verifyCmd": "$TC -j p4template get pipeline/pppppppppppppppppppppppppppppppp",
+        "matchPattern": "\"pname\":\\s*\"pppppppppppppppppppppppppppppppp\"",
+        "matchCount": "1",
+        "teardown": [
+            "ip link del dev p4d$TESTID",
+            "sh -c 'for id in 22 23; do for attempt in $(seq 1 200); do out=$($TC p4template del pipeline/ pipeid \"$id\" 2>&1); rc=$?; case \"$out\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ \"$rc\" -eq 0 ] || [ \"$rc\" -eq 255 ] || exit \"$rc\"; done'"
+        ]
+    },
+    {
+        "id": "5c85",
+        "name": "Classifier raw name 32 bytes with pipeid 22",
+        "category": [
+            "p4tc",
+            "classifier",
+            "name_capacity"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/ppppppppppppppppppppppppppppppp pipeid 23 numtables 0",
+            "$TC p4template update pipeline/ppppppppppppppppppppppppppppppp state ready",
+            "ip link add dev p4d$TESTID type dummy",
+            "$TC qdisc add dev p4d$TESTID clsact"
+        ],
+        "cmdUnderTest": "python3 \"$INTROSPECTION/classifier_name_boundary.py\" \"$TC\" p4d$TESTID 32 22",
+        "expExitCode": "0",
+        "verifyCmd": "$TC -j p4template get pipeline/pppppppppppppppppppppppppppppppp",
+        "matchPattern": "\"pname\":\\s*\"pppppppppppppppppppppppppppppppp\"",
+        "matchCount": "1",
+        "teardown": [
+            "ip link del dev p4d$TESTID",
+            "sh -c 'for id in 22 23; do for attempt in $(seq 1 200); do out=$($TC p4template del pipeline/ pipeid \"$id\" 2>&1); rc=$?; case \"$out\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ \"$rc\" -eq 0 ] || [ \"$rc\" -eq 255 ] || exit \"$rc\"; done'"
+        ]
+    },
+    {
+        "id": "7370",
+        "name": "Classifier raw name 33 bytes with pipeid 0",
+        "category": [
+            "p4tc",
+            "classifier",
+            "name_capacity"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/ppppppppppppppppppppppppppppppp pipeid 23 numtables 0",
+            "$TC p4template update pipeline/ppppppppppppppppppppppppppppppp state ready",
+            "ip link add dev p4d$TESTID type dummy",
+            "$TC qdisc add dev p4d$TESTID clsact"
+        ],
+        "cmdUnderTest": "python3 \"$INTROSPECTION/classifier_name_boundary.py\" \"$TC\" p4d$TESTID 33 0",
+        "expExitCode": "0",
+        "verifyCmd": "$TC -j p4template get pipeline/pppppppppppppppppppppppppppppppp",
+        "matchPattern": "\"pname\":\\s*\"pppppppppppppppppppppppppppppppp\"",
+        "matchCount": "1",
+        "teardown": [
+            "ip link del dev p4d$TESTID",
+            "sh -c 'for id in 22 23; do for attempt in $(seq 1 200); do out=$($TC p4template del pipeline/ pipeid \"$id\" 2>&1); rc=$?; case \"$out\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ \"$rc\" -eq 0 ] || [ \"$rc\" -eq 255 ] || exit \"$rc\"; done'"
+        ]
+    },
+    {
+        "id": "13d1",
+        "name": "Classifier raw name 33 bytes with pipeid 22",
+        "category": [
+            "p4tc",
+            "classifier",
+            "name_capacity"
+        ],
+        "plugins": {
+            "requires": "nsPlugin"
+        },
+        "setup": [
+            "$TC p4template create pipeline/ppppppppppppppppppppppppppppppp pipeid 23 numtables 0",
+            "$TC p4template update pipeline/ppppppppppppppppppppppppppppppp state ready",
+            "ip link add dev p4d$TESTID type dummy",
+            "$TC qdisc add dev p4d$TESTID clsact"
+        ],
+        "cmdUnderTest": "python3 \"$INTROSPECTION/classifier_name_boundary.py\" \"$TC\" p4d$TESTID 33 22",
+        "expExitCode": "0",
+        "verifyCmd": "$TC -j p4template get pipeline/pppppppppppppppppppppppppppppppp",
+        "matchPattern": "\"pname\":\\s*\"pppppppppppppppppppppppppppppppp\"",
+        "matchCount": "1",
+        "teardown": [
+            "ip link del dev p4d$TESTID",
+            "sh -c 'for id in 22 23; do for attempt in $(seq 1 200); do out=$($TC p4template del pipeline/ pipeid \"$id\" 2>&1); rc=$?; case \"$out\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ \"$rc\" -eq 0 ] || [ \"$rc\" -eq 255 ] || exit \"$rc\"; done'"
+        ]
+    }
+]

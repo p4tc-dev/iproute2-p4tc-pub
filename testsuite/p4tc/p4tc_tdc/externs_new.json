@@ -1,0 +1,3656 @@
+[
+    {
+        "id": "f678",
+        "name": "Create valid extern template",
+        "category": [
+            "p4tc",
+            "template",
+            "extern"
+        ],
+        "setup": [],
+        "cmdUnderTest": "$TC p4template create extern/root/myext extid 1 numinstances 1",
+        "expExitCode": "0",
+        "verifyCmd": "$TC -j p4template get extern/root/myext",
+        "matchCount": "1",
+        "matchJSON": [
+            {
+                "obj": "extern",
+                "pname": "root",
+                "extname": "myext",
+                "num_insts": 1,
+                "extid": 1
+            }
+        ],
+        "teardown": [
+            [
+                "$TC p4template del extern/root/myext",
+                0
+            ]
+        ]
+    },
+    {
+        "id": "e06e",
+        "name": "Try to create valid extern template with same name twice",
+        "category": [
+            "p4tc",
+            "template",
+            "extern"
+        ],
+        "setup": [
+            "$TC p4template create extern/root/myext extid 1 numinstances 1",
+            0
+        ],
+        "cmdUnderTest": "$TC p4template create extern/root/myext extid 2 numinstances 2",
+        "expExitCode": "255",
+        "verifyCmd": "$TC -j p4template get extern/root/myext",
+        "matchCount": "1",
+        "matchJSON": [
+            {
+                "obj": "extern",
+                "pname": "root",
+                "extname": "myext",
+                "num_insts": 1,
+                "extid": 1
+            }
+        ],
+        "teardown": [
+            [
+                "$TC p4template del extern/root/myext",
+                0
+            ]
+        ]
+    },
+    {
+        "id": "f96d",
+        "name": "Try to create valid extern template with same ID twice",
+        "category": [
+            "p4tc",
+            "template",
+            "extern"
+        ],
+        "setup": [
+            "$TC p4template create extern/root/myext extid 1 numinstances 1",
+            0
+        ],
+        "cmdUnderTest": "$TC p4template create extern/root/myext2 extid 1 numinstances 2",
+        "expExitCode": "255",
+        "verifyCmd": "$TC -j p4template get extern/root/myext",
+        "matchCount": "1",
+        "matchJSON": [
+            {
+                "obj": "extern",
+                "pname": "root",
+                "extname": "myext",
+                "num_insts": 1,
+                "extid": 1
+            }
+        ],
+        "teardown": [
+            [
+                "$TC p4template del extern/root/myext",
+                0
+            ]
+        ]
+    },
+    {
+        "id": "ea0b",
+        "name": "Create valid extern template without specifying numinstances",
+        "category": [
+            "p4tc",
+            "template",
+            "extern"
+        ],
+        "setup": [],
+        "cmdUnderTest": "$TC p4template create extern/root/myext extid 1",
+        "expExitCode": "0",
+        "verifyCmd": "$TC -j p4template get extern/root/myext",
+        "matchCount": "1",
+        "matchJSON": [
+            {
+                "obj": "extern",
+                "pname": "root",
+                "extname": "myext",
+                "num_insts": 1,
+                "extid": 1
+            }
+        ],
+        "teardown": [
+            [
+                "$TC p4template del extern/root/myext",
+                0
+            ]
+        ]
+    },
+    {
+        "id": "1bfe",
+        "name": "Try to create extern template with numinstances > P4TC_MAX_NUM_EXT_INSTS",
+        "category": [
+            "p4tc",
+            "template",
+            "extern"
+        ],
+        "setup": [],
+        "cmdUnderTest": "$TC p4template create extern/root/myext extid 1 numinstances 1025",
+        "expExitCode": "255",
+        "verifyCmd": "$TC -j p4template get extern/root/myext",
+        "matchCount": "1",
+        "matchPattern": "Error: Extern name not found",
+        "teardown": []
+    },
+    {
+        "id": "7fef",
+        "name": "Try to create extern template with numinstances == 0",
+        "category": [
+            "p4tc",
+            "template",
+            "extern"
+        ],
+        "setup": [],
+        "cmdUnderTest": "$TC p4template create extern/root/myext extid 1 numinstances 0",
+        "expExitCode": "255",
+        "verifyCmd": "$TC -j p4template get extern/root/myext",
+        "matchCount": "1",
+        "matchPattern": "Error: Extern name not found",
+        "teardown": []
+    },
+    {
+        "id": "0879",
+        "name": "Try to create extern template without specifying extid",
+        "category": [
+            "p4tc",
+            "template",
+            "extern"
+        ],
+        "setup": [],
+        "cmdUnderTest": "$TC p4template create extern/root/myext",
+        "expExitCode": "255",
+        "verifyCmd": "$TC -j p4template get extern/root/myext",
+        "matchCount": "1",
+        "matchPattern": "Error: Extern name not found",
+        "teardown": []
+    },
+    {
+        "id": "d78c",
+        "name": "Try to create extern template with extern name > EXTERNNAMSIZ",
+        "category": [
+            "p4tc",
+            "template",
+            "extern"
+        ],
+        "setup": [],
+        "cmdUnderTest": "$TC p4template create extern/root/jvufustmcjxbszrxfyrhjaduloibkxdaophvyjwoukivajeozfrjfoancfzsjhmncpjevepijlgbflmddbjyklrbbdzcjhjupragpdliaiapkmdwvzqhvylkavigtemyjldzmzutcqorwlnmntqnpaytwwdqmegverzmporppbszburoiyhnxltiptjsqbhqruzezkovomljyitdokoumgulzyazqmqfmzgiwjhcgwggcscbontriwxqybankavufk extid 1",
+        "expExitCode": "255",
+        "verifyCmd": "$TC -j p4template get extern/root/jvufustmcjxbszrxfyrhjaduloibkxdaophvyjwoukivajeozfrjfoancfzsjhmncpjevepijlgbflmddbjyklrbbdzcjhjupragpdliaiapkmdwvzqhvylkavigtemyjldzmzutcqorwlnmntqnpaytwwdqmegverzmporppbszburoiyhnxltiptjsqbhqruzezkovomljyitdokoumgulzyazqmqfmzgiwjhcgwggcscbontriwxqybankavufk",
+        "matchCount": "1",
+        "matchPattern": "Path component exceeds 32 bytes",
+        "teardown": []
+    },
+    {
+        "id": "a5b8",
+        "name": "Create valid extern template and flush",
+        "category": [
+            "p4tc",
+            "template",
+            "extern"
+        ],
+        "setup": [
+            [
+                "$TC p4template create extern/root/myext extid 1",
+                0
+            ]
+        ],
+        "cmdUnderTest": "$TC p4template del extern/root/",
+        "expExitCode": "0",
+        "verifyCmd": "$TC -j p4template get extern/root/myext",
+        "matchCount": "1",
+        "matchPattern": "Error: Extern name not found",
+        "teardown": []
+    },
+    {
+        "id": "5dc5",
+        "name": "Create valid extern template and dump",
+        "category": [
+            "p4tc",
+            "template",
+            "extern"
+        ],
+        "setup": [],
+        "cmdUnderTest": "$TC p4template create extern/root/myext extid 1",
+        "expExitCode": "0",
+        "verifyCmd": "$TC -j p4template get extern/root/myext",
+        "matchCount": "1",
+        "matchJSON": [
+            {
+                "obj": "extern",
+                "pname": "root",
+                "extname": "myext",
+                "extid": 1
+            }
+        ],
+        "teardown": [
+            [
+                "$TC p4template del extern/root/myext",
+                0
+            ]
+        ]
+    },
+    {
+        "id": "7f43",
+        "name": "Create valid extern instance with no control_params",
+        "category": [
+            "p4tc",
+            "template",
+            "extern_inst"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                255
+            ],
+            [
+                "$TC p4template create pipeline/ptables pipeid 22 numtables 0",
+                0
+            ],
+            [
+                "$TC p4template create extern/root/myext extid 1 numinstances 1",
+                0
+            ]
+        ],
+        "cmdUnderTest": "$TC p4template create extern_inst/ptables/myext/inst1 tc_numel 1 instid 1",
+        "expExitCode": "0",
+        "verifyCmd": "$TC -j p4template get extern_inst/ptables/myext/inst1",
+        "matchCount": "1",
+        "matchJSON": [
+            {
+                "pname": "ptables",
+                "extname": "myext",
+                "extinstname": "inst1",
+                "num_elems": 1,
+                "extid": 1,
+                "extinstid": 1
+            }
+        ],
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0
+            ]
+        ]
+    },
+    {
+        "id": "d99c",
+        "name": "Create valid extern instance without specifying tc_numel",
+        "category": [
+            "p4tc",
+            "template",
+            "extern_inst"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                255
+            ],
+            [
+                "$TC p4template create pipeline/ptables pipeid 22 numtables 0",
+                0
+            ],
+            [
+                "$TC p4template create extern/root/myext extid 1 numinstances 1",
+                0
+            ]
+        ],
+        "cmdUnderTest": "$TC p4template create extern_inst/ptables/myext/inst1 instid 1",
+        "expExitCode": "0",
+        "verifyCmd": "$TC -j p4template get extern_inst/ptables/myext/inst1",
+        "matchCount": "1",
+        "matchJSON": [
+            {
+                "pname": "ptables",
+                "extname": "myext",
+                "extinstname": "inst1",
+                "num_elems": 1,
+                "extid": 1,
+                "extinstid": 1
+            }
+        ],
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0
+            ]
+        ]
+    },
+    {
+        "id": "d0ff",
+        "name": "Try to create extern instance with tc_numel > P4TC_MAX_NUM_EXT_INST_ELEMS",
+        "category": [
+            "p4tc",
+            "template",
+            "extern_inst"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                255
+            ],
+            [
+                "$TC p4template create pipeline/ptables pipeid 22 numtables 0",
+                0
+            ],
+            [
+                "$TC p4template create extern/root/myext extid 1 numinstances 1",
+                0
+            ]
+        ],
+        "cmdUnderTest": "$TC p4template create extern_inst/ptables/myext/inst1 instid 1 tc_numel 0x2000001",
+        "expExitCode": "255",
+        "verifyCmd": "$TC -j p4template get extern_inst/ptables/myext/inst1",
+        "matchCount": "1",
+        "matchPattern": "Error: Instance name not found inst1",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0
+            ]
+        ]
+    },
+    {
+        "id": "f5cc",
+        "name": "Create extern instance with tc_numel == 0",
+        "category": [
+            "p4tc",
+            "template",
+            "extern_inst"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                255
+            ],
+            [
+                "$TC p4template create pipeline/ptables pipeid 22 numtables 0",
+                0
+            ],
+            [
+                "$TC p4template create extern/root/myext extid 1 numinstances 1",
+                0
+            ]
+        ],
+        "cmdUnderTest": "$TC p4template create extern_inst/ptables/myext/inst1 instid 1 tc_numel 0",
+        "expExitCode": "0",
+        "verifyCmd": "$TC -j p4template get extern_inst/ptables/myext/inst1",
+        "matchCount": "1",
+        "matchJSON": [
+            {
+                "pname": "ptables",
+                "extname": "myext",
+                "extinstname": "inst1",
+                "num_elems": 0,
+                "extid": 1,
+                "extinstid": 1
+            }
+        ],
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0
+            ]
+        ]
+    },
+    {
+        "id": "5437",
+        "name": "Create valid extern instance control path key of type bit32",
+        "category": [
+            "p4tc",
+            "template",
+            "extern_inst"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                255
+            ],
+            [
+                "$TC p4template create pipeline/ptables pipeid 22 numtables 0",
+                0
+            ],
+            [
+                "$TC p4template create extern/root/myext extid 1 numinstances 1",
+                0
+            ]
+        ],
+        "cmdUnderTest": "$TC p4template create extern_inst/ptables/myext/inst1 tc_numel 1 instid 1 tc_numel 1 control_path tc_key index ptype bit32 param value ptype bit32",
+        "expExitCode": "0",
+        "verifyCmd": "$TC -j p4template get extern_inst/ptables/myext/inst1",
+        "matchCount": "1",
+        "matchJSON": [
+            {
+                "pname": "ptables",
+                "extname": "myext",
+                "extinstname": "inst1",
+                "control_params": [
+                    {
+                        "name": "index",
+                        "id": 1,
+                        "type": "bit32"
+                    },
+                    {
+                        "name": "value",
+                        "id": 2,
+                        "type": "bit32"
+                    }
+                ],
+                "num_elems": 1,
+                "extid": 1,
+                "extinstid": 1
+            }
+        ],
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0
+            ]
+        ]
+    },
+    {
+        "id": "fccf",
+        "name": "Create valid extern instance control path key of type bit16",
+        "category": [
+            "p4tc",
+            "template",
+            "extern_inst"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                255
+            ],
+            [
+                "$TC p4template create pipeline/ptables pipeid 22 numtables 0",
+                0
+            ],
+            [
+                "$TC p4template create extern/root/myext extid 1 numinstances 1",
+                0
+            ]
+        ],
+        "cmdUnderTest": "$TC p4template create extern_inst/ptables/myext/inst3 tc_numel 1 instid 1 tc_numel 1 control_path tc_key index ptype bit16 param value ptype bit32",
+        "expExitCode": "0",
+        "verifyCmd": "$TC -j p4template get extern_inst/ptables/myext/inst3",
+        "matchCount": "1",
+        "matchJSON": [
+            {
+                "pname": "ptables",
+                "extname": "myext",
+                "extinstname": "inst3",
+                "control_params": [
+                    {
+                        "name": "index",
+                        "id": 1,
+                        "type": "bit16"
+                    },
+                    {
+                        "name": "value",
+                        "id": 2,
+                        "type": "bit32"
+                    }
+                ],
+                "num_elems": 1,
+                "extid": 1,
+                "extinstid": 1
+            }
+        ],
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0
+            ]
+        ]
+    },
+    {
+        "id": "add4",
+        "name": "Create valid extern instance control path key of type bit8",
+        "category": [
+            "p4tc",
+            "template",
+            "extern_inst"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                255
+            ],
+            [
+                "$TC p4template create pipeline/ptables pipeid 22 numtables 0",
+                0
+            ],
+            [
+                "$TC p4template create extern/root/myext extid 1 numinstances 1",
+                0
+            ]
+        ],
+        "cmdUnderTest": "$TC p4template create extern_inst/ptables/myext/inst4 tc_numel 1 instid 1 tc_numel 1 control_path tc_key index ptype bit8 param value ptype bit32",
+        "expExitCode": "0",
+        "verifyCmd": "$TC -j p4template get extern_inst/ptables/myext/inst4",
+        "matchCount": "1",
+        "matchJSON": [
+            {
+                "pname": "ptables",
+                "extname": "myext",
+                "extinstname": "inst4",
+                "control_params": [
+                    {
+                        "name": "index",
+                        "id": 1,
+                        "type": "bit8"
+                    },
+                    {
+                        "name": "value",
+                        "id": 2,
+                        "type": "bit32"
+                    }
+                ],
+                "num_elems": 1,
+                "extid": 1,
+                "extinstid": 1
+            }
+        ],
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0
+            ]
+        ]
+    },
+    {
+        "id": "7d20",
+        "name": "Create valid extern instance control path key of type bit8 and update to bit32",
+        "category": [
+            "p4tc",
+            "template",
+            "extern_inst"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                255
+            ],
+            [
+                "$TC p4template create pipeline/ptables pipeid 22 numtables 0",
+                0
+            ],
+            [
+                "$TC p4template create extern/root/myext extid 1 numinstances 1",
+                0
+            ],
+            [
+                "$TC p4template create extern_inst/ptables/myext/inst1 tc_numel 2 instid 1 control_path tc_key index ptype bit8 param value ptype bit32",
+                0
+            ]
+        ],
+        "cmdUnderTest": "$TC p4template update extern_inst/ptables/myext/inst1 control_path tc_key index ptype bit32 param value ptype bit32",
+        "expExitCode": "0",
+        "verifyCmd": "$TC -j p4template get extern_inst/ptables/myext/inst1",
+        "matchCount": "1",
+        "matchJSON": [
+            {
+                "pname": "ptables",
+                "extname": "myext",
+                "extinstname": "inst1",
+                "control_params": [
+                    {
+                        "name": "index",
+                        "id": 1,
+                        "type": "bit32"
+                    },
+                    {
+                        "name": "value",
+                        "id": 2,
+                        "type": "bit32"
+                    }
+                ],
+                "num_elems": 2,
+                "extid": 1,
+                "extinstid": 1
+            }
+        ],
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0
+            ]
+        ]
+    },
+    {
+        "id": "cb19",
+        "name": "Create valid extern instance control path key of type bit8 and try to update with invalid default value",
+        "category": [
+            "p4tc",
+            "template",
+            "extern_inst"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                255
+            ],
+            [
+                "$TC p4template create pipeline/ptables pipeid 22 numtables 0",
+                0
+            ],
+            [
+                "$TC p4template create extern/root/myext extid 1 numinstances 1",
+                0
+            ],
+            [
+                "$TC p4template create extern_inst/ptables/myext/inst4 tc_numel 1 instid 1 tc_numel 1 control_path tc_key index ptype bit8 param value ptype bit32",
+                0
+            ]
+        ],
+        "cmdUnderTest": "$TC p4template update extern_inst/ptables/myext/inst4 control_path tc_key index ptype bit32 param value ptype bit8 default_value 256",
+        "expExitCode": "255",
+        "verifyCmd": "$TC -j p4template get extern_inst/ptables/myext/inst4",
+        "matchCount": "1",
+        "matchJSON": [
+            {
+                "pname": "ptables",
+                "extname": "myext",
+                "extinstname": "inst4",
+                "control_params": [
+                    {
+                        "name": "index",
+                        "id": 1,
+                        "type": "bit8"
+                    },
+                    {
+                        "name": "value",
+                        "id": 2,
+                        "type": "bit32"
+                    }
+                ],
+                "num_elems": 1,
+                "extid": 1,
+                "extinstid": 1
+            }
+        ],
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0
+            ]
+        ]
+    },
+    {
+        "id": "0024",
+        "name": "Create valid extern instance and update tc_numel",
+        "category": [
+            "p4tc",
+            "template",
+            "extern_inst"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                255
+            ],
+            [
+                "$TC p4template create pipeline/ptables pipeid 22 numtables 0",
+                0
+            ],
+            [
+                "$TC p4template create extern/root/myext extid 1 numinstances 1",
+                0
+            ],
+            [
+                "$TC p4template create extern_inst/ptables/myext/inst1 tc_numel 1 instid 1 tc_numel 1 control_path tc_key index ptype bit32 param value ptype bit32",
+                0
+            ]
+        ],
+        "cmdUnderTest": "$TC p4template update extern_inst/ptables/myext/inst1 tc_numel 128",
+        "expExitCode": "0",
+        "verifyCmd": "$TC -j p4template get extern_inst/ptables/myext/inst1",
+        "matchCount": "1",
+        "matchJSON": [
+            {
+                "pname": "ptables",
+                "extname": "myext",
+                "extinstname": "inst1",
+                "control_params": [
+                    {
+                        "name": "index",
+                        "id": 1,
+                        "type": "bit32"
+                    },
+                    {
+                        "name": "value",
+                        "id": 2,
+                        "type": "bit32"
+                    }
+                ],
+                "num_elems": 128,
+                "extid": 1,
+                "extinstid": 1
+            }
+        ],
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0
+            ]
+        ]
+    },
+    {
+        "id": "e0b8",
+        "name": "Try to update extern instance without a module with table binadable",
+        "category": [
+            "p4tc",
+            "template",
+            "extern_inst"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/aP4proggieScalar 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                0,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                255
+            ],
+            [
+                "$TC p4template create pipeline/aP4proggieScalar pipeid 22 numtables 0",
+                0
+            ],
+            [
+                "$TC p4template create extern/root/Register extid 1 numinstances 1",
+                0
+            ],
+            [
+                "$TC p4template create extern_inst/aP4proggieScalar/Register/reg1 tc_numel 1 instid 1 control_path tc_data_scalar value ptype bit32 default_value 22",
+                0
+            ]
+        ],
+        "cmdUnderTest": "$TC p4template update extern_inst/aP4proggieScalar/Register/reg1 tbl_bindable control_path tc_data_scalar value ptype bit32 default_value 22",
+        "expExitCode": "255",
+        "verifyCmd": "$TC -j p4template get extern_inst/aP4proggieScalar/Register/reg1",
+        "matchCount": "1",
+        "matchJSON": [
+            {
+                "pname": "aP4proggieScalar",
+                "extname": "Register",
+                "extinstname": "reg1",
+                "control_params": [
+                    {
+                        "name": "value",
+                        "id": 1,
+                        "type": "bit32"
+                    }
+                ],
+                "num_elems": 1,
+                "extid": 1,
+                "extinstid": 1
+            }
+        ],
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/aP4proggieScalar 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0
+            ],
+            [
+                "$TC p4template del extern/root/Register",
+                0
+            ]
+        ]
+    },
+    {
+        "id": "4707",
+        "name": "Try to update extern instance with constructor parameters when extern has no module",
+        "category": [
+            "p4tc",
+            "template",
+            "extern_inst"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/aP4proggieScalar 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                0,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                255
+            ],
+            [
+                "$TC p4template create pipeline/aP4proggieScalar pipeid 22 numtables 0",
+                0
+            ],
+            [
+                "$TC p4template create extern/root/Register extid 1 numinstances 1",
+                0
+            ],
+            [
+                "$TC p4template create extern_inst/aP4proggieScalar/Register/reg1 tc_numel 1 instid 1 control_path tc_data_scalar value ptype bit32 default_value 22",
+                0
+            ]
+        ],
+        "cmdUnderTest": "$TC p4template update extern_inst/aP4proggieScalar/Register/reg1 constructor param constr_param ptype bit8 2",
+        "expExitCode": "255",
+        "verifyCmd": "$TC -j p4template get extern_inst/aP4proggieScalar/Register/reg1",
+        "matchCount": "1",
+        "matchJSON": [
+            {
+                "pname": "aP4proggieScalar",
+                "extname": "Register",
+                "extinstname": "reg1",
+                "control_params": [
+                    {
+                        "name": "value",
+                        "id": 1,
+                        "type": "bit32",
+                        "value": 22
+                    }
+                ],
+                "num_elems": 1,
+                "extid": 1,
+                "extinstid": 1
+            }
+        ],
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/aP4proggieScalar 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0
+            ],
+            [
+                "$TC p4template del extern/root/Register",
+                0
+            ]
+        ]
+    },
+    {
+        "id": "edc5",
+        "name": "Try to create extern instance with 2 key parameters",
+        "category": [
+            "p4tc",
+            "template",
+            "extern_inst"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                255
+            ],
+            [
+                "$TC p4template create pipeline/ptables pipeid 22 numtables 0",
+                0
+            ],
+            [
+                "$TC p4template create extern/root/myext extid 1 numinstances 1",
+                0
+            ]
+        ],
+        "cmdUnderTest": "$TC p4template create extern_inst/ptables/myext/inst1 instid 1 tc_numel 1 control_path tc_key index ptype bit8 tc_key index2 ptype bit32 param value ptype bit32",
+        "expExitCode": "255",
+        "verifyCmd": "$TC -j p4template get extern_inst/ptables/myext/inst1",
+        "matchCount": "1",
+        "matchPattern": "Error: Instance name not found inst1",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0
+            ]
+        ]
+    },
+    {
+        "id": "eb38",
+        "name": "Create valid extern instance and update tc_numel with 0",
+        "category": [
+            "p4tc",
+            "template",
+            "extern_inst"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                255
+            ],
+            [
+                "$TC p4template create pipeline/ptables pipeid 22 numtables 0",
+                0
+            ],
+            [
+                "$TC p4template create extern/root/myext extid 1 numinstances 1",
+                0
+            ],
+            [
+                "$TC p4template create extern_inst/ptables/myext/inst4 tc_numel 1 instid 1 tc_numel 1 control_path tc_key index ptype bit8 param value ptype bit32",
+                0
+            ]
+        ],
+        "cmdUnderTest": "$TC p4template update extern_inst/ptables/myext/inst4 tc_numel 0",
+        "expExitCode": "0",
+        "verifyCmd": "$TC -j p4template get extern_inst/ptables/myext/inst4",
+        "matchCount": "1",
+        "matchJSON": [
+            {
+                "pname": "ptables",
+                "extname": "myext",
+                "extinstname": "inst4",
+                "control_params": [
+                    {
+                        "name": "index",
+                        "id": 1,
+                        "type": "bit8"
+                    },
+                    {
+                        "name": "value",
+                        "id": 2,
+                        "type": "bit32"
+                    }
+                ],
+                "num_elems": 0,
+                "extid": 1,
+                "extinstid": 1
+            }
+        ],
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0
+            ]
+        ]
+    },
+    {
+        "id": "3f8d",
+        "name": "Create valid extern instance and try to update tc_numel with P4TC_MAX_NUM_EXT_INST_ELEMS + 1",
+        "category": [
+            "p4tc",
+            "template",
+            "extern_inst"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                255
+            ],
+            [
+                "$TC p4template create pipeline/ptables pipeid 22 numtables 0",
+                0
+            ],
+            [
+                "$TC p4template create extern/root/myext extid 1 numinstances 1",
+                0
+            ],
+            [
+                "$TC p4template create extern_inst/ptables/myext/inst4 tc_numel 1 instid 1 tc_numel 1 control_path tc_key index ptype bit8 param value ptype bit32",
+                0
+            ]
+        ],
+        "cmdUnderTest": "$TC p4template update extern_inst/ptables/myext/inst4 tc_numel 0x2000001",
+        "expExitCode": "255",
+        "verifyCmd": "$TC -j p4template get extern_inst/ptables/myext/inst4",
+        "matchCount": "1",
+        "matchJSON": [
+            {
+                "pname": "ptables",
+                "extname": "myext",
+                "extinstname": "inst4",
+                "control_params": [
+                    {
+                        "name": "index",
+                        "id": 1,
+                        "type": "bit8"
+                    },
+                    {
+                        "name": "value",
+                        "id": 2,
+                        "type": "bit32"
+                    }
+                ],
+                "num_elems": 1,
+                "extid": 1,
+                "extinstid": 1
+            }
+        ],
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0
+            ]
+        ]
+    },
+    {
+        "id": "0091",
+        "name": "Try to create extern instance with control path key of type bit64",
+        "category": [
+            "p4tc",
+            "template",
+            "extern_inst"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                255
+            ],
+            [
+                "$TC p4template create pipeline/ptables pipeid 22 numtables 0",
+                0
+            ],
+            [
+                "$TC p4template create extern/root/myext extid 1 numinstances 1",
+                0
+            ]
+        ],
+        "cmdUnderTest": "$TC p4template create extern_inst/ptables/myext/inst1 tc_numel 1 instid 1 tc_numel 1 control_path tc_key index ptype bit64 param value ptype bit32",
+        "expExitCode": "255",
+        "verifyCmd": "$TC -j p4template get extern_inst/ptables/myext/inst1",
+        "matchCount": "1",
+        "matchPattern": "Error: Instance name not found inst1",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0
+            ]
+        ]
+    },
+    {
+        "id": "d34a",
+        "name": "Create valid extern instance without default value",
+        "category": [
+            "p4tc",
+            "template",
+            "extern_inst"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                255
+            ],
+            [
+                "$TC p4template create pipeline/ptables pipeid 22 numtables 0",
+                0
+            ],
+            [
+                "$TC p4template create extern/root/myext extid 1 numinstances 1",
+                0
+            ]
+        ],
+        "cmdUnderTest": "$TC p4template create extern_inst/ptables/myext/inst1 tc_numel 1 instid 1 tc_numel 1 control_path tc_key index ptype bit32 param value ptype bit32",
+        "expExitCode": "0",
+        "verifyCmd": "$TC -j p4template get extern_inst/ptables/myext/inst1",
+        "matchCount": "1",
+        "matchJSON": [
+            {
+                "pname": "ptables",
+                "extname": "myext",
+                "extinstname": "inst1",
+                "control_params": [
+                    {
+                        "name": "index",
+                        "id": 1,
+                        "type": "bit32"
+                    },
+                    {
+                        "name": "value",
+                        "id": 2,
+                        "type": "bit32"
+                    }
+                ],
+                "num_elems": 1,
+                "extid": 1,
+                "extinstid": 1
+            }
+        ],
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0
+            ]
+        ]
+    },
+    {
+        "id": "c312",
+        "name": "Create valid extern instance with default value",
+        "category": [
+            "p4tc",
+            "template",
+            "extern_inst"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                255
+            ],
+            [
+                "$TC p4template create pipeline/ptables pipeid 22 numtables 0",
+                0
+            ],
+            [
+                "$TC p4template create extern/root/myext extid 1 numinstances 1",
+                0
+            ]
+        ],
+        "cmdUnderTest": "$TC p4template create extern_inst/ptables/myext/inst1 tc_numel 1 instid 1 tc_numel 1 control_path tc_key index ptype bit32 param value ptype bit32 default_value 22",
+        "expExitCode": "0",
+        "verifyCmd": "$TC -j p4template get extern_inst/ptables/myext/inst1",
+        "matchCount": "1",
+        "matchJSON": [
+            {
+                "pname": "ptables",
+                "extname": "myext",
+                "extinstname": "inst1",
+                "control_params": [
+                    {
+                        "name": "index",
+                        "id": 1,
+                        "type": "bit32"
+                    },
+                    {
+                        "name": "value",
+                        "id": 2,
+                        "type": "bit32",
+                        "value": 22
+                    }
+                ],
+                "num_elems": 1,
+                "extid": 1,
+                "extinstid": 1
+            }
+        ],
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0
+            ]
+        ]
+    },
+    {
+        "id": "3917",
+        "name": "Create valid extern instance and update default value",
+        "category": [
+            "p4tc",
+            "template",
+            "extern_inst"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                255
+            ],
+            [
+                "$TC p4template create pipeline/ptables pipeid 22 numtables 0",
+                0
+            ],
+            [
+                "$TC p4template create extern/root/myext extid 1 numinstances 1",
+                0
+            ]
+        ],
+        "cmdUnderTest": "$TC p4template create extern_inst/ptables/myext/inst1 tc_numel 1 instid 1 tc_numel 1 control_path tc_key index ptype bit32 param value ptype bit32 default_value 44",
+        "expExitCode": "0",
+        "verifyCmd": "$TC -j p4template get extern_inst/ptables/myext/inst1",
+        "matchCount": "1",
+        "matchJSON": [
+            {
+                "pname": "ptables",
+                "extname": "myext",
+                "extinstname": "inst1",
+                "control_params": [
+                    {
+                        "name": "index",
+                        "id": 1,
+                        "type": "bit32"
+                    },
+                    {
+                        "name": "value",
+                        "id": 2,
+                        "type": "bit32",
+                        "value": 44
+                    }
+                ],
+                "num_elems": 1,
+                "extid": 1,
+                "extinstid": 1
+            }
+        ],
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0
+            ]
+        ]
+    },
+    {
+        "id": "82cd",
+        "name": "Try or create instance with invalid default value",
+        "category": [
+            "p4tc",
+            "template",
+            "extern_inst"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                255
+            ],
+            [
+                "$TC p4template create pipeline/ptables pipeid 22 numtables 0",
+                0
+            ],
+            [
+                "$TC p4template create extern/root/myext extid 1 numinstances 1",
+                0
+            ]
+        ],
+        "cmdUnderTest": "$TC p4template create extern_inst/ptables/myext/inst1 tc_numel 1 instid 1 tc_numel 1 control_path tc_key index ptype bit32 param value ptype bit32 default_value 4294967296",
+        "expExitCode": "255",
+        "verifyCmd": "$TC p4template get extern_inst/ptables/myext/inst1",
+        "matchCount": "1",
+        "matchPattern": "Error: Instance name not found inst1",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0
+            ]
+        ]
+    },
+    {
+        "id": "69e2",
+        "name": "Create valid extern instance and update default value with type dev",
+        "category": [
+            "p4tc",
+            "template",
+            "extern_inst"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                255
+            ],
+            [
+                "$TC p4template create pipeline/ptables pipeid 22 numtables 0",
+                0
+            ],
+            [
+                "$TC p4template create extern/root/myext extid 1 numinstances 1",
+                0
+            ]
+        ],
+        "cmdUnderTest": "$TC p4template create extern_inst/ptables/myext/inst5 tc_numel 1 instid 1 tc_numel 1 control_path tc_key index ptype bit8 param value ptype dev default_value lo",
+        "expExitCode": "0",
+        "verifyCmd": "$TC -j p4template get extern_inst/ptables/myext/inst5",
+        "matchCount": "1",
+        "matchJSON": [
+            {
+                "pname": "ptables",
+                "extname": "myext",
+                "extinstname": "inst5",
+                "control_params": [
+                    {
+                        "name": "index",
+                        "id": 1,
+                        "type": "bit8"
+                    },
+                    {
+                        "name": "value",
+                        "id": 2,
+                        "type": "dev",
+                        "value": "lo"
+                    }
+                ],
+                "num_elems": 1,
+                "extid": 1,
+                "extinstid": 1
+            }
+        ],
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0
+            ]
+        ]
+    },
+    {
+        "id": "cedc",
+        "name": "Create valid extern instances with no control_params and flush",
+        "category": [
+            "p4tc",
+            "template",
+            "extern_inst"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                255
+            ],
+            [
+                "$TC p4template create pipeline/ptables pipeid 22 numtables 0",
+                0
+            ],
+            [
+                "$TC p4template create extern/root/myext extid 1 numinstances 2",
+                0
+            ],
+            [
+                "$TC p4template create extern_inst/ptables/myext/inst1 tc_numel 1 instid 1",
+                0
+            ],
+            [
+                "$TC p4template create extern_inst/ptables/myext/inst2 tc_numel 1 instid 2",
+                0
+            ]
+        ],
+        "cmdUnderTest": "$TC p4template del extern_inst/ptables/myext/",
+        "expExitCode": "0",
+        "verifyCmd": "$TC p4template get extern_inst/ptables/myext/",
+        "matchCount": "1",
+        "matchPattern": "Error: Extern name not found.",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0
+            ]
+        ]
+    },
+    {
+        "id": "45e6",
+        "name": "Create valid extern instances with no control_params and flush",
+        "category": [
+            "p4tc",
+            "template",
+            "extern_inst"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                255
+            ],
+            [
+                "$TC p4template create pipeline/ptables pipeid 22 numtables 0",
+                0
+            ],
+            [
+                "$TC p4template create extern/root/myext extid 1 numinstances 3",
+                0
+            ],
+            [
+                "$TC p4template create extern_inst/ptables/myext/inst1 tc_numel 1 instid 1",
+                0
+            ],
+            [
+                "$TC p4template create extern_inst/ptables/myext/inst2 tc_numel 1 instid 2",
+                0
+            ]
+        ],
+        "cmdUnderTest": "$TC p4template create extern_inst/ptables/myext/inst3 tc_numel 1 instid 3",
+        "expExitCode": "0",
+        "verifyCmd": "$TC -j p4template get extern_inst/ptables/myext/",
+        "matchCount": "1",
+        "matchJSON": [
+            {
+                "obj": "extern instance",
+                "pname": "ptables",
+                "pipeid": 22
+            },
+            {
+                "templates": [
+                    {
+                        "extname": "myext",
+                        "extinstname": "inst1",
+                        "extid": 1,
+                        "extinstid": 1
+                    },
+                    {
+                        "extname": "myext",
+                        "extinstname": "inst2",
+                        "extid": 1,
+                        "extinstid": 2
+                    },
+                    {
+                        "extname": "myext",
+                        "extinstname": "inst3",
+                        "extid": 1,
+                        "extinstid": 3
+                    }
+                ]
+            }
+        ],
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0
+            ]
+        ]
+    },
+    {
+        "id": "8188",
+        "name": "Try to create extern instances with same name twice",
+        "category": [
+            "p4tc",
+            "template",
+            "extern_inst"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                255
+            ],
+            [
+                "$TC p4template create pipeline/ptables pipeid 22 numtables 0",
+                0
+            ],
+            [
+                "$TC p4template create extern/root/myext extid 1 numinstances 3",
+                0
+            ],
+            [
+                "$TC p4template create extern_inst/ptables/myext/inst1 tc_numel 1 instid 1",
+                0
+            ]
+        ],
+        "cmdUnderTest": "$TC p4template create extern_inst/ptables/myext/inst1 tc_numel 1 instid 3",
+        "expExitCode": "255",
+        "verifyCmd": "$TC -j p4template get extern_inst/ptables/myext/",
+        "matchCount": "1",
+        "matchJSON": [
+            {
+                "obj": "extern instance",
+                "pname": "ptables",
+                "pipeid": 22
+            },
+            {
+                "templates": [
+                    {
+                        "extname": "myext",
+                        "extinstname": "inst1",
+                        "extid": 1,
+                        "extinstid": 1
+                    }
+                ]
+            }
+        ],
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0
+            ]
+        ]
+    },
+    {
+        "id": "3efb",
+        "name": "Try to create extern instances with same id twice",
+        "category": [
+            "p4tc",
+            "template",
+            "extern_inst"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                255
+            ],
+            [
+                "$TC p4template create pipeline/ptables pipeid 22 numtables 0",
+                0
+            ],
+            [
+                "$TC p4template create extern/root/myext extid 1 numinstances 3",
+                0
+            ],
+            [
+                "$TC p4template create extern_inst/ptables/myext/inst1 tc_numel 1 instid 1",
+                0
+            ]
+        ],
+        "cmdUnderTest": "$TC p4template create extern_inst/ptables/myext/inst2 tc_numel 1 instid 1",
+        "expExitCode": "255",
+        "verifyCmd": "$TC -j p4template get extern_inst/ptables/myext/",
+        "matchCount": "1",
+        "matchJSON": [
+            {
+                "obj": "extern instance",
+                "pname": "ptables",
+                "pipeid": 22
+            },
+            {
+                "templates": [
+                    {
+                        "extname": "myext",
+                        "extinstname": "inst1",
+                        "extid": 1,
+                        "extinstid": 1
+                    }
+                ]
+            }
+        ],
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0
+            ]
+        ]
+    },
+    {
+        "id": "adfb",
+        "name": "Try to create more extern instances then allowed",
+        "category": [
+            "p4tc",
+            "template",
+            "extern_inst"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                1,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                255
+            ],
+            [
+                "$TC p4template create pipeline/ptables pipeid 22 numtables 0",
+                0
+            ],
+            [
+                "$TC p4template create extern/root/myext extid 1 numinstances 2",
+                0
+            ],
+            [
+                "$TC p4template create extern_inst/ptables/myext/inst1 tc_numel 1 instid 1",
+                0
+            ],
+            [
+                "$TC p4template create extern_inst/ptables/myext/inst2 tc_numel 1 instid 2",
+                0
+            ]
+        ],
+        "cmdUnderTest": "$TC p4template create extern_inst/ptables/myext/inst3 tc_numel 1 instid 3",
+        "expExitCode": "255",
+        "verifyCmd": "$TC -j p4template get extern_inst/ptables/myext/",
+        "matchCount": "1",
+        "matchJSON": [
+            {
+                "obj": "extern instance",
+                "pname": "ptables",
+                "pipeid": 22
+            },
+            {
+                "templates": [
+                    {
+                        "extname": "myext",
+                        "extinstname": "inst1",
+                        "extid": 1,
+                        "extinstid": 1
+                    },
+                    {
+                        "extname": "myext",
+                        "extinstname": "inst2",
+                        "extid": 1,
+                        "extinstid": 2
+                    }
+                ]
+            }
+        ],
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0
+            ]
+        ]
+    },
+    {
+        "id": "12a5",
+        "name": "Create valid extern instance with default value, seal pipeline and see all elements are 22",
+        "category": [
+            "p4tc",
+            "template",
+            "extern_inst"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                0,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                255
+            ],
+            [
+                "$TC p4template create pipeline/ptables pipeid 22 numtables 0",
+                0
+            ],
+            [
+                "$TC p4template create extern/root/myext extid 1 numinstances 1",
+                0
+            ],
+            [
+                "$TC p4template create extern_inst/ptables/myext/inst1 tc_numel 1 instid 1 tc_numel 1 control_path tc_key index ptype bit32 param value ptype bit32 default_value 22",
+                0
+            ]
+        ],
+        "cmdUnderTest": "$TC p4template update pipeline/ptables state ready",
+        "expExitCode": "0",
+        "verifyCmd": "$TC -j p4ctrl get ptables/extern/myext/inst1",
+        "matchCount": "1",
+        "matchJSON": [
+            {
+                "total exts": 0
+            },
+            {
+                "externs": [
+                    {
+                        "order": 0,
+                        "kind": "myext",
+                        "instance": "inst1",
+                        "key": 1,
+                        "params": [
+                            {
+                                "name": "value",
+                                "id": 2,
+                                "type": "bit32",
+                                "value": 22
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0
+            ]
+        ]
+    },
+    {
+        "id": "902e",
+        "name": "Create valid extern instance with more than 1 element and default value, seal pipeline and see all elements are 22",
+        "category": [
+            "p4tc",
+            "template",
+            "extern_inst"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                0,
+                255
+            ],
+            [
+                "$TC p4template create pipeline/ptables pipeid 22 numtables 0",
+                0
+            ],
+            [
+                "$TC p4template create extern/root/myext extid 1 numinstances 1",
+                0
+            ],
+            [
+                "$TC p4template create extern_inst/ptables/myext/inst1 tc_numel 2 instid 1 control_path tc_key index ptype bit32 param value ptype bit32 default_value 22",
+                0
+            ]
+        ],
+        "cmdUnderTest": "$TC p4template update pipeline/ptables state ready",
+        "expExitCode": "0",
+        "verifyCmd": "$TC -j p4ctrl get ptables/extern/myext/inst1",
+        "matchCount": "1",
+        "matchJSON": [
+            {
+                "total exts": 0
+            },
+            {
+                "externs": [
+                    {
+                        "order": 0,
+                        "kind": "myext",
+                        "instance": "inst1",
+                        "key": 1,
+                        "params": [
+                            {
+                                "name": "value",
+                                "id": 2,
+                                "type": "bit32",
+                                "value": 22
+                            }
+                        ]
+                    },
+                    {
+                        "order": 1,
+                        "kind": "myext",
+                        "instance": "inst1",
+                        "key": 2,
+                        "params": [
+                            {
+                                "name": "value",
+                                "id": 2,
+                                "type": "bit32",
+                                "value": 22
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0
+            ]
+        ]
+    },
+    {
+        "id": "223c",
+        "name": "Create valid extern instance with 1 element and default value, and try to update the value before sealing",
+        "category": [
+            "p4tc",
+            "template",
+            "extern_inst"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                0,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                255
+            ],
+            [
+                "$TC p4template create pipeline/ptables pipeid 22 numtables 0",
+                0
+            ],
+            [
+                "$TC p4template create extern/root/myext extid 1 numinstances 1",
+                0
+            ],
+            [
+                "$TC p4template create extern_inst/ptables/myext/inst1 tc_numel 1 instid 1 tc_numel 1 control_path tc_key index ptype bit32 param value ptype bit32 default_value 22",
+                0
+            ]
+        ],
+        "cmdUnderTest": "$TC p4ctrl update ptables/extern/myext/inst1 tc_key index 1 param value 97",
+        "expExitCode": "255",
+        "verifyCmd": "$TC -j p4ctrl get ptables/extern/myext/inst1 tc_key index 1",
+        "matchCount": "1",
+        "matchPattern": "Error: Pipeline must be sealed for extern runtime ops",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0
+            ]
+        ]
+    },
+    {
+        "id": "29c6",
+        "name": "Create valid extern instance with 1 element and default value, seal pipeline and update the value",
+        "category": [
+            "p4tc",
+            "template",
+            "extern_inst"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                0,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                255
+            ],
+            [
+                "$TC p4template create pipeline/ptables pipeid 22 numtables 0",
+                0
+            ],
+            [
+                "$TC p4template create extern/root/myext extid 1 numinstances 1",
+                0
+            ],
+            [
+                "$TC p4template create extern_inst/ptables/myext/inst1 tc_numel 1 instid 1 tc_numel 1 control_path tc_key index ptype bit32 param value ptype bit32 default_value 22",
+                0
+            ],
+            [
+                "$TC p4template update pipeline/ptables state ready",
+                0
+            ]
+        ],
+        "cmdUnderTest": "$TC p4ctrl update ptables/extern/myext/inst1 tc_key index 1 param value 97",
+        "expExitCode": "0",
+        "verifyCmd": "$TC -j p4ctrl get ptables/extern/myext/inst1 tc_key index 1",
+        "matchCount": "1",
+        "matchJSON": [
+            {
+                "total exts": 0
+            },
+            {
+                "externs": [
+                    {
+                        "order": 1,
+                        "key": 1,
+                        "params": [
+                            {
+                                "name": "value",
+                                "id": 2,
+                                "type": "bit32",
+                                "value": 97
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0
+            ]
+        ]
+    },
+    {
+        "id": "0e96",
+        "name": "Create valid extern instance with 1 element and dev param, seal pipeline and update the value",
+        "category": [
+            "p4tc",
+            "template",
+            "extern_inst"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                0,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                255
+            ],
+            [
+                "$TC p4template create pipeline/ptables pipeid 22 numtables 0",
+                0
+            ],
+            [
+                "$TC p4template create extern/root/myext extid 1 numinstances 1",
+                0
+            ],
+            [
+                "$TC p4template create extern_inst/ptables/myext/inst2 tc_numel 1 instid 1 tc_numel 1 control_path tc_key index ptype bit32 param value ptype dev",
+                0
+            ],
+            [
+                "$TC p4template update pipeline/ptables state ready",
+                0
+            ]
+        ],
+        "cmdUnderTest": "$TC p4ctrl update ptables/extern/myext/inst2 tc_key index 1 param value lo",
+        "expExitCode": "0",
+        "verifyCmd": "$TC -j p4ctrl get ptables/extern/myext/inst2 tc_key index 1",
+        "matchCount": "1",
+        "matchJSON": [
+            {
+                "total exts": 0
+            },
+            {
+                "externs": [
+                    {
+                        "order": 1,
+                        "key": 1,
+                        "params": [
+                            {
+                                "name": "value",
+                                "id": 2,
+                                "type": "dev",
+                                "value": "lo"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0
+            ]
+        ]
+    },
+    {
+        "id": "8174",
+        "name": "Create valid extern instance with 1 element and dev param, seal pipeline and update with invalid dev",
+        "category": [
+            "p4tc",
+            "template",
+            "extern_inst"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                0,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                255
+            ],
+            [
+                "$TC p4template create pipeline/ptables pipeid 22 numtables 0",
+                0
+            ],
+            [
+                "$TC p4template create extern/root/myext extid 1 numinstances 1",
+                0
+            ],
+            [
+                "$TC p4template create extern_inst/ptables/myext/inst2 tc_numel 1 instid 1 tc_numel 1 control_path tc_key index ptype bit32 param value ptype dev",
+                0
+            ],
+            [
+                "$TC p4template update pipeline/ptables state ready",
+                0
+            ]
+        ],
+        "cmdUnderTest": "$TC p4ctrl update ptables/extern/myext/inst2 tc_key index 1 param value notarealiface",
+        "expExitCode": "255",
+        "verifyCmd": "$TC -j p4ctrl get ptables/extern/myext/inst2 tc_key index 1",
+        "matchCount": "1",
+        "matchJSON": [
+            {
+                "total exts": 0
+            },
+            {
+                "externs": [
+                    {
+                        "order": 1,
+                        "kind": "myext",
+                        "instance": "inst2",
+                        "key": 1,
+                        "params": [
+                            {
+                                "name": "value",
+                                "id": 2,
+                                "type": "dev",
+                                "value": "lo"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0
+            ]
+        ]
+    },
+    {
+        "id": "2f47",
+        "name": "Create valid extern instance with 1 element and default value, seal pipeline and update the value twice",
+        "category": [
+            "p4tc",
+            "runtime",
+            "extern"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                0,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                255
+            ],
+            [
+                "$TC p4template create pipeline/ptables pipeid 22 numtables 0",
+                0
+            ],
+            [
+                "$TC p4template create extern/root/myext extid 1 numinstances 1",
+                0
+            ],
+            [
+                "$TC p4template create extern_inst/ptables/myext/inst1 tc_numel 1 instid 1 tc_numel 1 control_path tc_key index ptype bit32 param value ptype bit32 default_value 22",
+                0
+            ],
+            [
+                "$TC p4template update pipeline/ptables state ready",
+                0
+            ],
+            [
+                "$TC p4ctrl update ptables/extern/myext/inst1 tc_key index 1 param value 97",
+                0
+            ]
+        ],
+        "cmdUnderTest": "$TC p4ctrl update ptables/extern/myext/inst1 tc_key index 1 param value 44",
+        "expExitCode": "0",
+        "verifyCmd": "$TC -j p4ctrl get ptables/extern/myext/inst1 tc_key index 1",
+        "matchCount": "1",
+        "matchJSON": [
+            {
+                "total exts": 0
+            },
+            {
+                "externs": [
+                    {
+                        "order": 1,
+                        "key": 1,
+                        "params": [
+                            {
+                                "name": "value",
+                                "id": 2,
+                                "type": "bit32",
+                                "value": 44
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0
+            ]
+        ]
+    },
+    {
+        "id": "1e73",
+        "name": "Create valid extern instance with 1 element and default value, seal pipeline and try to update element without specifying value",
+        "category": [
+            "p4tc",
+            "runtime",
+            "extern"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                0,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                255
+            ],
+            [
+                "$TC p4template create pipeline/ptables pipeid 22 numtables 0",
+                0
+            ],
+            [
+                "$TC p4template create extern/root/myext extid 1 numinstances 1",
+                0
+            ],
+            [
+                "$TC p4template create extern_inst/ptables/myext/inst1 tc_numel 1 instid 1 tc_numel 1 control_path tc_key index ptype bit32 param value ptype bit32 default_value 22",
+                0
+            ],
+            [
+                "$TC p4template update pipeline/ptables state ready",
+                0
+            ],
+            [
+                "$TC p4ctrl update ptables/extern/myext/inst1 tc_key index 1 param value 97",
+                0
+            ]
+        ],
+        "cmdUnderTest": "$TC p4ctrl update ptables/extern/myext/inst1 tc_key index 1 param value",
+        "expExitCode": "255",
+        "verifyCmd": "$TC -j p4ctrl get ptables/extern/myext/inst1 tc_key index 1",
+        "matchCount": "1",
+        "matchJSON": [
+            {
+                "total exts": 0
+            },
+            {
+                "externs": [
+                    {
+                        "order": 1,
+                        "key": 1,
+                        "params": [
+                            {
+                                "name": "value",
+                                "id": 2,
+                                "type": "bit32",
+                                "value": 97
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0
+            ]
+        ]
+    },
+    {
+        "id": "ca4f",
+        "name": "Try to create scalar extern instance with a parameter being scalar and another not",
+        "category": [
+            "p4tc",
+            "template",
+            "extern_inst"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/aP4proggieScalar 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                0,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                255
+            ],
+            [
+                "$TC p4template create pipeline/aP4proggieScalar pipeid 22 numtables 0",
+                0
+            ],
+            [
+                "$TC p4template create extern/root/Register extid 1 numinstances 1",
+                0
+            ]
+        ],
+        "cmdUnderTest": "$TC p4template create extern_inst/aP4proggieScalar/Register/reg1 tc_numel 1 instid 1 control_path tc_data_scalar value ptype bit32 default_value 22 param value2 ptype bit32",
+        "expExitCode": "255",
+        "verifyCmd": "$TC -j p4template get extern_inst/aP4proggieScalar/Register/reg1",
+        "matchCount": "1",
+        "matchPattern": "Error: Instance name not found reg1",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/aP4proggieScalar 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0
+            ],
+            [
+                "$TC p4template del extern/root/Register",
+                0
+            ]
+        ]
+    },
+    {
+        "id": "f149",
+        "name": "Try to create extern instance without a module that is table binadable",
+        "category": [
+            "p4tc",
+            "template",
+            "extern_inst"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/aP4proggieScalar 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                0,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                255
+            ],
+            [
+                "$TC p4template create pipeline/aP4proggieScalar pipeid 22 numtables 0",
+                0
+            ],
+            [
+                "$TC p4template create extern/root/Register extid 1 numinstances 1",
+                0
+            ]
+        ],
+        "cmdUnderTest": "$TC p4template create extern_inst/aP4proggieScalar/Register/reg1 tc_numel 1 instid 1 tbl_bindable control_path tc_data_scalar value ptype bit32 default_value 22",
+        "expExitCode": "255",
+        "verifyCmd": "$TC -j p4template get extern_inst/aP4proggieScalar/Register/reg1",
+        "matchCount": "1",
+        "matchPattern": "Error: Instance name not found reg1",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/aP4proggieScalar 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0
+            ],
+            [
+                "$TC p4template del extern/root/Register",
+                0
+            ]
+        ]
+    },
+    {
+        "id": "a023",
+        "name": "Try to create extern instance with constructor parameters that has no module",
+        "category": [
+            "p4tc",
+            "template",
+            "extern_inst"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/aP4proggieScalar 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                0,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                255
+            ],
+            [
+                "$TC p4template create pipeline/aP4proggieScalar pipeid 22 numtables 0",
+                0
+            ],
+            [
+                "$TC p4template create extern/root/Register extid 1 numinstances 1",
+                0
+            ]
+        ],
+        "cmdUnderTest": "$TC p4template create extern_inst/aP4proggieScalar/Register/reg1 tc_numel 1 instid 1 constructor param constr_param ptype bit8 2 control_path tc_data_scalar value ptype bit32 default_value 22",
+        "expExitCode": "255",
+        "verifyCmd": "$TC -j p4template get extern_inst/aP4proggieScalar/Register/reg1",
+        "matchCount": "1",
+        "matchPattern": "Error: Instance name not found reg1",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/aP4proggieScalar 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0
+            ],
+            [
+                "$TC p4template del extern/root/Register",
+                0
+            ]
+        ]
+    },
+    {
+        "id": "b226",
+        "name": "Create valid scalar extern instance with 1 element and default value, seal pipeline and update the value without specifying key",
+        "category": [
+            "p4tc",
+            "template",
+            "extern_inst"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/aP4proggieScalar 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                0,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                255
+            ],
+            [
+                "$TC p4template create pipeline/aP4proggieScalar pipeid 22 numtables 0",
+                0
+            ],
+            [
+                "$TC p4template create extern/root/Register extid 1 numinstances 1",
+                0
+            ],
+            [
+                "$TC p4template create extern_inst/aP4proggieScalar/Register/reg1 tc_numel 1 instid 1 tc_numel 1 control_path tc_data_scalar value ptype bit32 default_value 22",
+                0
+            ],
+            [
+                "$TC p4template update pipeline/aP4proggieScalar state ready",
+                0
+            ]
+        ],
+        "cmdUnderTest": "$TC p4ctrl update aP4proggieScalar/extern/Register/reg1 tc_data_scalar value 97",
+        "expExitCode": "0",
+        "verifyCmd": "$TC -j p4ctrl get aP4proggieScalar/extern/Register/reg1 tc_key index 1",
+        "matchCount": "1",
+        "matchJSON": [
+            {
+                "total exts": 0
+            },
+            {
+                "externs": [
+                    {
+                        "order": 1,
+                        "params": [
+                            {
+                                "name": "value",
+                                "id": 1,
+                                "type": "bit32",
+                                "value": 97
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/aP4proggieScalar 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0
+            ],
+            [
+                "$TC p4template del extern/root/Register",
+                0
+            ]
+        ]
+    },
+    {
+        "id": "e13f",
+        "name": "Create valid scalar extern instance with 1 element and default value, seal pipeline and update the value specifying index",
+        "category": [
+            "p4tc",
+            "template",
+            "extern_inst"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/aP4proggieScalar 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                0,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                255
+            ],
+            [
+                "$TC p4template create pipeline/aP4proggieScalar pipeid 22 numtables 0",
+                0
+            ],
+            [
+                "$TC p4template create extern/root/Register extid 1 numinstances 1",
+                0
+            ],
+            [
+                "$TC p4template create extern_inst/aP4proggieScalar/Register/reg1 tc_numel 1 instid 1 tc_numel 1 control_path tc_data_scalar value ptype bit32 default_value 22",
+                0
+            ],
+            [
+                "$TC p4template update pipeline/aP4proggieScalar state ready",
+                0
+            ]
+        ],
+        "cmdUnderTest": "$TC p4ctrl update aP4proggieScalar/extern/Register/reg1 tc_key index 1 tc_data_scalar value 97",
+        "expExitCode": "0",
+        "verifyCmd": "$TC -j p4ctrl get aP4proggieScalar/extern/Register/reg1",
+        "matchCount": "1",
+        "matchJSON": [
+            {
+                "total exts": 0
+            },
+            {
+                "externs": [
+                    {
+                        "order": 0,
+                        "params": [
+                            {
+                                "name": "value",
+                                "id": 1,
+                                "type": "bit32",
+                                "value": 97
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/aP4proggieScalar 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0
+            ],
+            [
+                "$TC p4template del extern/root/Register",
+                0
+            ]
+        ]
+    },
+    {
+        "id": "e188",
+        "name": "Create valid scalar extern instance with 1 element and default value, seal pipeline and try to update the value specifying index > 1",
+        "category": [
+            "p4tc",
+            "template",
+            "extern_inst"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/aP4proggieScalar 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                0,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                255
+            ],
+            [
+                "$TC p4template create pipeline/aP4proggieScalar pipeid 22 numtables 0",
+                0
+            ],
+            [
+                "$TC p4template create extern/root/Register extid 1 numinstances 1",
+                0
+            ],
+            [
+                "$TC p4template create extern_inst/aP4proggieScalar/Register/reg1 tc_numel 1 instid 1 tc_numel 1 control_path tc_data_scalar value ptype bit32 default_value 22",
+                0
+            ],
+            [
+                "$TC p4template update pipeline/aP4proggieScalar state ready",
+                0
+            ]
+        ],
+        "cmdUnderTest": "$TC p4ctrl update aP4proggieScalar/extern/Register/reg1 tc_key index 2 tc_data_scalar value 97",
+        "expExitCode": "255",
+        "verifyCmd": "$TC -j p4ctrl get aP4proggieScalar/extern/Register/reg1 tc_key index 2",
+        "matchCount": "1",
+        "matchPattern": "Error: Key of scalar must be 1",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/aP4proggieScalar 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0
+            ],
+            [
+                "$TC p4template del extern/root/Register",
+                0
+            ]
+        ]
+    },
+    {
+        "id": "969a",
+        "name": "Create valid scalar extern instance with 1 element and default value, seal pipeline, try to update the value specifying index > 1 and verify value is unaltered",
+        "category": [
+            "p4tc",
+            "template",
+            "extern_inst"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/aP4proggieScalar 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                0,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                255
+            ],
+            [
+                "$TC p4template create pipeline/aP4proggieScalar pipeid 22 numtables 0",
+                0
+            ],
+            [
+                "$TC p4template create extern/root/Register extid 1 numinstances 1",
+                0
+            ],
+            [
+                "$TC p4template create extern_inst/aP4proggieScalar/Register/reg1 tc_numel 1 instid 1 tc_numel 1 control_path tc_data_scalar value ptype bit32 default_value 22",
+                0
+            ],
+            [
+                "$TC p4template update pipeline/aP4proggieScalar state ready",
+                0
+            ]
+        ],
+        "cmdUnderTest": "$TC p4ctrl update aP4proggieScalar/extern/Register/reg1 tc_key index 2 tc_data_scalar value 97",
+        "expExitCode": "255",
+        "verifyCmd": "$TC -j p4ctrl get aP4proggieScalar/extern/Register/reg1",
+        "matchCount": "1",
+        "matchJSON": [
+            {
+                "total exts": 0
+            },
+            {
+                "externs": [
+                    {
+                        "order": 0,
+                        "kind": "Register",
+                        "instance": "reg1",
+                        "key": 1,
+                        "params": [
+                            {
+                                "name": "value",
+                                "id": 1,
+                                "type": "bit32",
+                                "value": 22
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/aP4proggieScalar 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0
+            ],
+            [
+                "$TC p4template del extern/root/Register",
+                0
+            ]
+        ]
+    },
+    {
+        "id": "39c7",
+        "name": "Create valid scalar extern instance with 1 element and default value and try to dump before sealing pipeline",
+        "category": [
+            "p4tc",
+            "template",
+            "extern_inst"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/aP4proggieScalar 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                0,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                255
+            ],
+            [
+                "$TC p4template create pipeline/aP4proggieScalar pipeid 22 numtables 0",
+                0
+            ],
+            [
+                "$TC p4template create extern/root/Register extid 1 numinstances 1",
+                0
+            ]
+        ],
+        "cmdUnderTest": "$TC p4template create extern_inst/aP4proggieScalar/Register/reg1 tc_numel 1 instid 1 tc_numel 1 control_path tc_data_scalar value ptype bit32 default_value 22",
+        "expExitCode": "0",
+        "verifyCmd": "$TC -j p4ctrl get aP4proggieScalar/extern/Register/reg1",
+        "matchCount": "1",
+        "matchPattern": "Error: Pipeline must be sealed for extern runtime ops",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/aP4proggieScalar 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0
+            ],
+            [
+                "$TC p4template del extern/root/Register",
+                0
+            ]
+        ]
+    },
+    {
+        "id": "32e9",
+        "name": "Create valid extern instance with 1 element and default value, and try to create an element",
+        "category": [
+            "p4tc",
+            "template",
+            "extern_inst"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                0,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                255
+            ],
+            [
+                "$TC p4template create pipeline/ptables pipeid 22 numtables 0",
+                0
+            ],
+            [
+                "$TC p4template create extern/root/myext extid 1 numinstances 1",
+                0
+            ],
+            [
+                "$TC p4template create extern_inst/ptables/myext/inst1 tc_numel 2 instid 1 tc_numel 1 control_path tc_key index ptype bit32 param value ptype bit32 default_value 22",
+                0
+            ],
+            [
+                "$TC p4template update pipeline/ptables state ready",
+                0
+            ]
+        ],
+        "cmdUnderTest": "$TC p4ctrl create ptables/extern/myext/inst1 tc_key index 3 param value 97",
+        "expExitCode": "255",
+        "verifyCmd": "$TC -j p4ctrl get ptables/extern/myext/inst1 tc_key index 3",
+        "matchCount": "1",
+        "matchPattern": "Error: TC extern with specified key not found",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0
+            ]
+        ]
+    },
+    {
+        "id": "09c0",
+        "name": "Create valid extern instance with 1 element and default value, and try to update an element without permission",
+        "category": [
+            "p4tc",
+            "template",
+            "extern_inst"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                0,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                255
+            ],
+            [
+                "$TC p4template create pipeline/ptables pipeid 22 numtables 0",
+                0
+            ],
+            [
+                "$TC p4template create extern/root/myext extid 1 numinstances 1 tc_acl 0x11A6",
+                0
+            ],
+            [
+                "$TC p4template create extern_inst/ptables/myext/inst1 instid 1 tc_numel 1 control_path tc_key index ptype bit32 param value ptype bit32 default_value 22",
+                0
+            ],
+            [
+                "$TC p4template update pipeline/ptables state ready",
+                0
+            ]
+        ],
+        "cmdUnderTest": "$TC p4ctrl update ptables/extern/myext/inst1 tc_key index 1 param value 97",
+        "expExitCode": "255",
+        "verifyCmd": "$TC -j p4ctrl get ptables/extern/myext/inst1 tc_key index 3",
+        "matchCount": "1",
+        "matchPattern": "Error: TC extern with specified key not found",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0
+            ]
+        ]
+    },
+    {
+        "id": "c5c9",
+        "name": "Try to create extern template with ctrl create permissions",
+        "category": [
+            "p4tc",
+            "template",
+            "extern_inst"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                0,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                255
+            ]
+        ],
+        "cmdUnderTest": "$TC p4template create extern/root/myext extid 1 numinstances 1 tc_acl 0x29A4",
+        "expExitCode": "255",
+        "verifyCmd": "$TC -j p4template get extern/root/myext",
+        "matchCount": "1",
+        "matchPattern": "Error: Extern name not found",
+        "teardown": []
+    },
+    {
+        "id": "e93a",
+        "name": "Try to create extern template with ctrl delete permissions",
+        "category": [
+            "p4tc",
+            "template",
+            "extern_inst"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                0,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                255
+            ]
+        ],
+        "cmdUnderTest": "$TC p4template create extern/root/myext extid 1 numinstances 1 tc_acl 0xDA4",
+        "expExitCode": "255",
+        "verifyCmd": "$TC -j p4template get extern/root/myext",
+        "matchCount": "1",
+        "matchPattern": "Error: Extern name not found",
+        "teardown": []
+    },
+    {
+        "id": "b414",
+        "name": "Try to create extern template with ctrl execute permissions",
+        "category": [
+            "p4tc",
+            "template",
+            "extern_inst"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                0,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                255
+            ]
+        ],
+        "cmdUnderTest": "$TC p4template create extern/root/myext extid 1 numinstances 1 tc_acl 0xBA4",
+        "expExitCode": "255",
+        "verifyCmd": "$TC -j p4template get extern/root/myext",
+        "matchCount": "1",
+        "matchPattern": "Error: Extern name not found",
+        "teardown": []
+    },
+    {
+        "id": "91d7",
+        "name": "Try to create extern template with datapath create permissions",
+        "category": [
+            "p4tc",
+            "template",
+            "extern_inst"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                0,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                255
+            ]
+        ],
+        "cmdUnderTest": "$TC p4template create extern/root/myext extid 1 numinstances 1 tc_acl 0x19E4",
+        "expExitCode": "255",
+        "verifyCmd": "$TC -j p4template get extern/root/myext",
+        "matchCount": "1",
+        "matchPattern": "Error: Extern name not found",
+        "teardown": []
+    },
+    {
+        "id": "44fa",
+        "name": "Try to create extern template with datapath delete permissions",
+        "category": [
+            "p4tc",
+            "template",
+            "extern_inst"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                0,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                255
+            ]
+        ],
+        "cmdUnderTest": "$TC p4template create extern/root/myext extid 1 numinstances 1 tc_acl 0x19AC",
+        "expExitCode": "255",
+        "verifyCmd": "$TC -j p4template get extern/root/myext",
+        "matchCount": "1",
+        "matchPattern": "Error: Extern name not found",
+        "teardown": []
+    },
+    {
+        "id": "0357",
+        "name": "Create valid extern instance with 1 element and default value, and try to read an element without permission",
+        "category": [
+            "p4tc",
+            "template",
+            "extern_inst"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                0,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                255
+            ],
+            [
+                "$TC p4template create pipeline/ptables pipeid 22 numtables 0",
+                0
+            ],
+            [
+                "$TC p4template create extern/root/myext extid 1 numinstances 1 tc_acl 0x9A4",
+                0
+            ],
+            [
+                "$TC p4template create extern_inst/ptables/myext/inst1 instid 1 tc_numel 1 control_path tc_key index ptype bit32 param value ptype bit32 default_value 22",
+                0
+            ]
+        ],
+        "cmdUnderTest": "$TC p4template update pipeline/ptables state ready",
+        "expExitCode": "0",
+        "verifyCmd": "$TC -j p4ctrl get ptables/extern/myext/inst1 tc_key index 1",
+        "matchCount": "1",
+        "matchPattern": "Error: Read permissions not set",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0
+            ]
+        ]
+    },
+    {
+        "id": "8ad6",
+        "name": "Create valid extern instance with 1 element and default value, and try to delete an element",
+        "category": [
+            "p4tc",
+            "template",
+            "extern_inst"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                0,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                255
+            ],
+            [
+                "$TC p4template create pipeline/ptables pipeid 22 numtables 0",
+                0
+            ],
+            [
+                "$TC p4template create extern/root/myext extid 1 numinstances 1",
+                0
+            ],
+            [
+                "$TC p4template create extern_inst/ptables/myext/inst1 tc_numel 2 instid 1 tc_numel 1 control_path tc_key index ptype bit32 param value ptype bit32 default_value 22",
+                0
+            ],
+            [
+                "$TC p4template update pipeline/ptables state ready",
+                0
+            ]
+        ],
+        "cmdUnderTest": "$TC p4ctrl del ptables/extern/myext/inst1 tc_key index 1",
+        "expExitCode": "255",
+        "verifyCmd": "$TC -j p4ctrl get ptables/extern/myext/inst1 tc_key index 1",
+        "matchCount": "1",
+        "matchJSON": [
+            {
+                "total exts": 0
+            },
+            {
+                "externs": [
+                    {
+                        "order": 1,
+                        "kind": "myext",
+                        "instance": "inst1",
+                        "key": 1,
+                        "params": [
+                            {
+                                "name": "value",
+                                "id": 2,
+                                "type": "bit32",
+                                "value": 22
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0
+            ]
+        ]
+    },
+    {
+        "id": "6516",
+        "name": "Create valid extern instance with 1 element and default value, and try to flush elements",
+        "category": [
+            "p4tc",
+            "template",
+            "extern_inst"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                0,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                255
+            ],
+            [
+                "$TC p4template create pipeline/ptables pipeid 22 numtables 0",
+                0
+            ],
+            [
+                "$TC p4template create extern/root/myext extid 1 numinstances 1",
+                0
+            ],
+            [
+                "$TC p4template create extern_inst/ptables/myext/inst1 instid 1 tc_numel 1 control_path tc_key index ptype bit32 param value ptype bit32 default_value 22",
+                0
+            ],
+            [
+                "$TC p4template update pipeline/ptables state ready",
+                0
+            ],
+            [
+                "$TC p4ctrl update ptables/extern/myext/inst1 tc_key index 1 param value 25",
+                0
+            ]
+        ],
+        "cmdUnderTest": "$TC p4ctrl del ptables/extern/myext/inst1",
+        "expExitCode": "255",
+        "verifyCmd": "$TC -j p4ctrl get ptables/extern/myext/inst1 tc_key index 1",
+        "matchCount": "1",
+        "matchJSON": [
+            {
+                "total exts": 0
+            },
+            {
+                "externs": [
+                    {
+                        "order": 1,
+                        "key": 1,
+                        "params": [
+                            {
+                                "name": "value",
+                                "id": 2,
+                                "type": "bit32",
+                                "value": 25
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0
+            ]
+        ]
+    },
+    {
+        "id": "e9f0",
+        "name": "Create valid extern instance with 1 element and default value, and try to update with invalid value",
+        "category": [
+            "p4tc",
+            "template",
+            "extern_inst"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                0,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                255
+            ],
+            [
+                "$TC p4template create pipeline/ptables pipeid 22 numtables 0",
+                0
+            ],
+            [
+                "$TC p4template create extern/root/myext extid 1 numinstances 1",
+                0
+            ],
+            [
+                "$TC p4template create extern_inst/ptables/myext/inst1 instid 1 tc_numel 1 control_path tc_key index ptype bit32 param value ptype bit32 default_value 22",
+                0
+            ],
+            [
+                "$TC p4template update pipeline/ptables state ready",
+                0
+            ]
+        ],
+        "cmdUnderTest": "$TC p4ctrl update ptables/extern/myext/inst1 tc_key index 1 param index 4294967296",
+        "expExitCode": "255",
+        "verifyCmd": "$TC -j p4ctrl get ptables/extern/myext/inst1 tc_key index 1",
+        "matchCount": "1",
+        "matchJSON": [
+            {
+                "total exts": 0
+            },
+            {
+                "externs": [
+                    {
+                        "order": 1,
+                        "kind": "myext",
+                        "instance": "inst1",
+                        "key": 1,
+                        "params": [
+                            {
+                                "name": "value",
+                                "id": 2,
+                                "type": "bit32",
+                                "value": 22
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0
+            ]
+        ]
+    },
+    {
+        "id": "f051",
+        "name": "Create valid extern instance with 1 element and try to update specifying invalid value",
+        "category": [
+            "p4tc",
+            "template",
+            "extern_inst"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                0,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                255
+            ],
+            [
+                "$TC p4template create pipeline/ptables pipeid 22 numtables 0",
+                0
+            ],
+            [
+                "$TC p4template create extern/root/myext extid 1 numinstances 1",
+                0
+            ],
+            [
+                "$TC p4template create extern_inst/ptables/myext/inst1 instid 1 tc_numel 1 control_path tc_key index ptype bit32 param value ptype bit32 default_value 22",
+                0
+            ],
+            [
+                "$TC p4template update pipeline/ptables state ready",
+                0
+            ]
+        ],
+        "cmdUnderTest": "$TC p4ctrl create ptables/extern/myext/inst1 tc_key index 1 param value 4294967296",
+        "expExitCode": "255",
+        "verifyCmd": "$TC -j p4ctrl get ptables/extern/myext/inst1 tc_key index 1",
+        "matchCount": "1",
+        "matchJSON": [
+            {
+                "total exts": 0
+            },
+            {
+                "externs": [
+                    {
+                        "order": 1,
+                        "kind": "myext",
+                        "instance": "inst1",
+                        "key": 1,
+                        "params": [
+                            {
+                                "name": "value",
+                                "id": 2,
+                                "type": "bit32",
+                                "value": 22
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0
+            ]
+        ]
+    },
+    {
+        "id": "3475",
+        "name": "Create valid extern instance with 1 element and try to update specifying wrong key name",
+        "category": [
+            "p4tc",
+            "template",
+            "extern_inst"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                0,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                255
+            ],
+            [
+                "$TC p4template create pipeline/ptables pipeid 22 numtables 0",
+                0
+            ],
+            [
+                "$TC p4template create extern/root/myext extid 1 numinstances 1",
+                0
+            ],
+            [
+                "$TC p4template create extern_inst/ptables/myext/inst1 instid 1 tc_numel 1 control_path tc_key index ptype bit32 param value ptype bit32 default_value 22",
+                0
+            ],
+            [
+                "$TC p4template update pipeline/ptables state ready",
+                0
+            ]
+        ],
+        "cmdUnderTest": "$TC p4ctrl create ptables/extern/myext/inst1 tc_key wrongkey 1 param value 97",
+        "expExitCode": "255",
+        "verifyCmd": "$TC -j p4ctrl get ptables/extern/myext/inst1 tc_key index 1",
+        "matchCount": "1",
+        "matchJSON": [
+            {
+                "total exts": 0
+            },
+            {
+                "externs": [
+                    {
+                        "order": 1,
+                        "kind": "myext",
+                        "instance": "inst1",
+                        "key": 1,
+                        "params": [
+                            {
+                                "name": "value",
+                                "id": 2,
+                                "type": "bit32",
+                                "value": 22
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0
+            ]
+        ]
+    },
+    {
+        "id": "3c90",
+        "name": "Try to create extern instance without a value parameter",
+        "category": [
+            "p4tc",
+            "template",
+            "extern_inst"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                0,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                255
+            ],
+            [
+                "$TC p4template create pipeline/ptables pipeid 22 numtables 0",
+                0
+            ],
+            [
+                "$TC p4template create extern/root/myext extid 1 numinstances 1",
+                0
+            ]
+        ],
+        "cmdUnderTest": "$TC p4template create extern_inst/ptables/myext/inst1 instid 1 tc_numel 1 control_path tc_key index ptype bit32",
+        "expExitCode": "255",
+        "verifyCmd": "$TC p4template get extern_inst/ptables/myext/inst1",
+        "matchCount": "1",
+        "matchPattern": "Error: Instance name not found inst1",
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0
+            ]
+        ]
+    },
+    {
+        "id": "4a7a",
+        "name": "Try to update extern instance params without a value parameter",
+        "category": [
+            "p4tc",
+            "template",
+            "extern_inst"
+        ],
+        "setup": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0,
+                0,
+                255
+            ],
+            [
+                "$TC actions flush action gact",
+                0,
+                1,
+                255
+            ],
+            [
+                "$TC p4template create pipeline/ptables pipeid 22 numtables 0",
+                0
+            ],
+            [
+                "$TC p4template create extern/root/myext extid 1 numinstances 1",
+                0
+            ],
+            [
+                "$TC p4template create extern_inst/ptables/myext/inst1 instid 1 tc_numel 1 control_path tc_key index ptype bit32 param value ptype bit32",
+                0
+            ]
+        ],
+        "cmdUnderTest": "$TC p4template update extern_inst/ptables/myext/inst1 control_path tc_key index ptype bit32",
+        "expExitCode": "255",
+        "verifyCmd": "$TC -j p4template get extern_inst/ptables/myext/inst1",
+        "matchCount": "1",
+        "matchJSON": [
+            {
+                "pname": "ptables",
+                "extname": "myext",
+                "extinstname": "inst1",
+                "control_params": [
+                    {
+                        "name": "index",
+                        "id": 1,
+                        "type": "bit32"
+                    },
+                    {
+                        "name": "value",
+                        "id": 2,
+                        "type": "bit32"
+                    }
+                ],
+                "num_elems": 1,
+                "extid": 1,
+                "extinstid": 1
+            }
+        ],
+        "teardown": [
+            [
+                "sh -c 'for attempt in $(seq 1 200); do output=$($TC p4template del pipeline/ptables 2>&1); rc=$?; [ \"$rc\" -eq 0 ] && break; case \"$output\" in *\"Pipeline in use\"*) sleep 0.05;; *) break;; esac; done; [ -z \"$output\" ] || printf '\"'\"'%s\\n'\"'\"' \"$output\" >&2; exit \"$rc\"'",
+                0
+            ],
+            [
+                "$TC p4template del extern/root/myext",
+                0
+            ]
+        ]
+    }
+]
